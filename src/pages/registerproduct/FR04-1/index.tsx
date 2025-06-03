@@ -1,7 +1,8 @@
 import { FR04Layout } from "../common/layout";
 import { Autocomplete, TextField } from "@mui/material";
-import { DeleteRounded } from "@mui/icons-material";
+import { DeleteRounded, Save, Edit } from "@mui/icons-material";
 import { ProcessStepper } from "../common/layout";
+import { useState } from "react";
 const FR04_1 = () => {
   return (
     <div>
@@ -41,6 +42,8 @@ const FR04_1Data = {
 };
 
 const FR04_1Form = () => {
+  const [isEdit, setIsEdit] = useState(false);
+
   return (
     <div className="flex flex-col gap-4 font-medium">
       <div>
@@ -54,9 +57,25 @@ const FR04_1Form = () => {
             <label className="text-sm text-gray-300">ปริมาณ</label>
             <p>1,219</p>
           </div>
+
+          <div className="w-40">
+            <label className="text-sm text-gray-300">output product</label>
+            <Autocomplete
+              options={outputProduct}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="output product"
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                />
+              )}
+            />
+          </div>
           <div>
             <label className="text-sm text-gray-300">ปริมาณ/FU</label>
-            <p>0.0003</p>
+            <p>1,219</p>
           </div>
           <div className="mt-auto w-64">
             <label className="text-sm text-gray-300">ที่มาของค่า LCI</label>
@@ -88,6 +107,36 @@ const FR04_1Form = () => {
               )}
             />
           </div>
+          <div className="w-40">
+            <label className="text-sm text-gray-300">Category</label>
+            <Autocomplete
+              options={Category}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="category"
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                />
+              )}
+            />
+          </div>
+          <div className="w-40">
+            <label className="text-sm text-gray-300">subcategory</label>
+            <Autocomplete
+              options={Subcategory}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="subcategory of material"
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                />
+              )}
+            />
+          </div>
           <div className="w-64">
             <label className="text-sm text-gray-300">แหล่งอ้างอิง EF</label>
             <Autocomplete
@@ -103,13 +152,16 @@ const FR04_1Form = () => {
               )}
             />
           </div>
+        </div>
+        <div className="flex gap-8">
           <div>
             <label className="text-sm text-gray-300">ค่า EF</label>
             <p>8.4819</p>
           </div>
         </div>
       </div>
-      <div className="flex gap-8">
+      <div className="flex gap-8 mt-5">
+        <TextField label="การปันส่วน %" value={100} size="small" />
         <div>
           <label className="text-sm text-gray-300">ผลคูณ</label>
           <p>0.0027</p>
@@ -118,12 +170,44 @@ const FR04_1Form = () => {
           <label className="text-sm text-gray-300">สัดส่วน</label>
           <p>0.07 %</p>
         </div>
-        <div className="ml-auto">
-          <button className="border border-red-700 rounded-full text-red-700 text-sm flex items-center gap-2 h-fit mt-4.5 px-4 py-1 ml-4">
-            <DeleteRounded />
-            <p>ลบรายการ</p>
-          </button>
-        </div>
+      </div>
+      <div className="mt-auto">
+        <label className="text-sm text-gray-300">
+          หมายเหตุ / คำอธิบายเพิ่มเติม
+        </label>
+        <TextField
+          label="หมายเหตุ / คำอธิบายเพิ่มเติม"
+          variant="outlined"
+          type="string"
+          size="small"
+          fullWidth
+          multiline
+        />
+      </div>
+      <div className="ml-auto">
+        {isEdit ? (
+          <div className="mt-4.5">
+            <label className="text-red-500">อย่าลืมกด save na</label>
+            <button className="border border-primary rounded-full text-primary text-sm flex items-center gap-2 h-fit  px-4 py-1 ml-4">
+              <Save />
+              <p>บันทึก</p>
+            </button>
+          </div>
+        ) : (
+          <div className="flex gap-2">
+            <button
+              onClick={() => setIsEdit(true)}
+              className="border border-primary rounded-full text-primary text-sm flex items-center gap-2 h-fit mt-4.5 px-4 py-1 ml-4"
+            >
+              <Edit />
+              <p>แก้ไข</p>
+            </button>
+            <button className="border border-red-700 rounded-full text-red-700 text-sm flex items-center gap-2 h-fit mt-4.5 px-4 py-1 ml-4">
+              <DeleteRounded />
+              <p>ลบรายการ</p>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -135,3 +219,20 @@ const LCIandEF = [
 ];
 
 const EF = ["TGO EF", "self EF", "TGO LCI", "self LCI"];
+const Category = ["M", "E", "C", "O"];
+const Subcategory = ["กลุ่มปิโตรเลี่ยม", "สิ่งทอ", "ยาง"];
+
+const outputProduct = [
+  {
+    productname: "product1",
+    value: 100,
+  },
+  {
+    productname: "product2",
+    value: 100,
+  },
+  {
+    productname: "product3",
+    value: 100,
+  },
+];
