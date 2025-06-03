@@ -1,0 +1,38 @@
+import { CreateRounded, DeleteRounded } from "@mui/icons-material";
+export const MaterialCard = () => {};
+export type MaterialCardProps = {
+  title: string;
+  unit: string;
+  amount: number;
+  type?: string;
+};
+export type InfoProps = {
+  title: string;
+  amount: number | string;
+};
+const Info = (props: InfoProps) => {
+  return (
+    <div className="font-medium">
+      <label className="text-gray-300 text-xs">{props.title}</label>
+      <p>{props.amount}</p>
+    </div>
+  );
+};
+export const MaterialCardItem = (props: MaterialCardProps) => {
+  return (
+    <div className="border-2 border-stroke rounded-lg py-3 px-5 w-full bg-white">
+      <div className="mb-3 flex justify-between">
+        <h3 className="font-semibold text-xl">{props.title}</h3>
+        <div className="flex gap-2 my-auto">
+          <CreateRounded sx={{ fontSize: "16px" }} className="text-primary" />
+          <DeleteRounded sx={{ fontSize: "16px" }} className="text-error" />
+        </div>
+      </div>
+      <div className="flex gap-6">
+        <Info title="หน่วย" amount={props.unit} />
+        <Info title="ปริมาณ" amount={props.amount} />
+        {props.type && <Info title="ประเภท" amount={props.type} />}
+      </div>
+    </div>
+  );
+};
