@@ -1,4 +1,5 @@
 import { TextField } from "@mui/material";
+import { useEffect } from "react";
 import {
   DeleteRounded,
   KeyboardArrowDownRounded,
@@ -7,15 +8,23 @@ import {
 import { MaterialCardItem } from "../common/component/card";
 import { useState } from "react";
 import { ProcessStepper } from "../common/layout";
+import { DndContext, closestCenter } from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+import { CSS } from "@dnd-kit/utilities";
+import FormDialog from "../common/component/dialog";
 const FR03 = () => {
   return (
     <div>
       <div className="max-w-xl mx-auto">
         <ProcessStepper isActive={0} />
       </div>
-      <FR03Item order={1} />
-      <FR03Item order={2} />
-      <FR03Item order={3} />
+      <DraggableList />
       <div className="w-1/4 mx-auto">
         <button
           type="submit"
@@ -31,14 +40,15 @@ export default FR03;
 
 type FR03ItemProps = {
   order: number;
+  isOpen: boolean;
+  onToggle: () => void;
+  dragHandleProps?: React.HTMLAttributes<any>;
 };
 const FR03Item = (props: FR03ItemProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const toggleAccordion = () => {
-    setIsOpen(!isOpen);
-  };
+  const { isOpen, onToggle } = props;
+
   return (
-    <div className="flex max-w-5xl mx-auto my-3">
+    <div className="flex max-w-5xl mx-auto my-3 bg-white">
       <div className="rounded-full bg-primary/10 border border-primary text-primary font-semibold text-sm flex items-center justify-center w-8 h-8 mr-4">
         <p>{props.order}</p>
       </div>
@@ -61,16 +71,18 @@ const FR03Item = (props: FR03ItemProps) => {
             <DeleteRounded />
             <p>ลบกระบวนการ</p>
           </button>
-          <div onClick={toggleAccordion} className="ml-auto my-auto">
+          <div
+            onClick={onToggle}
+            // {...dragHandleProps}
+            className="ml-auto my-auto"
+          >
             {isOpen ? <KeyboardArrowUpRounded /> : <KeyboardArrowDownRounded />}
           </div>
         </div>
         {isOpen && (
           <>
             <div className="px-6 py-4">
-              <button className="text-white bg-primary-2 rounded-full px-4 py-2 text-xs font-semibold flex items-center gap-2">
-                <p>+ เพิ่มรายการ</p>
-              </button>
+              <FormDialog />
             </div>
             <div className="border-t border-gray-400 bg-gray-100 flex gap-2 px-5 py-4">
               <div className="rounded-md bg-white border border-gray-400 p-4 w-full">
@@ -157,3 +169,71 @@ const FR03Item = (props: FR03ItemProps) => {
     </div>
   );
 };
+
+const SortableItem = ({
+  id,
+  index,
+  isOpen,
+  onToggle,
+}: {
+  id: string;
+  index: number;
+  isOpen: boolean;
+  onToggle: () => void;
+}) => {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      <FR03Item order={index + 1} isOpen={isOpen} onToggle={onToggle} />
+    </div>
+  );
+};
+
+export function DraggableList() {
+  const [items, setItems] = useState(["item-1", "item-2", "item-3"]);
+  const [expandedItems, setExpandedItems] = useState<string[]>(["item-1"]);
+  const toggleExpanded = (id: string) => {
+    setExpandedItems((prev) => {
+      const isExpanded = prev.includes(id);
+      return isExpanded
+        ? prev.filter((itemId) => itemId !== id)
+        : [...prev, id];
+    });
+  };
+  useEffect(() => {
+    console.log("Expanded items changed:", expandedItems);
+  }, [expandedItems]);
+
+  return (
+    <DndContext
+      collisionDetection={closestCenter}
+      modifiers={[restrictToVerticalAxis]}
+      onDragEnd={({ active, over }) => {
+        if (over && active.id !== over.id) {
+          const oldIndex = items.indexOf(String(active.id));
+          const newIndex = items.indexOf(String(over.id));
+          setItems(arrayMove(items, oldIndex, newIndex));
+        }
+      }}
+    >
+      <SortableContext items={items} strategy={verticalListSortingStrategy}>
+        {items.map((id, index) => (
+          <SortableItem
+            key={id}
+            id={id}
+            index={index}
+            isOpen={expandedItems.includes(id)}
+            onToggle={() => toggleExpanded(id)}
+          />
+        ))}
+      </SortableContext>
+    </DndContext>
+  );
+}
