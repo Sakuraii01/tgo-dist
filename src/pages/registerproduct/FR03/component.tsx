@@ -1,11 +1,10 @@
-import React from "react";
 import {
   ReactFlow,
   Background,
   Controls,
   type Node,
   type Edge,
-  type ReactFlowInstance,
+  //   type ReactFlowInstance,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 

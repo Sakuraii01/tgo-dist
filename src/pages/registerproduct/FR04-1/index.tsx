@@ -206,17 +206,17 @@ const EF = ["TGO EF", "self EF", "TGO LCI", "self LCI"];
 const Category = ["M", "E", "C", "O"];
 const Subcategory = ["กลุ่มปิโตรเลี่ยม", "สิ่งทอ", "ยาง"];
 
-const outputProduct = [
-  {
-    productname: "product1",
-    value: 100,
-  },
-  {
-    productname: "product2",
-    value: 100,
-  },
-  {
-    productname: "product3",
-    value: 100,
-  },
-];
+// const outputProduct = [
+//   {
+//     productname: "product1",
+//     value: 100,
+//   },
+//   {
+//     productname: "product2",
+//     value: 100,
+//   },
+//   {
+//     productname: "product3",
+//     value: 100,
+//   },
+// ];
