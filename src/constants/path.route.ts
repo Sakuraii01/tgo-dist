@@ -1,5 +1,6 @@
 export const PROTECTED_PATH = {
-  PROJECT_LIST: "/project_list",
+  DASHBOARD: "/dashboard",
+
   PRODUCT_DETAIL: "/product_detail",
 
   REGISTER_PRODUCT: "/register_product",

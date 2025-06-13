@@ -33,3 +33,29 @@
   --color-warn: #eb810f;
   --color-success: #6aaa33;
 }
+
+body {
+  @apply duration-300 ease-in-out;
+}
+button {
+  @apply cursor-pointer;
+}
+
+.primary-button {
+  @apply bg-primary-2 rounded-full text-white;
+}
+.secondary-button {
+  @apply bg-stroke rounded-full text-gray-500;
+}
+
+.text-linear {
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.text-secondary-linear {
+  @apply bg-gradient-to-l from-[#42A12C] to-[#87AD0A] to-50%;
+}
+.text-primary-linear {
+  @apply bg-gradient-to-l from-[#008FC3] to-[#20B3D2] to-50%;
+}

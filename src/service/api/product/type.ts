@@ -1,0 +1,26 @@
+type product = {
+  product_id?: number;
+  company_id: number;
+  product_name_th: string;
+  product_name_en: string;
+  scope: "B2B" | "B2C";
+  FU_value: number;
+  FU_th: string;
+  FU_en: string;
+  PU_value: number;
+  PU_th: string;
+  PU_en: string;
+  sale_ratio: number;
+  product_techinfo: string[] | null;
+  pcr_reference: string;
+  collect_data_start: Date | null;
+  collect_data_end: Date | null;
+  product_photo: File;
+  auditor_id: number | null;
+  verify_status: "unverified" | "verified";
+  submitted_round: string;
+  submitted_date: Date | null;
+  created_date?: string | null;
+  updated_date?: string | null;
+};
+export type ProductType = product | product[];

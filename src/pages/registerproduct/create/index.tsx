@@ -1,8 +1,12 @@
 import { Form, Formik, useFormikContext } from "formik";
 import { Autocomplete, TextField } from "@mui/material";
-// import { useState } from "react"
+import { Dropzone } from "../../../component/input/dropzone";
+import useViewModel from "./viewModel";
+
 import type { TextFieldProps } from "@mui/material/TextField";
+
 const CreateProduct = () => {
+  const { initialValues, handleSubmit } = useViewModel();
   // const [imagePreview, setImagePreview] = useState();
   const registrationRounds = [
     { label: "1/2568 (01/01/2568 - 31/03/2568)", value: "1/2568" },
@@ -11,25 +15,22 @@ const CreateProduct = () => {
     { label: "4/2568 (01/01/2568 - 31/03/2568)", value: "4/2568" },
     // Add more rounds if needed
   ];
+  const PRC = [
+    {
+      label: "ข้อกำหนดเฉพำะกลุ่มผลิตภัณฑ์สำหรับผลิตภัณฑ์ปูนซีเมนต์สำเร็จรูป",
+      value: "ข้อกำหนดเฉพำะกลุ่มผลิตภัณฑ์สำหรับผลิตภัณฑ์ปูนซีเมนต์สำเร็จรูป",
+    },
+    {
+      label: "ข้อกำหนดเฉพาะกลุ่มผลิตภัณฑ์ยางพาราและผลิตภัณฑ์จากยางพารา",
+      value: "ข้อกำหนดเฉพาะกลุ่มผลิตภัณฑ์ยางพาราและผลิตภัณฑ์จากยางพารา",
+    },
+  ];
   return (
     <div>
       <Formik
-        initialValues={{
-          productNameTH: "",
-          productNameEN: "",
-          functionalValue: "",
-          functionalUnitTH: "",
-          functionalUnitEN: "",
-          functionalProductValue: "",
-          functionalProductTH: "",
-          functionalProductEN: "",
-          sale_ratio: "",
-          pcrReference: "",
-          product_image: "",
-          scope: "B2B",
-        }}
+        initialValues={initialValues}
         onSubmit={(values) => {
-          console.log("Form values:", values);
+          handleSubmit(values);
         }}
       >
         {({ setFieldValue, handleSubmit, values }) => (
@@ -39,12 +40,11 @@ const CreateProduct = () => {
                 กรอกข้อมูลผลิตภัณฑ์
               </h6>
               <div>
-                {/* <label>เลือกรอบการขึ้นทะเบียน </label> */}
                 <Autocomplete
                   options={registrationRounds}
                   getOptionLabel={(option) => option.label}
                   onChange={(_, value) =>
-                    setFieldValue("registrationRound", value)
+                    setFieldValue("registrationRound", value?.value)
                   }
                   renderInput={(params) => (
                     <TextField
@@ -84,6 +84,7 @@ const CreateProduct = () => {
                   variant="outlined"
                   size="small"
                   required
+                  type="number"
                 />
                 <FormikTextField
                   name="functionalUnitTH"
@@ -113,6 +114,7 @@ const CreateProduct = () => {
                   variant="outlined"
                   size="small"
                   required
+                  type="number"
                 />
                 <FormikTextField
                   name="functionalProductTH"
@@ -142,36 +144,31 @@ const CreateProduct = () => {
                   variant="outlined"
                   size="small"
                   required
+                  type="number"
                 />
               </div>
               <div>
-                <FormikTextField
-                  name="pcrReference"
-                  label="อ้างอิง PCR"
-                  fullWidth
-                  margin="normal"
-                  variant="outlined"
+                <Autocomplete
+                  options={PRC}
+                  getOptionLabel={(option) => option.label}
+                  onChange={(_, value) =>
+                    setFieldValue("pcrReference", value?.value)
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="อ้างอิง PCR"
+                      fullWidth
+                      margin="normal"
+                    />
+                  )}
                   size="small"
-                  required
-                  value={values.pcrReference}
                 />
               </div>
-              <div className="border border-gray-400 rounded-lg py-24 my-4">
-                <p className="text-center">อัพโหลดรูปภาพ</p>
-                <div className="w-fit mx-auto">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(event) => {
-                      const file = event.currentTarget.files?.[0];
-                      if (file) {
-                        // const blobUrl = URL.createObjectURL(file); // for preview (optional)
-                        setFieldValue("product_image", file); // you can also send blob or base64 later
-                      }
-                    }}
-                  />
-                </div>
-              </div>
+              <Dropzone
+                file={values.product_image}
+                handleUpload={(file) => setFieldValue("product_image", file)}
+              />
               <div className="flex gap-4 text-center text-gray-300">
                 {["B2B", "B2C"].map((type) => (
                   <div
@@ -202,6 +199,24 @@ const CreateProduct = () => {
                   </div>
                 ))}
               </div>
+              <FormikTextField
+                name="productNameTH"
+                label="วันที่เริ่มเก็บข้อมูล"
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                size="small"
+                required
+              />{" "}
+              <FormikTextField
+                name="productNameTH"
+                label="วันที่หยุดเก็บข้อมูล"
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                size="small"
+                required
+              />
             </div>
             <div className="w-1/4 mx-auto">
               <button

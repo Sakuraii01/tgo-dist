@@ -57,22 +57,6 @@ const FR04_1Form = () => {
             <label className="text-sm text-gray-300">ปริมาณ</label>
             <p>1,219</p>
           </div>
-
-          <div className="w-40">
-            <label className="text-sm text-gray-300">output product</label>
-            <Autocomplete
-              options={outputProduct}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="output product"
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                />
-              )}
-            />
-          </div>
           <div>
             <label className="text-sm text-gray-300">ปริมาณ/FU</label>
             <p>1,219</p>

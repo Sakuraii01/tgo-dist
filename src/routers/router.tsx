@@ -1,7 +1,9 @@
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import { PROTECTED_PATH } from "../constants/path.route";
+import Dashboard from "../pages/dashboard";
 import RegisterProduct from "../pages/registerproduct";
 import CreateProduct from "../pages/registerproduct/create";
+import Product from "../pages/product";
 import FR03 from "../pages/registerproduct/FR03";
 import FR04_1 from "../pages/registerproduct/FR04-1";
 import FR04_2 from "../pages/registerproduct/FR04-2";
@@ -9,6 +11,8 @@ const Router = () => {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path={PROTECTED_PATH.DASHBOARD} element={<Dashboard />} />
+        <Route path={PROTECTED_PATH.PRODUCT_DETAIL} element={<Product />} />
         <Route element={<Outlet />}>
           <Route
             path={PROTECTED_PATH.REGISTER_PRODUCT}
