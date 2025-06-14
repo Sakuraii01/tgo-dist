@@ -6,7 +6,10 @@ import { useState } from "react";
 import useViewModel from "./viewModel";
 import { Accordion } from "../common/component/accordion";
 import { type ItemProcessType } from "../../../service/api/fr04/type";
+import { useNavigate } from "react-router-dom";
+import { PROTECTED_PATH } from "../../../constants/path.route";
 const FR04_1 = () => {
+  const navigate = useNavigate();
   const { fr04Data, tab, handleTabChange } = useViewModel();
   console.log(fr04Data);
   return (
@@ -46,6 +49,15 @@ const FR04_1 = () => {
           ))}
         </div>
       </FR04Layout>
+      <div className="w-1/4 mx-auto">
+        <button
+          onClick={() => navigate(PROTECTED_PATH.REGISTER_PRODUCT_FR04_2)}
+          type="submit"
+          className="rounded-full w-full mt-6 px-10 py-2 bg-gradient-to-r from-[#2BCFF2] via-[#19C2E6] via-30% to-[#0190C3]  text-white font-semibold"
+        >
+          ถัดไป
+        </button>
+      </div>
     </div>
   );
 };

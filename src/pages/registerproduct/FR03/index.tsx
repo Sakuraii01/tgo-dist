@@ -23,8 +23,11 @@ import { CSS } from "@dnd-kit/utilities";
 
 import useViewModel from "./viewModel";
 import { type ProcessType } from "../../../service/api/fr03/type";
+import { useNavigate } from "react-router-dom";
+import { PROTECTED_PATH } from "../../../constants/path.route";
 const FR03 = () => {
   const { tab, handleTabChange } = useViewModel();
+  const navigate = useNavigate();
   return (
     <div>
       <div className="max-w-xl mx-auto">
@@ -75,6 +78,7 @@ const FR03 = () => {
 
       <div className="w-1/4 mx-auto">
         <button
+          onClick={() => navigate(PROTECTED_PATH.REGISTER_PRODUCT_FR04_1)}
           type="submit"
           className="rounded-full w-full mt-6 px-10 py-2 bg-gradient-to-r from-[#2BCFF2] via-[#19C2E6] via-30% to-[#0190C3]  text-white font-semibold"
         >

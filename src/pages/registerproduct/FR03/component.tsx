@@ -272,13 +272,13 @@ const FlowChart = (props: { data: string[] }) => {
       id: `e-${id}-${middleId}`,
       source: id,
       target: middleId,
-      type: "smoothstep",
+      type: "default",
     });
     edges.push({
       id: `e-${id}-${middleId}-next`,
       source: middleId,
       target: `main-${index + 1}`,
-      type: "smoothstep",
+      type: "default",
     });
 
     // Main vertical edge (to next node)
