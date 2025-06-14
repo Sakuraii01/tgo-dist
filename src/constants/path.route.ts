@@ -1,7 +1,12 @@
+export const UNPROTECTED_PATH = {
+  LOGIN: "/login",
+  REGISTER: "/register",
+};
 export const PROTECTED_PATH = {
   DASHBOARD: "/dashboard",
 
   PRODUCT_DETAIL: "/product_detail",
+  SELF_COLLECT: "/selfcollect",
 
   REGISTER_PRODUCT: "/register_product",
   REGISTER_PRODUCT_CREATE: "/register_product/create",

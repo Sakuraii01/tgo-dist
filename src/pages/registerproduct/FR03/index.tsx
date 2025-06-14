@@ -24,26 +24,55 @@ import { CSS } from "@dnd-kit/utilities";
 import useViewModel from "./viewModel";
 import { type ProcessType } from "../../../service/api/fr03/type";
 const FR03 = () => {
+  const { tab, handleTabChange } = useViewModel();
   return (
     <div>
       <div className="max-w-xl mx-auto">
         <ProcessStepper isActive={0} />
       </div>
-      <div>
-        <FR03Summary />
-      </div>
-      <DraggableList />
-      <div className="flex max-w-5xl mx-auto my-5 bg-white">
-        <div className="rounded-full bg-primary/10 border border-primary text-primary font-semibold text-sm flex items-center justify-center w-8 h-8 mr-4 my-auto">
-          <Add fontSize="small" />
-        </div>
-        <button
-          className={`border border-dashed border-primary-2 text-primary-2 text-start rounded-full w-full py-4 px-10 
-            hover:bg-primary-2/10 transition-colors`}
+      <div className="flex w-fit mx-auto text-xl font-medium text-gray-300">
+        <p
+          onClick={() => handleTabChange(1)}
+          className={`${
+            tab === 1
+              ? "font-bold text-primary border-b-2 border-primary"
+              : "border-b border-gray-300"
+          } px-6 py-2`}
         >
-          <p>เพิ่มกระบวนการ</p>
-        </button>
+          กรอกข้อมูล
+        </p>
+        <p
+          onClick={() => handleTabChange(0)}
+          className={`${
+            tab === 0
+              ? "font-bold text-primary border-b-2 border-primary"
+              : "border-b border-gray-300"
+          } px-6 py-2`}
+        >
+          สรุปผล
+        </p>
       </div>
+      {tab === 0 ? (
+        <div>
+          <FR03Summary />
+        </div>
+      ) : (
+        <div>
+          <DraggableList />
+          <div className="flex max-w-5xl mx-auto my-5 bg-white">
+            <div className="rounded-full bg-primary/10 border border-primary text-primary font-semibold text-sm flex items-center justify-center w-8 h-8 mr-4 my-auto">
+              <Add fontSize="small" />
+            </div>
+            <button
+              className={`border border-dashed border-primary-2 text-primary-2 text-start rounded-full w-full py-4 px-10 
+            hover:bg-primary-2/10 transition-colors`}
+            >
+              <p>เพิ่มกระบวนการ</p>
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="w-1/4 mx-auto">
         <button
           type="submit"

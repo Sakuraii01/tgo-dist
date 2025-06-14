@@ -4,12 +4,18 @@ import { type AxiosResponse } from "axios";
 import { type ProductType } from "./type";
 
 export class ProductService extends RemoteA {
+  reqGetAllProducts = async (): Promise<ProductType[]> => {
+    const response = await this.getAxiosInstance().get(PROTECTED_PATH.PRODUCT);
+    const { data } = response;
+    return data;
+  };
+
   reqGetProduct = async (product_id: number): Promise<ProductType> => {
     const response = await this.getAxiosInstance().get(
       PROTECTED_PATH.PRODUCT + `/${product_id}`
     );
     const { data } = response;
-    return data;
+    return data[0] as ProductType;
   };
   reqPutProduct = async (
     product_id: number,

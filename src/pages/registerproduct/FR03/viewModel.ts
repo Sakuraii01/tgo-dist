@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { type ProcessType } from "../../../service/api/fr03/type";
 
 const useViewModel = () => {
+  const [tab, setTab] = useState(1);
   const [processData, setProcessData] = useState<ProcessType[]>([]);
   const processService = new ProcessService();
   const [processId, setProcessId] = useState<string[]>([]);
@@ -19,6 +20,9 @@ const useViewModel = () => {
         ? prev.filter((itemId) => itemId !== id)
         : [...prev, id];
     });
+  };
+  const handleTabChange = (newValue: number) => {
+    setTab(newValue);
   };
   const handleChangeOrder = (newArr: string[]) => {
     setProcessId(newArr);
@@ -37,6 +41,8 @@ const useViewModel = () => {
     processData,
     processId,
     expandedItems,
+    tab,
+    handleTabChange,
     toggleExpanded,
     handleChangeOrder,
   };

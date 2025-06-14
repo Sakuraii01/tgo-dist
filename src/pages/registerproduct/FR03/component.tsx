@@ -4,8 +4,11 @@ import {
   Controls,
   type Node,
   type Edge,
+  Handle,
+  Position,
   //   type ReactFlowInstance,
 } from "@xyflow/react";
+
 import "@xyflow/react/dist/style.css";
 
 import useViewModel from "./viewModel";
@@ -210,30 +213,113 @@ export const FR03Summary = () => {
 
 // export type Tree = TreeNode | TreeLeaf;
 const FlowChart = (props: { data: string[] }) => {
-  const nodes: Node[] = props.data.map((label, index) => ({
-    id: String(index),
-    position: { x: 250, y: index * 150 },
-    data: { label },
-    type: "default",
-  }));
+  const nodes: Node[] = [];
+  const edges: Edge[] = [];
+  const verticalGap = 200;
+  const horizontalOffset = 200;
 
-  const edges: Edge[] = props.data.slice(1).map((_, index) => ({
-    id: `e${index}-${index + 1}`,
-    source: String(index),
-    target: String(index + 1),
-    type: "smoothstep",
-  }));
+  props.data.forEach((label, index) => {
+    const id = `main-${index}`;
+    const x = 0;
+    const y = index * verticalGap;
 
+    // Main node
+    nodes.push({
+      id,
+      position: { x, y },
+      data: { label },
+      type: "default",
+    });
+
+    // Left (input) node
+    const leftId = `input-${index}`;
+    nodes.push({
+      id: leftId,
+      position: { x: x - horizontalOffset, y: y },
+      data: { label: `input_${index}` },
+      type: "input",
+    });
+    edges.push({
+      id: `e-${leftId}-${id}`,
+      source: leftId,
+      target: id,
+      type: "smoothstep",
+    });
+
+    const rightId = `waste-${index}`;
+    nodes.push({
+      id: rightId,
+      position: { x: x + horizontalOffset, y: y },
+      data: { label: `waste${index}` },
+      type: "waste",
+    });
+    edges.push({
+      id: `e-${id}-${rightId}`,
+      source: rightId,
+      target: id,
+      type: "smoothstep",
+    });
+
+    // Right (output) node
+    const middleId = `output-${index}`;
+    nodes.push({
+      id: middleId,
+      position: { x: x + horizontalOffset, y: y + verticalGap / 2 },
+      data: { label: `output_${index}` },
+      type: "default",
+    });
+    edges.push({
+      id: `e-${id}-${middleId}`,
+      source: id,
+      target: middleId,
+      type: "smoothstep",
+    });
+    edges.push({
+      id: `e-${id}-${middleId}-next`,
+      source: middleId,
+      target: `main-${index + 1}`,
+      type: "smoothstep",
+    });
+
+    // Main vertical edge (to next node)
+    if (index < props.data.length - 1) {
+      const nextId = `main-${index + 1}`;
+      edges.push({
+        id: `e-${id}-${nextId}`,
+        source: id,
+        target: nextId,
+        type: "smoothstep",
+      });
+    }
+  });
+  const nodeTypes = {
+    custom: CustomNode,
+  };
   return (
     <div style={{ width: "100%", height: "700px" }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
-        defaultViewport={{ x: 0, y: 15, zoom: 1.5 }}
+        defaultViewport={{ x: 350, y: 100, zoom: 1.3 }}
+        nodeTypes={nodeTypes}
       >
         <Background />
         <Controls />
       </ReactFlow>
+    </div>
+  );
+};
+
+const CustomNode = ({ data }: any) => {
+  return (
+    <div className="bg-white border border-black rounded px-4 py-2 text-center shadow">
+      {/* Four connection points */}
+      <Handle type="target" position={Position.Top} />
+      <Handle type="target" position={Position.Left} />
+      <Handle type="source" position={Position.Right} />
+      <Handle type="source" position={Position.Bottom} />
+
+      <div>{data.label}</div>
     </div>
   );
 };

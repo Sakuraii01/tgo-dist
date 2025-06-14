@@ -1,6 +1,10 @@
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
-import { PROTECTED_PATH } from "../constants/path.route";
+import { PROTECTED_PATH, UNPROTECTED_PATH } from "../constants/path.route";
+
+import Login from "../pages/login";
+import Register from "../pages/register";
 import Dashboard from "../pages/dashboard";
+import SelfCollect from "../pages/selfCollect";
 import RegisterProduct from "../pages/registerproduct";
 import CreateProduct from "../pages/registerproduct/create";
 import Product from "../pages/product";
@@ -11,6 +15,9 @@ const Router = () => {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path={UNPROTECTED_PATH.LOGIN} element={<Login />} />
+        <Route path={UNPROTECTED_PATH.REGISTER} element={<Register />} />
+        <Route path={PROTECTED_PATH.SELF_COLLECT} element={<SelfCollect />} />
         <Route path={PROTECTED_PATH.DASHBOARD} element={<Dashboard />} />
         <Route path={PROTECTED_PATH.PRODUCT_DETAIL} element={<Product />} />
         <Route element={<Outlet />}>

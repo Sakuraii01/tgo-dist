@@ -3,6 +3,7 @@ import { ExpandCircleDownOutlined } from "@mui/icons-material";
 export type AccordionItemProps = {
   title: string;
   children: React.ReactNode;
+  additionalHeader?: React.ReactNode;
 };
 export const Accordion = (props: AccordionItemProps) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,7 +17,10 @@ export const Accordion = (props: AccordionItemProps) => {
           isOpen ? "bg-primary/10" : "bg-white"
         }`}
       >
-        <h3 className="text-primary font-semibold text-lg">{props.title}</h3>
+        <div className="flex">
+          <h3 className="text-primary font-semibold text-lg">{props.title}</h3>
+          {props.additionalHeader}
+        </div>
         <div className="my-auto h-fit">
           <button>
             {isOpen ? (
