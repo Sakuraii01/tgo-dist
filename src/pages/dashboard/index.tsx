@@ -27,7 +27,7 @@ const Dashboard = () => {
               </p>
             </div>
             <div className="bg-gradient-to-b from-[#F4F8F3] to-[#F2F7F1] p-5 rounded-3xl text-center w-1/4">
-              <p className="text-[#193F4F]">ผู้ตรวจสอบ</p>
+              <p className="text-[#193F4F]">ผู้ทวนสอบ</p>
               <p className="text-[#5BAD46] text-xl font-bold">-</p>
             </div>
             <div className="bg-gradient-to-b from-[#F4F8F3] to-[#F2F7F1] p-5 rounded-3xl text-center w-1/4">

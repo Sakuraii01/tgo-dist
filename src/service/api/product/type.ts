@@ -5,11 +5,11 @@ export type ProductType = {
   product_name_en: string;
   scope: "B2B" | "B2C";
   FU_value: number;
-  FU_th: string;
-  FU_en: string;
+  FU_th: number;
+  FU_en: number;
   PU_value: number;
-  PU_th: string;
-  PU_en: string;
+  PU_th: number;
+  PU_en: number;
   sale_ratio: number;
   product_techinfo: string[] | null;
   pcr_reference: string;
@@ -22,4 +22,8 @@ export type ProductType = {
   submitted_date: Date | string | null;
   created_date?: string | null;
   updated_date?: string | null;
+  editor_name?: string;
+  product_techinfo_array?: string[];
+  photo_name?: string;
+  photo_path?: string;
 };

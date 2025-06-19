@@ -9,4 +9,9 @@ export const PROTECTED_PATH = {
   FR03_FROM: "/fr03",
   FR04_1_FORM: "/f4-1/form",
   FR04_2_FORM: "/f4-2/form",
+
+  UNITS_DROPDOWN: "/units",
+  REGISTER_ROUND_DROPDOWN: "/rounded",
+  TGO_EF_DROPDOWN: "/tgo",
+  TGO_EF_DROPDOWN_CATEGORY: "/tgo/category",
 };

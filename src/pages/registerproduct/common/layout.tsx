@@ -1,12 +1,10 @@
-import { Stepper, Step, StepLabel } from "@mui/material";
-
 export type FR04LayoutProps = {
   isB2B: boolean;
   children?: React.ReactNode;
   tabIndex: number;
   handleTabChange: (value: number) => void;
 };
-export const steps = ["FR03", "FR04.1", "FR04.2"];
+
 export const FR04Layout = (props: FR04LayoutProps) => {
   const subMethod = props.isB2B
     ? ["การได้มาของวัตถุดิบ", "การผลิต"]
@@ -70,23 +68,6 @@ export const FR04Layout = (props: FR04LayoutProps) => {
           {props.children}
         </div>
       </div>
-    </div>
-  );
-};
-
-type stepperProps = {
-  isActive: number;
-};
-export const ProcessStepper = (props: stepperProps) => {
-  return (
-    <div className="my-10">
-      <Stepper activeStep={props.isActive}>
-        {steps.map((label) => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
     </div>
   );
 };

@@ -5,6 +5,7 @@ import Login from "../pages/login";
 import Register from "../pages/register";
 import Dashboard from "../pages/dashboard";
 import SelfCollect from "../pages/selfCollect";
+import CreateSelfCollect from "../pages/selfCollect/create";
 import RegisterProduct from "../pages/registerproduct";
 import CreateProduct from "../pages/registerproduct/create";
 import Product from "../pages/product";
@@ -18,6 +19,10 @@ const Router = () => {
         <Route path={UNPROTECTED_PATH.LOGIN} element={<Login />} />
         <Route path={UNPROTECTED_PATH.REGISTER} element={<Register />} />
         <Route path={PROTECTED_PATH.SELF_COLLECT} element={<SelfCollect />} />
+        <Route
+          path={PROTECTED_PATH.CREATE_SELF_COLLECT}
+          element={<CreateSelfCollect />}
+        />
         <Route path={PROTECTED_PATH.DASHBOARD} element={<Dashboard />} />
         <Route path={PROTECTED_PATH.PRODUCT_DETAIL} element={<Product />} />
         <Route element={<Outlet />}>

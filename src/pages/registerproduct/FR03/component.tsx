@@ -20,198 +20,6 @@ export const FR03Summary = () => {
     </div>
   );
 };
-// export const TreeGraph = (props: TreeGraphType) => {
-//   const nodeTypes = {
-//     custom: CustomNode, // Register the custom node type
-//   };
-
-//   const [nodes, setNodes] = useNodesState<any>([]);
-//   const [edges, setEdges] = useEdgesState<any>([]);
-//   useEffect(() => {
-//     setNodes(props.NodeData.map((node) => ({ ...node, draggable: false })));
-//   }, [props.NodeData]);
-
-//   // Update edges when EdgesData changes
-//   useEffect(() => {
-//     setEdges(props.EdgesData);
-//   }, [props.EdgesData]);
-
-//   return (
-//     <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes} fitView>
-//       <Controls position="top-right" />
-//     </ReactFlow>
-//   );
-// };
-
-// type CardProps = {
-//   data:
-//     | TreeGraphMaterialTypes
-//     | TreeGraphOutputTypes
-//     | TreeGraphWasteTypes
-//     | TreeGraphStepType;
-// };
-
-// export const Card: React.FC<CardProps> = ({ data }) => {
-//   // Type guards for different data types
-//   const isStepType = (d: any): d is TreeGraphStepType =>
-//     d.datatype === "header";
-//   const isMaterialType = (d: any): d is TreeGraphMaterialTypes =>
-//     d.datatype === "input";
-//   const isOutputType = (d: any): d is TreeGraphOutputTypes =>
-//     d.datatype === "output";
-//   const isWasteType = (d: any): d is TreeGraphWasteTypes =>
-//     d.datatype === "waste";
-
-//   return (
-//     <div className="bg-white py-4 px-5 rounded-2xl w-80 shadow-lg">
-//       <div>
-//         <h4 className="text-lg font-semibold text-secondary-2">
-//           {isStepType(data)
-//             ? data.header
-//             : isMaterialType(data)
-//             ? data.material.name
-//             : isOutputType(data) || isWasteType(data)
-//             ? data.name
-//             : ""}
-//         </h4>
-//       </div>
-//       <hr className="border-1 my-2" />
-//       <div>
-//         <h3 className="font-bold text-2xl text-gradient gradient-secondary">
-//           {isMaterialType(data)
-//             ? data.material.amount + " " + data.material.unit
-//             : isOutputType(data)
-//             ? data.amount + " " + data.unit
-//             : isWasteType(data)
-//             ? data.amount + " " + data.unit
-//             : ""}
-//         </h3>
-//         {/* Example table, adjust as needed for your data */}
-//         {(isMaterialType(data) || isOutputType(data) || isWasteType(data)) && (
-//           <table className="w-full">
-//             <tbody>
-//               {/* You can add more rows depending on your data structure */}
-//               <tr>
-//                 <td>Type</td>
-//                 <td className="text-end">
-//                   {isMaterialType(data)
-//                     ? data.material.type
-//                     : isOutputType(data)
-//                     ? data.type
-//                     : isWasteType(data)
-//                     ? data.type
-//                     : ""}
-//                 </td>
-//               </tr>
-//             </tbody>
-//           </table>
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
-// export type NodeType = {
-//   id: string | number;
-//   type: string;
-//   position: { x: number; y: number };
-//   data:
-//     | TreeGraphMaterialTypes
-//     | TreeGraphOutputTypes
-//     | TreeGraphWasteTypes
-//     | TreeGraphStepType;
-// };
-// export type EdgesType = {
-//   type: string;
-//   source: string | number;
-//   target: string | number;
-//   id: string | number;
-// };
-// export const CustomNode = ({
-//   data,
-// }: {
-//   data:
-//     | TreeGraphMaterialTypes
-//     | TreeGraphOutputTypes
-//     | TreeGraphWasteTypes
-//     | TreeGraphStepType;
-// }) => {
-//   return (
-//     <div>
-//       <Card data={data} />
-//       <Handle type="target" position={Position.Top} />
-//       <Handle type="source" position={Position.Bottom} />
-//     </div>
-//   );
-// };
-
-// type TreeGraphType = {
-//   NodeData: NodeType[];
-//   EdgesData: EdgesType[];
-// };
-
-// export type TreeGraphMaterialTypes = {
-//   datatype: "input";
-//   material: {
-//     name: string;
-//     unit: string;
-//     amount: number;
-//     type: string;
-//   };
-//   energy: {
-//     name: string;
-//     unit: string;
-//     amount: number;
-//     type: string;
-//   };
-//   other: {
-//     name: string;
-//     unit: string;
-//     amount: number;
-//     type: string;
-//   };
-// };
-// export type TreeGraphOutputTypes = {
-//   datatype: "output";
-//   name: string;
-//   unit: string;
-//   amount: number;
-//   type: string;
-// };
-// export type TreeGraphWasteTypes = {
-//   datatype: "waste";
-//   name: string;
-//   unit: string;
-//   amount: number;
-//   type: string;
-// };
-// export type TreeGraphStepType = {
-//   datatype: "header";
-//   order: number;
-//   header: string;
-// };
-
-// export type TreeNode = {
-//   type: "node";
-//   data:
-//     | TreeGraphMaterialTypes
-//     | TreeGraphOutputTypes
-//     | TreeGraphWasteTypes
-//     | TreeGraphStepType;
-//   name: string;
-//   children: Tree[];
-// };
-
-// export type TreeLeaf = {
-//   type: "leaf";
-//   name: string;
-//   data:
-//     | TreeGraphMaterialTypes
-//     | TreeGraphOutputTypes
-//     | TreeGraphWasteTypes
-//     | TreeGraphStepType;
-// };
-
-// export type Tree = TreeNode | TreeLeaf;
 const FlowChart = (props: { data: string[] }) => {
   const nodes: Node[] = [];
   const edges: Edge[] = [];
@@ -228,7 +36,7 @@ const FlowChart = (props: { data: string[] }) => {
       id,
       position: { x, y },
       data: { label },
-      type: "default",
+      type: "custom",
     });
 
     // Left (input) node
@@ -236,9 +44,10 @@ const FlowChart = (props: { data: string[] }) => {
     nodes.push({
       id: leftId,
       position: { x: x - horizontalOffset, y: y },
-      data: { label: `input_${index}` },
-      type: "input",
+      data: { label: `input_${index}`, type: "input" },
+      type: "custom",
     });
+
     edges.push({
       id: `e-${leftId}-${id}`,
       source: leftId,
@@ -246,12 +55,13 @@ const FlowChart = (props: { data: string[] }) => {
       type: "smoothstep",
     });
 
+    // waste (output) node
     const rightId = `waste-${index}`;
     nodes.push({
       id: rightId,
-      position: { x: x + horizontalOffset, y: y },
-      data: { label: `waste${index}` },
-      type: "waste",
+      position: { x: x + horizontalOffset * 2, y: y },
+      data: { label: `waste${index}`, type: "output" },
+      type: "custom",
     });
     edges.push({
       id: `e-${id}-${rightId}`,
@@ -260,37 +70,35 @@ const FlowChart = (props: { data: string[] }) => {
       type: "smoothstep",
     });
 
-    // Right (output) node
-    const middleId = `output-${index}`;
+    // intermediaet (output) node
+    const intermediateId = `intermediate-${index}`;
     nodes.push({
-      id: middleId,
-      position: { x: x + horizontalOffset, y: y + verticalGap / 2 },
-      data: { label: `output_${index}` },
-      type: "default",
-    });
-    edges.push({
-      id: `e-${id}-${middleId}`,
-      source: id,
-      target: middleId,
-      type: "default",
-    });
-    edges.push({
-      id: `e-${id}-${middleId}-next`,
-      source: middleId,
-      target: `main-${index + 1}`,
-      type: "default",
+      id: intermediateId,
+      position: { x: x, y: y + verticalGap / 2 },
+      data: { label: `output_${index}`, type: "intermediate" },
+      type: "custom",
     });
 
     // Main vertical edge (to next node)
-    if (index < props.data.length - 1) {
-      const nextId = `main-${index + 1}`;
+    if (index - 1 >= 0) {
+      const prevMiddleId = `intermediate-${index - 1}`;
       edges.push({
-        id: `e-${id}-${nextId}`,
+        id: `e-${id}-${prevMiddleId}`,
         source: id,
-        target: nextId,
+        target: prevMiddleId,
+        sourceHandle: "top",
+        targetHandle: "bottom",
         type: "smoothstep",
       });
     }
+    edges.push({
+      id: `e-${intermediateId}-${id}`,
+      source: id,
+      target: intermediateId,
+      sourceHandle: "bottom",
+      targetHandle: "top",
+      type: "smoothstep",
+    });
   });
   const nodeTypes = {
     custom: CustomNode,
@@ -300,7 +108,7 @@ const FlowChart = (props: { data: string[] }) => {
       <ReactFlow
         nodes={nodes}
         edges={edges}
-        defaultViewport={{ x: 350, y: 100, zoom: 1.3 }}
+        defaultViewport={{ x: 350, y: 100, zoom: 1 }}
         nodeTypes={nodeTypes}
       >
         <Background />
@@ -312,13 +120,27 @@ const FlowChart = (props: { data: string[] }) => {
 
 const CustomNode = ({ data }: any) => {
   return (
-    <div className="bg-white border border-black rounded px-4 py-2 text-center shadow">
-      {/* Four connection points */}
-      <Handle type="target" position={Position.Top} />
-      <Handle type="target" position={Position.Left} />
-      <Handle type="source" position={Position.Right} />
-      <Handle type="source" position={Position.Bottom} />
-
+    <div className="bg-white border border-black rounded px-4 py-2 text-center shadow relative">
+      {data.type === "input" && (
+        <Handle type="source" position={Position.Right} id="right" />
+      )}
+      {data.type === "output" && (
+        <Handle type="source" position={Position.Left} id="left" />
+      )}
+      {data.type === "intermediate" && (
+        <>
+          <Handle type="target" position={Position.Top} id="top" />
+          <Handle type="target" position={Position.Bottom} id="bottom" />
+        </>
+      )}
+      {(!data.type || data.type === "main") && (
+        <>
+          <Handle type="target" position={Position.Left} id="left" />
+          <Handle type="target" position={Position.Right} id="right" />
+          <Handle type="source" position={Position.Top} id="top" />
+          <Handle type="source" position={Position.Bottom} id="bottom" />
+        </>
+      )}
       <div>{data.label}</div>
     </div>
   );

@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { DeleteRounded, Save, Edit } from "@mui/icons-material";
 import { useState } from "react";
-import { ProcessStepper } from "../common/layout";
+import { ProcessStepper } from "../common/component/stepper";
 import useViewModel from "./viewModel";
 import { Accordion } from "../common/component/accordion";
 import { type ItemTransportType } from "../../../service/api/fr04/type";
@@ -16,9 +16,8 @@ const FR04_2 = () => {
   const { fr04Data, tab, handleTabChange } = useViewModel();
   return (
     <div>
-      <div className="max-w-xl mx-auto">
-        <ProcessStepper isActive={2} />
-      </div>
+      <ProcessStepper isActive={3} />
+
       <FR04Layout isB2B={true} tabIndex={tab} handleTabChange={handleTabChange}>
         <div>
           {fr04Data?.form42?.[tab - 1]?.process.map((data) => (
@@ -96,8 +95,10 @@ const FR04_2Form = (props: { data: ItemTransportType }) => {
         </div>
         <div className="flex gap-8">
           <div>
-            <label className="text-sm text-gray-300">ระยะทาง/KM</label>
-            <p>{props.data.distance ?? "-"}</p>
+            <label className="text-sm text-gray-300">
+              ปริมาณเชื้อเพลิง การเผาไหม้
+            </label>
+            <p>{props.data.transport_emission ?? "-"}</p>
           </div>
           {isEdit ? (
             <div className="mt-auto w-64">

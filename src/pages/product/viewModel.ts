@@ -9,6 +9,7 @@ const useViewModel = (product_id: number) => {
       setProductData(data);
     });
   };
+
   useEffect(() => {
     fetchProductData();
   }, []);

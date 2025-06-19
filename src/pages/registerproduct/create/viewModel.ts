@@ -1,39 +1,58 @@
-import { type ProductType } from "../../../service/api/product/type";
 import { ProductService } from "../../../service/api/product";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import CreateFormSchema from "./validation";
+import {
+  UnitsDropdownService,
+  RegisterRoundDropdownService,
+} from "../../../service/api/dropdown";
+import type {
+  UnitsDrowpdownType,
+  RegisterRounedType,
+} from "../../../service/api/dropdown/type";
+import { type ProductType } from "../../../service/api/product/type";
 type productProps = {
   registrationRound: string;
+  startCollectData: Date | string;
+  stopCollectData: Date | string;
   productNameTH: string;
   productNameEN: string;
   functionalValue: string;
-  functionalUnitTH: string;
-  functionalUnitEN: string;
+  functionalUnit: string;
   functionalProductValue: string;
-  functionalProductTH: string;
-  functionalProductEN: string;
+  functionalProduct: string;
+  technicalInfo: string[];
   sale_ratio: string;
   pcrReference: string;
   product_image: File | null;
   scope: string;
 };
 const useViewModel = () => {
+  const unitService = new UnitsDropdownService();
+  const registerRoundService = new RegisterRoundDropdownService();
+  const [registerRoundList, setRegisterRoundList] = useState<
+    RegisterRounedType[]
+  >([]);
+  const [unitList, setUnitList] = useState<UnitsDrowpdownType[]>([]);
+  const { FR03FomrValidationSchema } = CreateFormSchema();
   const productService = new ProductService();
   const initialValues = {
     registrationRound: "",
+    startCollectData: "",
+    stopCollectData: "",
     productNameTH: "",
     productNameEN: "",
     functionalValue: "",
-    functionalUnitTH: "",
-    functionalUnitEN: "",
+    functionalUnit: "",
     functionalProductValue: "",
-    functionalProductTH: "",
-    functionalProductEN: "",
+    functionalProduct: "",
+    technicalInfo: [""],
     sale_ratio: "",
     pcrReference: "",
     product_image: null,
     scope: "B2B",
   };
   const handleSubmit = (data: productProps) => {
+    console.log(data);
     if (
       (data.scope !== "B2B" && data.scope !== "B2C") ||
       data.product_image === null ||
@@ -49,34 +68,53 @@ const useViewModel = () => {
       product_name_en: data.productNameEN,
       scope: data.scope,
       FU_value: Number(data.functionalValue),
-      FU_th: data.functionalUnitTH,
-      FU_en: data.functionalUnitEN,
+      FU_th: Number(data.functionalUnit),
+      FU_en: Number(data.functionalUnit),
       PU_value: Number(data.functionalProductValue),
-      PU_th: data.functionalProductTH,
-      PU_en: data.functionalProductEN,
+      PU_th: Number(data.functionalProduct),
+      PU_en: Number(data.functionalProduct),
       sale_ratio: Number(data.sale_ratio),
       pcr_reference: data.pcrReference,
       product_photo: data.product_image,
       auditor_id: null,
-      product_techinfo: null,
+      product_techinfo: data.technicalInfo,
       verify_status: "verified",
       // what is topic field
-      collect_data_start: null,
-      collect_data_end: null,
+      collect_data_start: data.startCollectData,
+      collect_data_end: data.stopCollectData,
       submitted_round: data.registrationRound,
       submitted_date: null,
     };
     try {
-      productService.reqPutProduct(9, entity);
+      productService.reqPostProduct(entity);
       console.log("success");
     } catch (err) {
       console.log(err);
     }
   };
   useEffect(() => {
-    productService.reqGetProduct(9).then((data) => console.log(data));
+    unitService
+      .reqGetUnits()
+      .then((data) => {
+        setUnitList(data || []);
+      })
+      .catch((err) => console.error(err));
+
+    registerRoundService
+      .reqGetRegisterRound()
+      .then((data) => {
+        setRegisterRoundList(data || []);
+      })
+      .catch((err) => console.error(err));
+    productService.reqGetProduct(5).then((data) => console.log(data));
   }, []);
 
-  return { initialValues, handleSubmit };
+  return {
+    initialValues,
+    FR03FomrValidationSchema,
+    unitList,
+    registerRoundList,
+    handleSubmit,
+  };
 };
 export default useViewModel;

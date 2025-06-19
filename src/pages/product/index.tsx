@@ -9,7 +9,6 @@ const Product = () => {
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
   const { productData } = useViewModel(Number(id));
-  console.log(id);
 
   return (
     <div>
@@ -42,19 +41,20 @@ const Product = () => {
           </div>
           <div className="w-full rounded-xl bg-stroke py-4 px-6 my-4">
             <p className="text-xs font-semibold mb-1">คำอธิบาย</p>
-            <p>{productData?.product_techinfo}</p>
+            {productData?.product_techinfo_array?.map((data) => (
+              <p>{data}</p>
+            ))}
           </div>
         </section>
-        <section className="flex gap-10">
-          <img
-            src={
-              typeof productData?.product_photo === "string"
-                ? productData.product_photo
-                : ""
+        <section className="flex gap-5">
+          {(() => {
+            let photoSrc: string = "/";
+            if (typeof productData?.product_photo === "string") {
+              photoSrc = "http://178.128.123.212:5000" + productData.photo_path;
             }
-            className="w-80"
-          />
-          <div className="w-full ">
+            return <img src={photoSrc} className="w-80" />;
+          })()}
+          <div className="w-full">
             <table className="rounded-2xl w-full mb-10">
               <tbody>
                 <tr className="rounded-tl-2xl">
@@ -109,7 +109,7 @@ const Product = () => {
                       ตรวจสอบโดย
                     </td>
                     <td className="border-b border-gray-300 py-2 px-4 bg-stroke w-72">
-                      -
+                      {productData?.editor_name}
                     </td>
                   </tr>
                   <tr>

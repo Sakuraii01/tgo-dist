@@ -1,20 +1,23 @@
-import { Form, Formik, useFormikContext } from "formik";
-import { Autocomplete, TextField } from "@mui/material";
+import { Form, Formik, FieldArray } from "formik";
+import {
+  Field,
+  AutoCompleteField,
+  DatePickerField,
+} from "../../../component/input/field";
 import { Dropzone } from "../../../component/input/dropzone";
 import useViewModel from "./viewModel";
 
-import type { TextFieldProps } from "@mui/material/TextField";
+import { ProcessStepper } from "../common/component/stepper";
 
 const CreateProduct = () => {
-  const { initialValues, handleSubmit } = useViewModel();
-  // const [imagePreview, setImagePreview] = useState();
-  const registrationRounds = [
-    { label: "1/2568 (01/01/2568 - 31/03/2568)", value: "1/2568" },
-    { label: "2/2568 (01/01/2568 - 31/03/2568)", value: "2/2568" },
-    { label: "3/2568 (01/01/2568 - 31/03/2568)", value: "3/2568" },
-    { label: "4/2568 (01/01/2568 - 31/03/2568)", value: "4/2568" },
-    // Add more rounds if needed
-  ];
+  const {
+    initialValues,
+    FR03FomrValidationSchema,
+    unitList,
+    registerRoundList,
+    handleSubmit,
+  } = useViewModel();
+
   const PRC = [
     {
       label: "ข้อกำหนดเฉพำะกลุ่มผลิตภัณฑ์สำหรับผลิตภัณฑ์ปูนซีเมนต์สำเร็จรูป",
@@ -27,8 +30,10 @@ const CreateProduct = () => {
   ];
   return (
     <div>
+      <ProcessStepper isActive={0} />
       <Formik
         initialValues={initialValues}
+        validationSchema={FR03FomrValidationSchema}
         onSubmit={(values) => {
           handleSubmit(values);
         }}
@@ -39,130 +44,159 @@ const CreateProduct = () => {
               <h6 className="font-bold text-center my-3">
                 กรอกข้อมูลผลิตภัณฑ์
               </h6>
-              <div>
-                <Autocomplete
-                  options={registrationRounds}
-                  getOptionLabel={(option) => option.label}
-                  onChange={(_, value) =>
-                    setFieldValue("registrationRound", value?.value)
-                  }
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="เลือกรอบการขึ้นทะเบียน"
-                      fullWidth
-                      margin="normal"
+              <section className="mb-2">
+                <div>
+                  <AutoCompleteField
+                    name={`registrationRound`}
+                    label="เลือกรอบการขึ้นทะเบียน"
+                    items={registerRoundList.map((item) => ({
+                      label: `${item.quarter}(${item.start} - ${item.end})`,
+                      value: item.quarter,
+                    }))}
+                  />
+                  <div className="my-2">
+                    <h3 className="font-bold">ช่วงเวลาการเก็บข้อมูล</h3>
+                    <div className="flex gap-2">
+                      <DatePickerField
+                        name="startCollectData"
+                        label="วันที่เริ่มเก็บข้อมูล"
+                        placeholder="วันที่เริ่มเก็บข้อมูล"
+                        items={[]}
+                      />
+                      <DatePickerField
+                        name="stopCollectData"
+                        label="วันที่สุดท้ายที่เก็บข้อมูล"
+                        placeholder="วันที่สุดท้ายที่เก็บข้อมูล"
+                        items={[]}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </section>
+              <section className="my-2">
+                <h3 className="font-bold">ชื่อผลิตภัณฑ์</h3>
+                <Field
+                  name="productNameTH"
+                  placeholder="ชื่อผลิตภัณฑ์ และรุ่น (TH)"
+                  label="ชื่อผลิตภัณฑ์ และรุ่น (TH)"
+                  require
+                />
+                <Field
+                  name="productNameEN"
+                  placeholder="ชื่อผลิตภัณฑ์ และรุ่น (EN)"
+                  label="ชื่อผลิตภัณฑ์ และรุ่น (EN)"
+                  require
+                />
+              </section>
+
+              <section className="my-2">
+                <h3 className="font-bold">ข้อมูลด้านเทคนิค</h3>
+                <div className="flex gap-2">
+                  <FieldArray name={"technicalInfo"} key={"technicalInfo"}>
+                    {({ remove, push }) => (
+                      <div className="w-full">
+                        {values["technicalInfo"].map((_, index) => (
+                          <div className="flex gap-2 mb-2">
+                            <div className="w-full">
+                              <Field
+                                name={`technicalInfo[${index}]`}
+                                placeholder="ข้อมูลด้านเทคนิค"
+                                label="ข้อมูลด้านเทคนิค"
+                              />
+                            </div>
+                            {
+                              <div className="my-auto ml-auto">
+                                <button
+                                  type="button"
+                                  className="secondary-button px-4 w-full h-fit py-2"
+                                  onClick={() => remove(index)}
+                                >
+                                  ลบ
+                                </button>
+                              </div>
+                            }
+                          </div>
+                        ))}
+                        <div className="w-fit ml-auto">
+                          {values.technicalInfo.length < 5 && (
+                            <button
+                              type="button"
+                              className="primary-button px-4 py-1"
+                              onClick={() => push("")}
+                            >
+                              เพิ่มข้อมูลด้านเทคนิค
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </FieldArray>
+                </div>
+              </section>
+
+              <section className="my-2">
+                <h3 className="font-bold">หน่วย</h3>
+                <div className="flex gap-2 w-1/2">
+                  <Field
+                    name="functionalValue"
+                    placeholder="ค่าหน่วยการทำงาน"
+                    label="ค่าหน่วยการทำงาน"
+                    require
+                    type="number"
+                  />
+                  <div className="w-64">
+                    <AutoCompleteField
+                      name={`functionalUnit`}
+                      label="หน่วยการทำงาน"
+                      items={unitList.map((item) => ({
+                        label:
+                          item.product_unit_abbr_th +
+                          `(${item.product_unit_abbr_eng})`,
+                        value: Number(item.product_unit_id),
+                      }))}
                     />
-                  )}
-                  size="small"
-                />
-              </div>
-              <FormikTextField
-                name="productNameTH"
-                label="ชื่อผลิตภัณฑ์ และรุ่น (TH)"
-                fullWidth
-                margin="normal"
-                variant="outlined"
-                size="small"
-                required
-              />
-              <FormikTextField
-                name="productNameEN"
-                label="ชื่อผลิตภัณฑ์ และรุ่น (EN)"
-                fullWidth
-                margin="normal"
-                variant="outlined"
-                size="small"
-                required
-              />
-              <div className="flex gap-2">
-                <FormikTextField
-                  name="functionalValue"
-                  label="ค่าหน่วยการทำงาน"
-                  fullWidth
-                  margin="normal"
-                  variant="outlined"
-                  size="small"
-                  required
-                  type="number"
-                />
-                <FormikTextField
-                  name="functionalUnitTH"
-                  label="หน่วยการทำงาน (TH)"
-                  fullWidth
-                  margin="normal"
-                  variant="outlined"
-                  size="small"
-                  required
-                />
-                <FormikTextField
-                  name="functionalUnitEN"
-                  label="หน่วยการทำงาน (EN)"
-                  fullWidth
-                  margin="normal"
-                  variant="outlined"
-                  size="small"
-                  required
-                />
-              </div>
-              <div className="flex gap-2">
-                <FormikTextField
-                  name="functionalProductValue"
-                  label="ค่าหน่วยผลิตภัณฑ์"
-                  fullWidth
-                  margin="normal"
-                  variant="outlined"
-                  size="small"
-                  required
-                  type="number"
-                />
-                <FormikTextField
-                  name="functionalProductTH"
-                  label="หน่วยผลิตภัณฑ์ (TH)"
-                  fullWidth
-                  margin="normal"
-                  variant="outlined"
-                  size="small"
-                  required
-                />
-                <FormikTextField
-                  name="functionalProductEN"
-                  label="หน่วยผลิตภัณฑ์ (EN)"
-                  fullWidth
-                  margin="normal"
-                  variant="outlined"
-                  size="small"
-                  required
-                />
-              </div>
-              <div>
-                <FormikTextField
-                  name="sale_ratio"
-                  label="สัดส่วนยอดขายผลิตภัณฑ์ในปีล่าสุด"
-                  fullWidth
-                  margin="normal"
-                  variant="outlined"
-                  size="small"
-                  required
-                  type="number"
-                />
-              </div>
-              <div>
-                <Autocomplete
-                  options={PRC}
-                  getOptionLabel={(option) => option.label}
-                  onChange={(_, value) =>
-                    setFieldValue("pcrReference", value?.value)
-                  }
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="อ้างอิง PCR"
-                      fullWidth
-                      margin="normal"
+                  </div>
+                </div>
+                <div className="flex gap-2 w-1/2">
+                  <Field
+                    name="functionalProductValue"
+                    placeholder="ค่าหน่วยผลิตภัณฑ์"
+                    label="ค่าหน่วยผลิตภัณฑ์"
+                    type="number"
+                    require
+                  />
+                  <div className="w-64">
+                    <AutoCompleteField
+                      name={`functionalProduct`}
+                      label="หน่วยผลิตภัณฑ์"
+                      items={unitList.map((item) => ({
+                        label:
+                          item.product_unit_abbr_th +
+                          `(${item.product_unit_abbr_eng})`,
+                        value: Number(item.product_unit_id),
+                      }))}
                     />
-                  )}
-                  size="small"
+                  </div>
+                </div>
+              </section>
+
+              <div className="mt-3 flex gap-2">
+                <div className="w-80">
+                  <Field
+                    name="sale_ratio"
+                    placeholder="สัดส่วนยอดขายผลิตภัณฑ์ในปีล่าสุด"
+                    label="สัดส่วนยอดขายผลิตภัณฑ์ในปีล่าสุด"
+                    type="number"
+                    require
+                  />
+                </div>
+                <AutoCompleteField
+                  name={`pcrReference`}
+                  label="อ้างอิง PCR"
+                  items={PRC.map((item) => ({
+                    label: item.label,
+                    value: item.value,
+                  }))}
                 />
               </div>
               <Dropzone
@@ -199,24 +233,6 @@ const CreateProduct = () => {
                   </div>
                 ))}
               </div>
-              <FormikTextField
-                name="productNameTH"
-                label="วันที่เริ่มเก็บข้อมูล"
-                fullWidth
-                margin="normal"
-                variant="outlined"
-                size="small"
-                required
-              />{" "}
-              <FormikTextField
-                name="productNameTH"
-                label="วันที่หยุดเก็บข้อมูล"
-                fullWidth
-                margin="normal"
-                variant="outlined"
-                size="small"
-                required
-              />
             </div>
             <div className="w-1/4 mx-auto">
               <button
@@ -234,21 +250,3 @@ const CreateProduct = () => {
 };
 
 export default CreateProduct;
-
-interface FormikTextFieldProps extends Omit<TextFieldProps, "name" | "label"> {
-  name: string;
-  label: string;
-}
-
-const FormikTextField = ({ name, label, ...props }: FormikTextFieldProps) => {
-  const { values, setFieldValue } = useFormikContext<any>();
-  return (
-    <TextField
-      name={name}
-      label={label}
-      value={values[name]}
-      onChange={(e) => setFieldValue(name, e.target.value)}
-      {...props}
-    />
-  );
-};

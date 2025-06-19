@@ -5,11 +5,14 @@ import {
   KeyboardArrowUpRounded,
   MoreVert,
   Add,
+  Edit,
+  Clear,
+  Check,
 } from "@mui/icons-material";
 import { MaterialCardItem } from "../common/component/card";
-import { ProcessStepper } from "../common/layout";
+import { ProcessStepper } from "../common/component/stepper";
 import { FR03Summary } from "./component";
-import FormDialog from "../common/component/dialog";
+import { FR03Form } from "./form";
 
 import {
   arrayMove,
@@ -25,14 +28,14 @@ import useViewModel from "./viewModel";
 import { type ProcessType } from "../../../service/api/fr03/type";
 import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../../constants/path.route";
+import { useState } from "react";
 const FR03 = () => {
   const { tab, handleTabChange } = useViewModel();
   const navigate = useNavigate();
   return (
     <div>
-      <div className="max-w-xl mx-auto">
-        <ProcessStepper isActive={0} />
-      </div>
+      <ProcessStepper isActive={1} />
+
       <div className="flex w-fit mx-auto text-xl font-medium text-gray-300">
         <p
           onClick={() => handleTabChange(1)}
@@ -76,13 +79,16 @@ const FR03 = () => {
         </div>
       )}
 
-      <div className="w-1/4 mx-auto">
+      <div className="w-1/4 mx-auto flex gap-4">
+        <button className="transition-colors rounded-full w-full mt-6 px-10 py-2 bg-gray-400 hover:bg-gray-300 text-white font-semibold">
+          กลับ FR 01
+        </button>
         <button
           onClick={() => navigate(PROTECTED_PATH.REGISTER_PRODUCT_FR04_1)}
           type="submit"
-          className="rounded-full w-full mt-6 px-10 py-2 bg-gradient-to-r from-[#2BCFF2] via-[#19C2E6] via-30% to-[#0190C3]  text-white font-semibold"
+          className="rounded-full w-full mt-6 px-10 py-2 bg-gradient-to-r from-[#2BCFF2] via-[#19C2E6] via-30% to-[#0190C3]  text-white font-semibold transition hover:opacity-80"
         >
-          ถัดไป
+          ไป FR 04.1
         </button>
       </div>
     </div>
@@ -99,6 +105,8 @@ type FR03ItemProps = {
 };
 const FR03Item = (props: FR03ItemProps) => {
   const { isOpen, onToggle } = props;
+  const [showForm, setShowform] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
 
   return (
     <div className="flex max-w-5xl mx-auto my-3 bg-white">
@@ -118,13 +126,13 @@ const FR03Item = (props: FR03ItemProps) => {
         <div
           className={`flex ${
             isOpen ? "border-b" : ""
-          } border-gray-400 pb-4 px-6`}
+          } border-gray-400 pb-4 px-6 justify-between`}
         >
           <div className="my-auto h-fit">
-            {props.data.process_name ? (
+            {!isEdit ? (
               <p className="text-xl pt-1">{props.data.process_name}</p>
             ) : (
-              <div className="w-1/2">
+              <div className="w-96">
                 <TextField
                   label="ชื่อกระบวนการ"
                   variant="outlined"
@@ -136,12 +144,33 @@ const FR03Item = (props: FR03ItemProps) => {
             )}
           </div>
 
-          <div onClick={onToggle} className="flex ml-auto my-auto gap-10">
-            <button className="border border-red-700 rounded-full text-red-700 font-semibold text-sm flex items-center gap-2 h-fit my-3 px-4 py-1 transform translate-y-1">
-              <DeleteRounded />
-              <p>ลบกระบวนการ</p>
-            </button>
-            <div className="my-auto">
+          <div className="flex my-auto gap-2">
+            {!isEdit ? (
+              <>
+                <button
+                  className="border border-primary rounded-full text-primary hover:bg-primary/10 transition font-semibold text-sm flex items-center gap-2 h-fit my-3 px-3 py-1 transform"
+                  onClick={() => setIsEdit(true)}
+                >
+                  <Edit />
+                </button>
+                <button className="border border-red-700 rounded-full text-red-700 hover:bg-red-50 transition font-semibold text-sm flex items-center gap-2 h-fit my-3 px-3 py-1 transform">
+                  <DeleteRounded />
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  className="border border-gray-200 rounded-full text-gray-200 hover:bg-gray-200/10 transition font-semibold text-sm flex items-center gap-2 h-fit my-3 px-3 py-1 transform"
+                  onClick={() => setIsEdit(false)}
+                >
+                  <Clear />
+                </button>
+                <button className="border border-primary rounded-full text-primary hover:bg-primary/10 transition font-semibold text-sm flex items-center gap-2 h-fit my-3 px-3 py-1 transform">
+                  <Check />
+                </button>
+              </>
+            )}
+            <div className="my-auto" onClick={onToggle}>
               {isOpen ? (
                 <KeyboardArrowUpRounded />
               ) : (
@@ -153,7 +182,17 @@ const FR03Item = (props: FR03ItemProps) => {
         {isOpen && (
           <>
             <div className="px-6 py-4">
-              <FormDialog />
+              {showForm ? (
+                <FR03Form />
+              ) : (
+                <button
+                  onClick={() => setShowform(true)}
+                  className={`text-white bg-primary-2 rounded-full px-4 py-2 text-xs font-semibold flex items-center gap-2 
+                    transition-colors hover:bg-primary-2/80`}
+                >
+                  <p>+ เพิ่มรายการ</p>
+                </button>
+              )}
             </div>
             <div className="border-t border-gray-400 bg-gray-100 flex gap-2 px-5 py-4">
               <div className="rounded-md bg-white border border-gray-400 p-4 w-full">

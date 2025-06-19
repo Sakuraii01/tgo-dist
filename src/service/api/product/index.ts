@@ -15,7 +15,7 @@ export class ProductService extends RemoteA {
       PROTECTED_PATH.PRODUCT + `/${product_id}`
     );
     const { data } = response;
-    return data[0] as ProductType;
+    return data;
   };
   reqPutProduct = async (
     product_id: number,
