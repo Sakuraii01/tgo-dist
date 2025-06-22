@@ -30,7 +30,10 @@ const Product = () => {
               </p>
               <div className="ml-auto">
                 <button
-                  onClick={() => navigate(PROTECTED_PATH.REGISTER_PRODUCT_FR03)}
+                  onClick={() =>
+                    navigate(PROTECTED_PATH.REGISTER_PRODUCT_FR03 + `?id=${id}`)
+                  }
+                  type="button"
                   className="bg-white font-semibold shadow px-4 py-1 rounded-full flex gap-1"
                 >
                   <EditRounded fontSize="small" />

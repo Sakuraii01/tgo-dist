@@ -1,27 +1,26 @@
-import { FR04Layout } from "../common/layout";
-import { DeleteRounded, Save, Edit } from "@mui/icons-material";
-import { ProcessStepper } from "../common/component/stepper";
-import { useState } from "react";
-import useViewModel from "./viewModel";
-import { Accordion } from "../common/component/accordion";
-import { type ItemProcessType } from "../../../service/api/fr04/type";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { PROTECTED_PATH } from "../../../constants/path.route";
+import { useNavigate, useSearchParams } from "react-router-dom";
+
+import { DeleteRounded, Save, Edit } from "@mui/icons-material";
+import { Accordion } from "../common/component/accordion";
+import { ProcessStepper } from "../common/component/stepper";
+import { FR04Layout } from "../common/layout";
+
+import useViewModel from "./viewModel";
+import { type ItemProcessType } from "../../../service/api/fr04/type";
 
 import { Formik, Form } from "formik";
 import { Field, AutoCompleteField } from "../../../component/input/field";
 const FR04_1 = () => {
   const navigate = useNavigate();
-  const {
-    fr04Data,
-    tab,
-
-    handleTabChange,
-  } = useViewModel();
+  const [searchParams] = useSearchParams();
+  const id = Number(searchParams.get("id"));
+  const { fr04Data, tab, handleTabChange } = useViewModel(id);
   console.log(fr04Data);
   return (
     <div>
-      <ProcessStepper isActive={2} />
+      <ProcessStepper isActive={2} id={id} />
 
       <FR04Layout
         isB2B={false}
@@ -46,7 +45,7 @@ const FR04_1 = () => {
                     .map((item) => (
                       <div className="my-5">
                         <Accordion title={item.item_name}>
-                          <FR04_1Form data={item} />
+                          <FR04_1Form data={item} id={id} />
                         </Accordion>
                       </div>
                     ))
@@ -69,16 +68,14 @@ const FR04_1 = () => {
 };
 export default FR04_1;
 
-const FR04_1Form = (props: { data: ItemProcessType }) => {
+const FR04_1Form = (props: { data: ItemProcessType; id: number }) => {
   const {
     initialValues,
-    // tgoEfDropdown,
     tgoEfCategoryDropdown,
     tgoEfSubcategoryDropdown,
     tgoEfSourceRef,
-
-    fetchTGOEFDropdown,
-  } = useViewModel();
+    fetchTGOcategoryDropdown,
+  } = useViewModel(props.id);
   const [isEdit, setIsEdit] = useState(false);
 
   return (
@@ -91,215 +88,217 @@ const FR04_1Form = (props: { data: ItemProcessType }) => {
         setIsEdit(false);
       }}
     >
-      {({ handleSubmit, values }) => (
-        <Form
-          onSubmit={handleSubmit}
-          onChange={() => values.EFSource === "TGO EF" && fetchTGOEFDropdown()}
-        >
-          <div className="flex flex-col gap-4 font-medium">
-            {/* <AutoFetchTGOEF /> */}
-            <div>
-              <p>LCI</p>
-              <div className="flex gap-8">
-                <div>
-                  <label className="text-sm text-gray-300">หน่วย</label>
-                  <p>{props.data.item_unit}</p>
-                </div>
-                <div>
-                  <label className="text-sm text-gray-300">ปริมาณ</label>
-                  <p>{props.data.item_quantity}</p>
-                </div>
-                <div>
-                  <label className="text-sm text-gray-300">ปริมาณ/FU</label>
-                  <p>{"-"}</p>
-                </div>
-                <div className="mt-auto w-64">
-                  {isEdit ? (
-                    <Field
-                      name="LCISource"
-                      label="ที่มาของค่า LCI"
-                      placeholder="ที่มาของค่า LCI"
-                      require
-                    />
-                  ) : (
-                    <div>
-                      <label className="text-sm text-gray-300">
-                        ที่มาของค่า LCI
-                      </label>
-                      <p>{props.data.lci_source_period}</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-            <div>
-              <p>EF</p>
-              {isEdit ? (
-                <div className="flex flex-wrap gap-x-4 gap-y-2">
-                  <div className="w-40">
-                    <AutoCompleteField
-                      name="EF"
-                      label="ที่มาของค่า EF"
-                      placeholder="ที่มาของค่า EF"
-                      items={EF.map((item) => ({
-                        label: item.label,
-                        value: item.value,
-                      }))}
-                    />
+      {({ handleSubmit, values }) => {
+        useEffect(() => {
+          console.log("Formik values changed:", values);
+          if (values.EFSource === "tgo_ef") {
+            fetchTGOcategoryDropdown();
+            console.log("Fetching TGO EF Dropdown");
+            console.log(tgoEfCategoryDropdown);
+          }
+        }, [values]);
+        return (
+          <Form onSubmit={handleSubmit} onChange={(e) => console.log(values)}>
+            <div className="flex flex-col gap-4 font-medium">
+              <div>
+                <p>LCI</p>
+                <div className="flex gap-8">
+                  <div>
+                    <label className="text-sm text-gray-300">หน่วย</label>
+                    <p>{props.data.item_unit}</p>
                   </div>
-                  {tgoEfCategoryDropdown && (
-                    <div className="w-40">
-                      <AutoCompleteField
-                        name="TGOEFCategory"
-                        label="ประเภทของวัสดุ"
-                        placeholder="ประเภทของวัสดุ"
-                        items={tgoEfCategoryDropdown.map((item) => ({
-                          label: item?.tgo_ef_cat_name,
-                          value: item?.tgo_ef_cat_id,
-                        }))}
+                  <div>
+                    <label className="text-sm text-gray-300">ปริมาณ</label>
+                    <p>{props.data.item_quantity}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-300">ปริมาณ/FU</label>
+                    <p>{"-"}</p>
+                  </div>
+                  <div className="mt-auto w-64">
+                    {isEdit ? (
+                      <Field
+                        name="LCISource"
+                        label="ที่มาของค่า LCI"
+                        placeholder="ที่มาของค่า LCI"
+                        require
                       />
-                    </div>
-                  )}
-                  <div className="w-60">
-                    {tgoEfSubcategoryDropdown && (
-                      <AutoCompleteField
-                        name="TGOEFSubcategory"
-                        label="ประเภทของวัสดุรอง"
-                        placeholder="ประเภทของวัสดุรอง"
-                        items={tgoEfSubcategoryDropdown.map((item) => ({
-                          label: item.tgo_ef_subcat_name,
-                          value: item.tgo_ef_subcat_id,
-                        }))}
-                      />
+                    ) : (
+                      <div>
+                        <label className="text-sm text-gray-300">
+                          ที่มาของค่า LCI
+                        </label>
+                        <p>{props.data.lci_source_period}</p>
+                      </div>
                     )}
                   </div>
-                  <div className="w-80">
-                    <AutoCompleteField
-                      name="EFSourceRef"
-                      label="แหล่งอ้างอิง EF"
-                      placeholder="แหล่งอ้างอิง EF"
-                      items={tgoEfSourceRef.map((item) => ({
-                        label: item.ef_source_ref,
-                        value: item.ef_id,
-                      }))}
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm text-gray-300">ค่า EF</label>
-                    <p>8.4819</p>
-                  </div>
                 </div>
-              ) : (
-                <div className="flex flex-wrap gap-x-8">
-                  <div>
-                    <label className="text-sm text-gray-300">
-                      ที่มาของค่า EF
-                    </label>
-                    <p className="w-fit">{props.data.ef_source}</p>
+              </div>
+              <div>
+                <p>EF</p>
+                {isEdit ? (
+                  <div className="flex flex-wrap gap-x-4 gap-y-2">
+                    <div className="w-40">
+                      <AutoCompleteField
+                        name="EFSource"
+                        label="ที่มาของค่า EF"
+                        placeholder="ที่มาของค่า EF"
+                        items={EF.map((item) => ({
+                          label: item.label,
+                          value: item.value,
+                        }))}
+                      />
+                    </div>
+                    {tgoEfCategoryDropdown && (
+                      <div className="w-40">
+                        <AutoCompleteField
+                          name="TGOEFCategory"
+                          label="ประเภทของวัสดุ"
+                          placeholder="ประเภทของวัสดุ"
+                          items={tgoEfCategoryDropdown.map((item) => ({
+                            label: item?.tgo_ef_cat_name,
+                            value: item?.tgo_ef_cat_id,
+                          }))}
+                        />
+                      </div>
+                    )}
+                    <div className="w-60">
+                      {tgoEfSubcategoryDropdown && (
+                        <AutoCompleteField
+                          name="TGOEFSubcategory"
+                          label="ประเภทของวัสดุรอง"
+                          placeholder="ประเภทของวัสดุรอง"
+                          items={tgoEfSubcategoryDropdown.map((item) => ({
+                            label: item.tgo_ef_subcat_name,
+                            value: item.tgo_ef_subcat_id,
+                          }))}
+                        />
+                      )}
+                    </div>
+                    <div className="w-80">
+                      <AutoCompleteField
+                        name="EFSourceRef"
+                        label="แหล่งอ้างอิง EF"
+                        placeholder="แหล่งอ้างอิง EF"
+                        items={tgoEfSourceRef.map((item) => ({
+                          label: item.ef_source_ref,
+                          value: item.ef_id,
+                        }))}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm text-gray-300">ค่า EF</label>
+                      <p>8.4819</p>
+                    </div>
                   </div>
-                  <div>
-                    <label className="text-sm text-gray-300">
-                      ประเภทของวัสดุ
-                    </label>
-                    <p className="w-fit">{"-"}</p>
+                ) : (
+                  <div className="flex flex-wrap gap-x-8">
+                    <div>
+                      <label className="text-sm text-gray-300">
+                        ที่มาของค่า EF
+                      </label>
+                      <p className="w-fit">{props.data.ef_source}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm text-gray-300">
+                        ประเภทของวัสดุ
+                      </label>
+                      <p className="w-fit">{"-"}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm text-gray-300">
+                        ประเภทของวัสดุรอง
+                      </label>
+                      <p className="w-fit">{"-"}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm text-gray-300">
+                        แหล่งอ้างอิง EF
+                      </label>
+                      <p className="w-fit">{props.data.ef_source_ref}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm text-gray-300">ค่า EF</label>
+                      <p>8.4819</p>
+                    </div>
                   </div>
-                  <div>
-                    <label className="text-sm text-gray-300">
-                      ประเภทของวัสดุรอง
-                    </label>
-                    <p className="w-fit">{"-"}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm text-gray-300">
-                      แหล่งอ้างอิง EF
-                    </label>
-                    <p className="w-fit">{props.data.ef_source_ref}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm text-gray-300">ค่า EF</label>
-                    <p>8.4819</p>
-                  </div>
-                </div>
-              )}
-            </div>
-            <div>
-              {isEdit ? (
-                <div className="flex gap-8 mt-5">
-                  <div className="w-64">
+                )}
+              </div>
+              <div>
+                {isEdit ? (
+                  <div className="flex gap-8 mt-5">
+                    <div className="w-64">
+                      <Field
+                        name="ratio"
+                        label="สัดส่วนการปันส่วน"
+                        placeholder="สัดส่วนการปันส่วน"
+                        type="number"
+                        require
+                      />
+                    </div>
                     <Field
-                      name="ratio"
-                      label="สัดส่วนการปันส่วน"
-                      placeholder="สัดส่วนการปันส่วน"
-                      type="number"
+                      name="description"
+                      label="หมายเหตุ / คำอธิบายเพิ่มเติม"
+                      placeholder="หมายเหตุ / คำอธิบายเพิ่มเติม"
                       require
                     />
                   </div>
-                  <Field
-                    name="description"
-                    label="หมายเหตุ / คำอธิบายเพิ่มเติม"
-                    placeholder="หมายเหตุ / คำอธิบายเพิ่มเติม"
-                    require
-                  />
-                </div>
-              ) : (
+                ) : (
+                  <div className="flex gap-8 mt-5">
+                    <div>
+                      <label className="text-sm text-gray-300">
+                        การปันส่วน %
+                      </label>
+                      <p className="w-fit">{props.data.cut_off}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm text-gray-300">
+                        หมายเหตุ / คำอธิบายเพิ่มเติม
+                      </label>
+                      <p>{props.data.description ?? "-"}</p>
+                    </div>
+                  </div>
+                )}
                 <div className="flex gap-8 mt-5">
                   <div>
-                    <label className="text-sm text-gray-300">
-                      การปันส่วน %
-                    </label>
-                    <p className="w-fit">{props.data.cut_off}</p>
+                    <label className="text-sm text-gray-300">ผลคูณ</label>
+                    <p>0.0027</p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-300">
-                      หมายเหตุ / คำอธิบายเพิ่มเติม
-                    </label>
-                    <p>{props.data.description ?? "-"}</p>
+                    <label className="text-sm text-gray-300">สัดส่วน</label>
+                    <p>0.07 %</p>
                   </div>
                 </div>
-              )}
-              <div className="flex gap-8 mt-5">
-                <div>
-                  <label className="text-sm text-gray-300">ผลคูณ</label>
-                  <p>0.0027</p>
-                </div>
-                <div>
-                  <label className="text-sm text-gray-300">สัดส่วน</label>
-                  <p>0.07 %</p>
-                </div>
+              </div>
+
+              <div className="ml-auto">
+                {isEdit ? (
+                  <div className="mt-4.5">
+                    <label className="text-red-500">อย่าลืมกด save na</label>
+                    <button
+                      onClick={() => setIsEdit(false)}
+                      className="border border-primary rounded-full text-primary text-sm flex items-center gap-2 h-fit  px-4 py-1 ml-4"
+                    >
+                      <Save />
+                      <p>บันทึก</p>
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setIsEdit(true)}
+                      className="border border-primary rounded-full text-primary text-sm flex items-center gap-2 h-fit mt-4.5 px-4 py-1 ml-4"
+                    >
+                      <Edit />
+                      <p>แก้ไข</p>
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
-
-            <div className="ml-auto">
-              {isEdit ? (
-                <div className="mt-4.5">
-                  <label className="text-red-500">อย่าลืมกด save na</label>
-                  <button
-                    onClick={() => setIsEdit(false)}
-                    className="border border-primary rounded-full text-primary text-sm flex items-center gap-2 h-fit  px-4 py-1 ml-4"
-                  >
-                    <Save />
-                    <p>บันทึก</p>
-                  </button>
-                </div>
-              ) : (
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setIsEdit(true)}
-                    className="border border-primary rounded-full text-primary text-sm flex items-center gap-2 h-fit mt-4.5 px-4 py-1 ml-4"
-                  >
-                    <Edit />
-                    <p>แก้ไข</p>
-                  </button>
-                  <button className="border border-red-700 rounded-full text-red-700 text-sm flex items-center gap-2 h-fit mt-4.5 px-4 py-1 ml-4">
-                    <DeleteRounded />
-                    <p>ลบรายการ</p>
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </Form>
-      )}
+          </Form>
+        );
+      }}
     </Formik>
   );
 };

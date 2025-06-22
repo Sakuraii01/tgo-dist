@@ -11,7 +11,7 @@ export type ProductType = {
   PU_th: number;
   PU_en: number;
   sale_ratio: number;
-  product_techinfo: string[] | null;
+  product_techinfo: string[] | string | null;
   pcr_reference: string;
   collect_data_start: Date | string | null;
   collect_data_end: Date | string | null;
@@ -26,4 +26,9 @@ export type ProductType = {
   product_techinfo_array?: string[];
   photo_name?: string;
   photo_path?: string;
+};
+
+export type ProductResponseType = {
+  message: string;
+  product_id: number;
 };

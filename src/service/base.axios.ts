@@ -4,6 +4,7 @@ import axios, {
   type AxiosRequestConfig,
 } from "axios";
 import { clearToken } from "../utils/localStorage";
+import type { UserLoginInfo } from "./api/user/type";
 
 export class BaseAxios {
   private axiosInstance: AxiosInstance;
@@ -23,8 +24,8 @@ export class BaseAxios {
       (config) => {
         const token = this.getToken();
 
-        if (token?.trim()?.length > 0) {
-          config.headers["Bearer"] = `${token}`;
+        if (typeof token === "string" && token.trim().length > 0) {
+          config.headers["Authorization"] = `Bearer ${token}`;
         }
         return config;
       },
@@ -48,6 +49,16 @@ export class BaseAxios {
   }
 
   private getToken() {
-    return JSON.parse(localStorage.getItem("user_account") ?? "{}")?.token;
+    return getUserFromStorage()?.token ?? null;
+  }
+}
+export function getUserFromStorage(): UserLoginInfo | null {
+  try {
+    const raw = localStorage.getItem("user_account");
+    if (!raw || raw === "undefined") return null;
+    return JSON.parse(raw) as UserLoginInfo;
+  } catch {
+    localStorage.removeItem("user_account");
+    return null;
   }
 }

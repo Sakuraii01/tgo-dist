@@ -37,3 +37,37 @@ export type TGOEFSubcategoryType = {
   created_date: string;
   updated_date: string;
 };
+
+export type TGOVehiclesWithEFType = {
+  ef_id: number;
+  item: string;
+  item_detail: string;
+  unit: string;
+  ef: string;
+  ef_source_ref: string;
+  tgo_updated: string;
+  tgo_ef_subcat_id: 23;
+  created_date?: string;
+  updated_date?: string;
+};
+export type ProvinceType = {
+  province_id: number;
+  province_name: string;
+};
+
+export type DistrincType = {
+  district_id: number;
+  province_id: number;
+  district_name: string;
+};
+export type SubDistricType = {
+  subdistrict_id: number;
+  district_id: number;
+  subdistrict_name: string;
+};
+
+export type IndustryType = {
+  industrial_id: number;
+  industrial_name: string;
+  required_cbam: number;
+};

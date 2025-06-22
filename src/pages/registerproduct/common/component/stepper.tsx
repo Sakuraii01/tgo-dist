@@ -8,6 +8,7 @@ import { PROTECTED_PATH } from "../../../../constants/path.route";
 import { useNavigate } from "react-router-dom";
 type stepperProps = {
   isActive: number;
+  id: number;
 };
 export const ProcessStepper = (props: stepperProps) => {
   const navigate = useNavigate();
@@ -104,7 +105,7 @@ export const ProcessStepper = (props: stepperProps) => {
         {steps.map((label) => (
           <Step
             key={label.stepName}
-            onClick={() => navigate(label.navigate)}
+            onClick={() => navigate(label.navigate + `?id=${props.id}`)}
             sx={{ position: "relative" }}
           >
             <StepLabel StepIconComponent={ColorlibStepIcon}>

@@ -58,3 +58,13 @@ export const CreateProductNav = () => {
     </div>
   );
 };
+
+export const Popup = (props: { children: React.ReactNode }) => {
+  return (
+    <div className="fixed inset-0 w-full h-full bg-black/50 flex justify-center items-center z-[1000] backdrop-blur-xs">
+      <div className="bg-white py-4 px-10 rounded-md w-3/4">
+        {props.children}
+      </div>
+    </div>
+  );
+};

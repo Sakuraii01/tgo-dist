@@ -40,7 +40,7 @@ const Dashboard = () => {
           <div className="font-medium">
             <h4 className="text-4xl mb-3 mt-10">รายการผลิตภัณฑ์</h4>
             <p className="text-lg">
-              จำนวนผลิตภัณฑ์ทั้งหมด{" "}
+              จำนวนผลิตภัณฑ์ทั้งหมด
               <span className="text-primary-2">{productList.length}</span>{" "}
               รายการ
             </p>
@@ -55,7 +55,6 @@ const Dashboard = () => {
                 <p>ดูข้อมูลค่า EF</p>
               </button>
             </div>
-
             <div className="bg-gradient-to-b from-[#F1FCFF] to-[#E2F7FB] rounded-3xl w-fit px-2 pb-2 pt-4 text-center">
               <p className="text-sm">รอบขึ้นทะเบียนปัจจุบัน</p>
               <p className="font-bold text-primary text-3xl">1 / 2568</p>

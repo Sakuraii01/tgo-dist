@@ -6,6 +6,11 @@ import type {
   TGOEFDropdownType,
   TGOEFCategoryType,
   TGOEFSubcategoryType,
+  TGOVehiclesWithEFType,
+  ProvinceType,
+  DistrincType,
+  SubDistricType,
+  IndustryType,
 } from "./type";
 
 export class UnitsDropdownService extends RemoteA {
@@ -58,6 +63,53 @@ export class TGOEFDropdownService extends RemoteA {
   ): Promise<TGOEFDropdownType[]> => {
     const response = await this.getAxiosInstance().get(
       `${PROTECTED_PATH.TGO_EF_DROPDOWN_CATEGORY}/${categoryID}/${subcategoryId}`
+    );
+    const { data } = response;
+    return data;
+  };
+}
+
+export class TGOVehiclesService extends RemoteA {
+  reqGetTGOVehiclesWithEF = async (): Promise<TGOVehiclesWithEFType[]> => {
+    const response = await this.getAxiosInstance().get(PROTECTED_PATH.VEHICLES);
+    const { data } = response;
+    return data;
+  };
+}
+
+export class AddressService extends RemoteA {
+  reqGetProvince = async (): Promise<ProvinceType[]> => {
+    const response = await this.getAxiosInstance().get(
+      PROTECTED_PATH.ADDRESS_DROPDOWN
+    );
+    const { data } = response;
+    return data;
+  };
+  reqGetDistrict = async (entity: {
+    province: string;
+  }): Promise<DistrincType[]> => {
+    const response = await this.getAxiosInstance().get(
+      PROTECTED_PATH.ADDRESS_DROPDOWN + `/${entity.province}`
+    );
+    const { data } = response;
+    return data;
+  };
+  reqGetSubDistrict = async (entity: {
+    provice: string;
+    district: string;
+  }): Promise<SubDistricType[]> => {
+    const response = await this.getAxiosInstance().get(
+      PROTECTED_PATH.ADDRESS_DROPDOWN + `/${entity.provice}/${entity.district}`
+    );
+    const { data } = response;
+    return data;
+  };
+}
+
+export class IndustryService extends RemoteA {
+  reqGetIndustry = async (): Promise<IndustryType[]> => {
+    const response = await this.getAxiosInstance().get(
+      PROTECTED_PATH.INDUSTRIAL
     );
     const { data } = response;
     return data;

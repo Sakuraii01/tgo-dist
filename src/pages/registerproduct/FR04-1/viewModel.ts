@@ -7,18 +7,18 @@ import type {
 } from "../../../service/api/dropdown/type";
 import { type FR04DataType } from "../../../service/api/fr04/type";
 import { useState, useEffect, useCallback } from "react";
-const useViewModel = () => {
+const useViewModel = (id: number) => {
   const fr04Service = new Fr04Service();
   const tgoEfService = new TGOEFDropdownService();
   const [tgoEfDropdown, setTgoEfDropdown] = useState<
     TGOEFDropdownType[] | null
-  >(null);
+  >([]);
   const [tgoEfCategoryDropdown, setTgoEfCategoryDropdown] = useState<
     TGOEFCategoryType[] | null
-  >(null);
+  >([]);
   const [tgoEfSubcategoryDropdown, setTgoEfSubcategoryDropdown] = useState<
     TGOEFSubcategoryType[] | null
-  >(null);
+  >([]);
   const [tgoEfSourceRef, setTgoEfSourceRef] = useState<TGOEFDropdownType[]>([]);
   const [fr04Data, setFr04Data] = useState<FR04DataType>();
   const [tab, setTab] = useState(1);
@@ -32,6 +32,7 @@ const useViewModel = () => {
   };
   const fetchTGOEFSubcategory = async (categoryId: number) => {
     const data = await tgoEfService.reqGetTGOEFSubcategory(categoryId);
+
     setTgoEfSubcategoryDropdown(data);
   };
   const fetchTGOEFBySubcategory = async (
@@ -49,7 +50,7 @@ const useViewModel = () => {
   }, []);
 
   const fetchfr04Data = async () => {
-    const data = await fr04Service.reqGetFr04_1(7);
+    const data = await fr04Service.reqGetFr04_1(id);
     setFr04Data(data);
     await fetchTGOEFDropdown();
   };

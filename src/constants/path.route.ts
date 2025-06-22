@@ -3,6 +3,7 @@ export const UNPROTECTED_PATH = {
   REGISTER: "/register",
 };
 export const PROTECTED_PATH = {
+  SELECT_CBAM_CFP: "/select_cbam_cfp",
   DASHBOARD: "/dashboard",
 
   PRODUCT_DETAIL: "/product_detail",

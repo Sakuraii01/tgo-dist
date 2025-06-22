@@ -8,15 +8,19 @@ import { Dropzone } from "../../../component/input/dropzone";
 import useViewModel from "./viewModel";
 
 import { ProcessStepper } from "../common/component/stepper";
+import { useSearchParams } from "react-router-dom";
 
 const CreateProduct = () => {
+  const [searchParams] = useSearchParams();
+  const id = Number(searchParams.get("id"));
   const {
     initialValues,
     FR03FomrValidationSchema,
     unitList,
     registerRoundList,
     handleSubmit,
-  } = useViewModel();
+  } = useViewModel(id);
+  console.log(initialValues);
 
   const PRC = [
     {
@@ -30,9 +34,10 @@ const CreateProduct = () => {
   ];
   return (
     <div>
-      <ProcessStepper isActive={0} />
+      <ProcessStepper isActive={0} id={id} />
       <Formik
         initialValues={initialValues}
+        enableReinitialize
         validationSchema={FR03FomrValidationSchema}
         onSubmit={(values) => {
           handleSubmit(values);
@@ -95,28 +100,29 @@ const CreateProduct = () => {
                   <FieldArray name={"technicalInfo"} key={"technicalInfo"}>
                     {({ remove, push }) => (
                       <div className="w-full">
-                        {values["technicalInfo"].map((_, index) => (
-                          <div className="flex gap-2 mb-2">
-                            <div className="w-full">
-                              <Field
-                                name={`technicalInfo[${index}]`}
-                                placeholder="ข้อมูลด้านเทคนิค"
-                                label="ข้อมูลด้านเทคนิค"
-                              />
-                            </div>
-                            {
-                              <div className="my-auto ml-auto">
-                                <button
-                                  type="button"
-                                  className="secondary-button px-4 w-full h-fit py-2"
-                                  onClick={() => remove(index)}
-                                >
-                                  ลบ
-                                </button>
+                        {Array.isArray(values["technicalInfo"]) &&
+                          values["technicalInfo"].map((_, index) => (
+                            <div className="flex gap-2 mb-2" key={index}>
+                              <div className="w-full">
+                                <Field
+                                  name={`technicalInfo[${index}]`}
+                                  placeholder="ข้อมูลด้านเทคนิค"
+                                  label="ข้อมูลด้านเทคนิค"
+                                />
                               </div>
-                            }
-                          </div>
-                        ))}
+                              {
+                                <div className="my-auto ml-auto">
+                                  <button
+                                    type="button"
+                                    className="secondary-button px-4 w-full h-fit py-2"
+                                    onClick={() => remove(index)}
+                                  >
+                                    ลบ
+                                  </button>
+                                </div>
+                              }
+                            </div>
+                          ))}
                         <div className="w-fit ml-auto">
                           {values.technicalInfo.length < 5 && (
                             <button
@@ -236,6 +242,7 @@ const CreateProduct = () => {
             </div>
             <div className="w-1/4 mx-auto">
               <button
+                onClick={() => console.log(values)}
                 type="submit"
                 className="rounded-full w-full mt-6 px-10 py-2 bg-gradient-to-r from-[#2BCFF2] via-[#19C2E6] via-30% to-[#0190C3]  text-white font-semibold"
               >

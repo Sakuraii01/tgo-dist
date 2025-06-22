@@ -10,32 +10,33 @@ import type {
   RegisterRounedType,
 } from "../../../service/api/dropdown/type";
 import { type ProductType } from "../../../service/api/product/type";
+import { useNavigate } from "react-router-dom";
+import { PROTECTED_PATH } from "../../../constants/path.route";
 type productProps = {
   registrationRound: string;
   startCollectData: Date | string;
   stopCollectData: Date | string;
   productNameTH: string;
   productNameEN: string;
-  functionalValue: string;
-  functionalUnit: string;
-  functionalProductValue: string;
-  functionalProduct: string;
-  technicalInfo: string[];
+  functionalValue: string | number;
+  functionalUnit: string | number;
+  functionalProductValue: string | number;
+  functionalProduct: string | number;
+  technicalInfo: string[] | string;
   sale_ratio: string;
   pcrReference: string;
   product_image: File | null;
   scope: string;
 };
-const useViewModel = () => {
+const useViewModel = (id?: number) => {
+  const navigate = useNavigate();
   const unitService = new UnitsDropdownService();
   const registerRoundService = new RegisterRoundDropdownService();
   const [registerRoundList, setRegisterRoundList] = useState<
     RegisterRounedType[]
   >([]);
   const [unitList, setUnitList] = useState<UnitsDrowpdownType[]>([]);
-  const { FR03FomrValidationSchema } = CreateFormSchema();
-  const productService = new ProductService();
-  const initialValues = {
+  const [initialValues, setInitialValues] = useState<productProps>({
     registrationRound: "",
     startCollectData: "",
     stopCollectData: "",
@@ -50,14 +51,13 @@ const useViewModel = () => {
     pcrReference: "",
     product_image: null,
     scope: "B2B",
-  };
-  const handleSubmit = (data: productProps) => {
-    console.log(data);
-    if (
-      (data.scope !== "B2B" && data.scope !== "B2C") ||
-      data.product_image === null ||
-      !(data.product_image instanceof File)
-    ) {
+  });
+  const { FR03FomrValidationSchema } = CreateFormSchema();
+  const productService = new ProductService();
+
+  const handleSubmit = async (data: productProps) => {
+    let newId = id;
+    if (data.scope !== "B2B" && data.scope !== "B2C") {
       return;
     }
     console.log(data.product_image);
@@ -75,21 +75,35 @@ const useViewModel = () => {
       PU_en: Number(data.functionalProduct),
       sale_ratio: Number(data.sale_ratio),
       pcr_reference: data.pcrReference,
-      product_photo: data.product_image,
+      product_photo: data.product_image || "",
       auditor_id: null,
-      product_techinfo: data.technicalInfo,
-      verify_status: "verified",
+      product_techinfo: Array.isArray(data.technicalInfo)
+        ? `[${data.technicalInfo
+            .map((item) => '"' + item.trim() + '"')
+            .join(",")}]`
+        : data.technicalInfo.trim(),
+      verify_status: "draft",
       // what is topic field
-      collect_data_start: data.startCollectData,
-      collect_data_end: data.stopCollectData,
+      collect_data_start: data.startCollectData.toString().split("T")[0],
+      collect_data_end: data.stopCollectData.toString().split("T")[0],
       submitted_round: data.registrationRound,
       submitted_date: null,
     };
     try {
-      productService.reqPostProduct(entity);
+      if (id) {
+        entity.product_id = id;
+        productService.reqPutProduct(id, entity);
+      } else {
+        const res = await productService.reqPostProduct(entity);
+        console.log(res);
+
+        newId = Number(res?.product_id);
+      }
       console.log("success");
     } catch (err) {
       console.log(err);
+    } finally {
+      navigate(PROTECTED_PATH.REGISTER_PRODUCT_FR03 + `?id=${newId}`);
     }
   };
   useEffect(() => {
@@ -106,7 +120,41 @@ const useViewModel = () => {
         setRegisterRoundList(data || []);
       })
       .catch((err) => console.error(err));
-    productService.reqGetProduct(5).then((data) => console.log(data));
+    if (id) {
+      productService
+        .reqGetProduct(id)
+        .then((data) => {
+          console.log(data);
+
+          if (data) {
+            setInitialValues({
+              registrationRound: data.submitted_round,
+              startCollectData: data.collect_data_start
+                ? data.collect_data_start
+                : "",
+              stopCollectData: data.collect_data_end
+                ? data.collect_data_end
+                : "",
+              productNameTH: data.product_name_th,
+              productNameEN: data.product_name_en,
+              functionalValue: Number(data.FU_value),
+              functionalUnit: Number(data.FU_th),
+              functionalProductValue: Number(data.PU_value),
+              functionalProduct: Number(data.PU_th),
+              technicalInfo: data.product_techinfo
+                ? typeof data.product_techinfo === "string"
+                  ? JSON.parse(data.product_techinfo)
+                  : data.product_techinfo
+                : [""],
+              sale_ratio: String(data.sale_ratio),
+              pcrReference: data.pcr_reference,
+              product_image: null,
+              scope: data.scope,
+            });
+          }
+        })
+        .catch((err) => console.error(err));
+    }
   }, []);
 
   return {

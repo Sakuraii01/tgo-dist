@@ -8,6 +8,8 @@ import {
   Radio,
   RadioGroup,
   FormHelperText,
+  Checkbox,
+  FormGroup,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -66,6 +68,9 @@ export const RadioField = ({
                     "&.Mui-checked": {
                       color: option.color,
                     },
+                    height: "25px",
+                    width: "25px",
+                    marginLeft: "5px",
                   }}
                 />
               }
@@ -85,7 +90,7 @@ type FieldProps = {
   name: string;
   label: string;
   placeholder?: string;
-  type?: "text" | "number";
+  type?: "text" | "number" | "password";
   require?: boolean;
 };
 
@@ -134,17 +139,20 @@ const AutoCompleteField = ({
   name,
   placeholder,
 }: AutoCompleteProps) => {
-  const [, meta, helpers] = useField(name);
-  const { setValue } = helpers;
-
+  const [field, meta, helpers] = useField(name);
+  const { setValue, setTouched } = helpers;
+  const selectedOption =
+    items.find((item) => item.value === field.value) || null;
   return (
     <Autocomplete
       fullWidth
       options={items}
       getOptionLabel={(option) => option.label}
+      onBlur={() => setTouched(true)}
       onChange={(_: any, newValue: AutoCompleteItem | null) => {
         setValue(newValue?.value);
       }}
+      value={selectedOption}
       renderInput={(params) => (
         <TextField
           {...params}
@@ -196,6 +204,38 @@ export const DatePickerField = ({
         />
       </LocalizationProvider>
     </div>
+  );
+};
+type CheckboxFieldProps = {
+  name: string;
+  label: string;
+  require?: boolean;
+};
+export const CheckboxField = ({
+  name,
+  label,
+  require = false,
+}: CheckboxFieldProps) => {
+  const [field, meta, helpers] = useField({ name, type: "checkbox" });
+
+  return (
+    <FormControl error={meta.touched && Boolean(meta.error)} required={require}>
+      <FormGroup>
+        <FormControlLabel
+          control={
+            <Checkbox
+              {...field}
+              checked={field.value}
+              onChange={(e) => helpers.setValue(e.target.checked)}
+            />
+          }
+          label={label}
+        />
+      </FormGroup>
+      {meta.touched && meta.error && (
+        <FormHelperText>{meta.error}</FormHelperText>
+      )}
+    </FormControl>
   );
 };
 export { Field, AutoCompleteField };

@@ -12,11 +12,14 @@ import { ProcessStepper } from "../common/component/stepper";
 import useViewModel from "./viewModel";
 import { Accordion } from "../common/component/accordion";
 import { type ItemTransportType } from "../../../service/api/fr04/type";
+import { useSearchParams } from "react-router-dom";
 const FR04_2 = () => {
+  const [searchParams] = useSearchParams();
+  const id = Number(searchParams.get("id"));
   const { fr04Data, tab, handleTabChange } = useViewModel();
   return (
     <div>
-      <ProcessStepper isActive={3} />
+      <ProcessStepper isActive={3} id={id} />
 
       <FR04Layout isB2B={true} tabIndex={tab} handleTabChange={handleTabChange}>
         <div>
@@ -94,16 +97,21 @@ const FR04_2Form = (props: { data: ItemTransportType }) => {
           </RadioGroup>
         </div>
         <div className="flex gap-8">
-          <div>
-            <label className="text-sm text-gray-300">
-              ปริมาณเชื้อเพลิง การเผาไหม้
-            </label>
+          {/* <div>
+            <label className="text-sm text-gray-300">ระยะทาง</label>
             <p>{props.data.transport_emission ?? "-"}</p>
-          </div>
+          </div> */}
           {isEdit ? (
-            <div className="mt-auto w-64">
+            <div className="flex gap-4 mt-auto w-full">
               <TextField
-                label="แหล่งที่มาของข้อมูลข่นส่ง"
+                label="ปริมาณ Ton/FU"
+                variant="outlined"
+                type="string"
+                size="small"
+                fullWidth
+              />
+              <TextField
+                label="ระยะทาง km"
                 variant="outlined"
                 type="string"
                 size="small"
@@ -124,19 +132,39 @@ const FR04_2Form = (props: { data: ItemTransportType }) => {
         <div>
           <div>
             <p>แบบการใช้ระยะทาง</p>
+
+            {isEdit ? (
+              <div className="w-80">
+                <label className="text-sm text-gray-300">พาหนะ</label>
+                <Autocomplete
+                  options={[
+                    "รถบรรทุก 8 ล้อ น้ำหนักรวม 12 ตัน",
+                    "รถบรรทุก 10 ล้อ น้ำหนักรวม 16 ตัน",
+                    "รถบรรทุก 12 ล้อ",
+                  ]}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="ประเภทพาหนะ"
+                      variant="outlined"
+                      size="small"
+                      fullWidth
+                    />
+                  )}
+                />
+              </div>
+            ) : (
+              <div>
+                <label className="text-sm text-gray-300">ประเภทพาหนะ</label>
+                <p>{props.data.type2_vehicle ?? "-"}</p>
+              </div>
+            )}
             <div className="flex flex-wrap gap-x-8">
               {isEdit ? (
-                <div className="w-40">
+                <div className="w-60">
                   <label className="text-sm text-gray-300">
-                    ภาระบรรทุกเที่ยวไป (KM)
+                    ภาระบรรทุกเที่ยวไป (tkm)
                   </label>
-                  <TextField
-                    label="ภาระบรรทุกเที่ยวไป (KM)"
-                    variant="outlined"
-                    type="string"
-                    size="small"
-                    fullWidth
-                  />
                 </div>
               ) : (
                 <div>
@@ -149,13 +177,9 @@ const FR04_2Form = (props: { data: ItemTransportType }) => {
 
               {isEdit ? (
                 <div className="w-40">
-                  <TextField
-                    label="ภาระบรรทุกเที่ยวกลับ (KM)"
-                    variant="outlined"
-                    type="string"
-                    size="small"
-                    fullWidth
-                  />
+                  <label className="text-sm text-gray-300">
+                    ภาระบรรทุกเที่ยวกลับ (km)
+                  </label>
                 </div>
               ) : (
                 <div>
@@ -165,54 +189,7 @@ const FR04_2Form = (props: { data: ItemTransportType }) => {
                   <p>{props.data.type2_return_load ?? "-"}</p>
                 </div>
               )}
-              {isEdit ? (
-                <div className="w-64">
-                  <label className="text-sm text-gray-300">พาหนะ</label>
-                  <Autocomplete
-                    options={["รถบรรทุก", "เรือ", "เครื่องบิน"]}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="พาหนะ"
-                        variant="outlined"
-                        size="small"
-                        fullWidth
-                      />
-                    )}
-                  />
-                </div>
-              ) : (
-                <div>
-                  <label className="text-sm text-gray-300">พาหนะ</label>
-                  <p>{props.data.type2_vehicle ?? "-"}</p>
-                </div>
-              )}
-              {isEdit ? (
-                <div className="w-64">
-                  <label className="text-sm text-gray-300">พาหนะ</label>
-                  <Autocomplete
-                    options={[
-                      "รถบรรทุก 8 ล้อ",
-                      "รถบรรทุก 10 ล้อ",
-                      "รถบรรทุก 12 ล้อ",
-                    ]}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="ประเภทพาหนะ"
-                        variant="outlined"
-                        size="small"
-                        fullWidth
-                      />
-                    )}
-                  />
-                </div>
-              ) : (
-                <div>
-                  <label className="text-sm text-gray-300">ประเภทพาหนะ</label>
-                  <p>{props.data.type2_vehicle ?? "-"}</p>
-                </div>
-              )}
+
               {isEdit ? (
                 <div className="w-40">
                   <TextField

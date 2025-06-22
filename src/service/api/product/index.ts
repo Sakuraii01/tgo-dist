@@ -1,7 +1,7 @@
 import { PROTECTED_PATH } from "../../../constants/api.route";
 import { RemoteA } from "../../remote";
-import { type AxiosResponse } from "axios";
-import { type ProductType } from "./type";
+
+import type { ProductType, ProductResponseType } from "./type";
 
 export class ProductService extends RemoteA {
   reqGetAllProducts = async (): Promise<ProductType[]> => {
@@ -20,7 +20,7 @@ export class ProductService extends RemoteA {
   reqPutProduct = async (
     product_id: number,
     entity: ProductType
-  ): Promise<AxiosResponse> => {
+  ): Promise<ProductResponseType> => {
     const response = await this.getAxiosInstance().put(
       PROTECTED_PATH.PRODUCT + `/${product_id}`,
       entity
@@ -28,7 +28,9 @@ export class ProductService extends RemoteA {
     const { data } = response;
     return data;
   };
-  reqPostProduct = async (entity: ProductType): Promise<AxiosResponse> => {
+  reqPostProduct = async (
+    entity: ProductType
+  ): Promise<ProductResponseType> => {
     const response = await this.getAxiosInstance().post(
       PROTECTED_PATH.PRODUCT,
       entity

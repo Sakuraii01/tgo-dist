@@ -1,15 +1,26 @@
 import { Formik, FieldArray, Form } from "formik";
-import { Field } from "../../../component/input/field";
+import { Field, AutoCompleteField } from "../../../component/input/field";
 import { Navbar, BreadcrumbNav } from "../../../component/layout";
+import { TGOVehiclesService } from "../../../service/api/dropdown";
+import type { TGOVehiclesWithEFType } from "../../../service/api/dropdown/type";
 type IOItem = {
   inputName: string;
   unit: string;
   amount: string;
   FU: string;
   FUsource: string;
-  source: string;
+  LCIsource: string;
   EFsource: string;
   EF: string;
+
+  distance: string;
+  transport_EF: string;
+  transport_source: string;
+  vehicle: string;
+  out_load: string;
+  return_load: string;
+  out_load_percent: string;
+  return_load_percent: string;
 };
 
 type FormValues = {
@@ -28,9 +39,17 @@ const CreateSelfCollect = () => {
         amount: "",
         FU: "",
         FUsource: "",
-        source: "",
+        LCIsource: "",
         EFsource: "",
         EF: "",
+        distance: "",
+        transport_EF: "",
+        transport_source: "",
+        vehicle: "",
+        out_load: "",
+        return_load: "",
+        out_load_percent: "",
+        return_load_percent: "",
       },
     ],
     output: [
@@ -40,12 +59,31 @@ const CreateSelfCollect = () => {
         amount: "",
         FU: "",
         FUsource: "",
-        source: "",
+        LCIsource: "",
         EFsource: "",
         EF: "",
+        distance: "",
+        transport_EF: "",
+        transport_source: "",
+        vehicle: "",
+        out_load: "",
+        return_load: "",
+        out_load_percent: "",
+        return_load_percent: "",
       },
     ],
   };
+  const vehicles = new TGOVehiclesService();
+  const [vehiclesDropdown, setVehiclesDropdown] = useState<
+    TGOVehiclesWithEFType[]
+  >([]);
+  const fetchVehiclesDropdown = async () => {
+    const data = await vehicles.reqGetTGOVehiclesWithEF();
+    setVehiclesDropdown(data);
+  };
+  useEffect(() => {
+    fetchVehiclesDropdown();
+  }, []);
 
   return (
     <div>
@@ -86,6 +124,7 @@ const CreateSelfCollect = () => {
                               label="ชื่อรายการ"
                             />
                           </div>
+                          <p>LCI</p>
                           <div className="flex gap-4 mb-4">
                             <Field
                               name={`${section}[${index}].amount`}
@@ -100,8 +139,8 @@ const CreateSelfCollect = () => {
                             />
                             <Field
                               name={`${section}[${index}].FU`}
-                              placeholder={"FU"}
-                              label={"FU"}
+                              placeholder={"ปริมาณ ton/FU"}
+                              label={"ปริมาณ ton/FU"}
                             />
                             <Field
                               name={`${section}[${index}].FUsource`}
@@ -109,10 +148,11 @@ const CreateSelfCollect = () => {
                               label={"แหล่งที่มาของ FU"}
                             />
                           </div>
+                          <p>EF</p>
                           <div className="flex gap-4 mb-4">
                             <Field
-                              name={`${section}[${index}].source`}
-                              placeholder={"แหล่งที่มาของค่า"}
+                              name={`${section}[${index}].LCIsource`}
+                              placeholder={"แหล่งที่มาของค่า LCI"}
                               label={"แหล่งที่มาของค่า"}
                             />
                             <Field
@@ -126,6 +166,73 @@ const CreateSelfCollect = () => {
                               label={"ค่า EF"}
                               type="number"
                             />
+                          </div>
+                          <p>การขนส่ง แบบการใช้ระยะทาง</p>
+                          <div>
+                            <div className="flex gap-3">
+                              <div className="w-52">
+                                <Field
+                                  name={`${section}[${index}].distance`}
+                                  placeholder={"ระยะทาง (km)"}
+                                  label={"ระยะทาง (km)"}
+                                  type="number"
+                                />
+                              </div>
+                              <AutoCompleteField
+                                name={`${section}[${index}].vehicle`}
+                                placeholder="ประเภทพาหนะ"
+                                label="ประเภทพาหนะ"
+                                items={vehiclesDropdown.map((data) => {
+                                  return {
+                                    value: data.ef_id,
+                                    label: data.item,
+                                  };
+                                })}
+                              />
+                            </div>
+                            <div className="flex gap-3">
+                              <div>
+                                <p>ภาระบรรทุกขาไป (tkm)</p>
+                                <p>
+                                  {Math.round(
+                                    Number(values[section][index].distance) *
+                                      Number(values[section][index].FU) *
+                                      10000
+                                  ) / 10000}
+                                </p>
+                              </div>
+                              <div>
+                                <p>ภาระบรรทุกขากลับ (tkm)</p>
+                                <p>
+                                  {(() => {
+                                    const itemDetail =
+                                      vehiclesDropdown.find(
+                                        (data) =>
+                                          String(data.ef_id) ===
+                                          String(values[section][index].vehicle)
+                                      )?.item_detail ?? "";
+                                    const weight =
+                                      extractWeightFromDetail(itemDetail) ?? 0;
+                                    const tkm =
+                                      Math.round(
+                                        Number(
+                                          values[section][index].distance
+                                        ) *
+                                          Number(values[section][index].FU) *
+                                          10000
+                                      ) / 10000;
+                                    return weight !== null ? weight * tkm : "-";
+                                  })()}
+                                </p>
+                              </div>
+                              <div className="w-96">
+                                <Field
+                                  name={`${section}[${index}].transport_source`}
+                                  placeholder={"แหล่งที่มาของข้อมูลข่นส่ง"}
+                                  label={"แหล่งที่มาของข้อมูลข่นส่ง"}
+                                />
+                              </div>
+                            </div>
                           </div>
                           <button
                             type="button"
@@ -149,6 +256,14 @@ const CreateSelfCollect = () => {
                             source: "",
                             EFsource: "",
                             EF: "",
+                            distance: "",
+                            transport_EF: "",
+                            transport_source: "",
+                            vehicle: "",
+                            out_load: "",
+                            return_load: "",
+                            out_load_percent: "",
+                            return_load_percent: "",
                           })
                         }
                       >
@@ -171,6 +286,7 @@ const CreateSelfCollect = () => {
 
 export default CreateSelfCollect;
 import * as Yup from "yup";
+import { useEffect, useState } from "react";
 
 const ioItemSchema = Yup.object().shape({
   inputName: Yup.string().required("กรุณาระบุชื่อรายการ"),
@@ -188,3 +304,7 @@ const validationSchema = Yup.object().shape({
   input: Yup.array().of(ioItemSchema),
   output: Yup.array().of(ioItemSchema),
 });
+function extractWeightFromDetail(item_detail: string) {
+  const match = item_detail.match(/น้ำหนักบรรทุกสูงสุด\s+(\d+(\.\d+)?)/);
+  return match ? parseFloat(match[1]) : null;
+}

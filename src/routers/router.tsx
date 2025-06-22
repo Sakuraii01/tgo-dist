@@ -12,6 +12,8 @@ import Product from "../pages/product";
 import FR03 from "../pages/registerproduct/FR03";
 import FR04_1 from "../pages/registerproduct/FR04-1";
 import FR04_2 from "../pages/registerproduct/FR04-2";
+import SelectPage from "../pages/selected";
+
 const Router = () => {
   return (
     <BrowserRouter>
@@ -24,6 +26,7 @@ const Router = () => {
           element={<CreateSelfCollect />}
         />
         <Route path={PROTECTED_PATH.DASHBOARD} element={<Dashboard />} />
+        <Route path={PROTECTED_PATH.SELECT_CBAM_CFP} element={<SelectPage />} />
         <Route path={PROTECTED_PATH.PRODUCT_DETAIL} element={<Product />} />
         <Route element={<Outlet />}>
           <Route
