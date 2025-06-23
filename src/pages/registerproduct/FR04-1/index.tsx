@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { PROTECTED_PATH } from "../../../constants/path.route";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import { DeleteRounded, Save, Edit } from "@mui/icons-material";
+import { Save, Edit } from "@mui/icons-material";
 import { Accordion } from "../common/component/accordion";
 import { ProcessStepper } from "../common/component/stepper";
 import { FR04Layout } from "../common/layout";
@@ -98,7 +98,7 @@ const FR04_1Form = (props: { data: ItemProcessType; id: number }) => {
           }
         }, [values]);
         return (
-          <Form onSubmit={handleSubmit} onChange={(e) => console.log(values)}>
+          <Form onSubmit={handleSubmit} onChange={(_) => console.log(values)}>
             <div className="flex flex-col gap-4 font-medium">
               <div>
                 <p>LCI</p>
