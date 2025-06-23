@@ -23,7 +23,10 @@ const SelectPage = () => {
             </p>
           </div>
         </div>{" "}
-        <div className="bg-secondary-500/20 rounded-3xl px-8 hover:bg-secondary-500/30  transition flex mx-auto w-fit gap-3 cursor-pointer">
+        <div
+          className="bg-secondary-500/20 rounded-3xl px-8 hover:bg-secondary-500/30  transition flex mx-auto w-fit gap-3 cursor-pointer"
+          onClick={() => navigate(PROTECTED_PATH.CBAM)}
+        >
           <img src="/Container ship-rafiki.svg" className="w-60" />
           <div className="mt-auto mb-9">
             <p className="text-2xl font-bold mt-5 mb-3 text-secondary-500">

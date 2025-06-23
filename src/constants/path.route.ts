@@ -4,7 +4,8 @@ export const UNPROTECTED_PATH = {
 };
 export const PROTECTED_PATH = {
   SELECT_CBAM_CFP: "/select_cbam_cfp",
-  DASHBOARD: "/dashboard",
+  CBAM: "/cbam",
+  DASHBOARD: "/",
 
   PRODUCT_DETAIL: "/product_detail",
   SELF_COLLECT: "/selfcollect",
