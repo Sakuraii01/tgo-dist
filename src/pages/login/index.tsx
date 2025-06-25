@@ -11,7 +11,7 @@ const Login = () => {
   return (
     <div className="flex justify-between p-5 w-full h-screen bg-gradient-to-tl from-[#DEF0D9] to-[#E2F7FB]">
       <div className="w-fit mx-auto my-auto">
-        <img src="/Forms-amico.svg" className="w-80" />
+        <img src="./Forms-amico.svg" className="w-80" />
         <div className="w-fit mx-auto mt-10">
           <h1 className="text-primary-linear text-linear text-center text-5xl font-medium">
             TGO <br />
@@ -21,7 +21,7 @@ const Login = () => {
       </div>
       <div className="bg-white rounded-3xl w-1/2 p-5 h-full">
         <div className="flex gap-4 justify-center my-20">
-          <img src="/icon.png" className="h-24" />
+          <img src="./icon.png" className="h-24" />
         </div>
         <div className="text-center">
           <p className="text-primary-12 font-light">

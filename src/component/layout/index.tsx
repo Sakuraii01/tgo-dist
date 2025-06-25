@@ -14,7 +14,7 @@ export const Navbar = () => {
       style={{ boxShadow: "inset 0px -5px 16px rgba(0, 0, 0, 0.05)" }}
     >
       <img
-        src="/icon.png"
+        src="./icon.png"
         alt="Logo"
         className="w-5"
         onClick={() => navigate(PROTECTED_PATH.DASHBOARD)}
