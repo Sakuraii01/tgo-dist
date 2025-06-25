@@ -14,8 +14,10 @@ export const PROTECTED_PATH = {
   WASTE_CATEGORY: "/waste/category",
 
   FR03_FROM: "/fr03",
+  FR04_1_REPORT: "/f4-1/report",
   FR04_1_FORM: "/f4-1/form",
   FR04_2_FORM: "/f4-2/form",
+  FR04_1_ITEM: "/f4-1/item",
 
   UNITS_DROPDOWN: "/units",
   REGISTER_ROUND_DROPDOWN: "/rounded",

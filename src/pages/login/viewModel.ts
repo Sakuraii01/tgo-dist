@@ -11,18 +11,12 @@ const useViewModel = () => {
     await userService
       .reqPostLogin(entity)
       .then((res) => {
-        // console.log(res);
-        navigate(PROTECTED_PATH.SELECT_CBAM_CFP);
-
         if (res?.token && res?.user) {
-          auth?.setCredential({
-            message: res?.message ?? "",
-            token: res.token,
-            user: res.user,
-          });
+          auth?.setCredential(res);
         } else {
           console.warn("Invalid login response", res.data);
         }
+        navigate(PROTECTED_PATH.SELECT_CBAM_CFP, { replace: true });
       })
       .catch((error) => {
         console.log(error);

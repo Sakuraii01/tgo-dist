@@ -99,6 +99,28 @@ export type WasteProcessType = {
   waste_cat_name: string;
   life_cycle_phase: number;
 };
+export type ReportSum = {
+  report41_sum_id: number;
+  product_id: number;
+  sum_lc1_FU_qty: number;
+  sum_lc1_emission: number;
+  sum_lc1_emission_proportion: number;
+  sum_lc2_FU_qty: number;
+  sum_lc2_emission: number;
+  sum_lc2_emission_proportion: 1;
+  sum_lc3_FU_qty: null;
+  sum_lc3_emission: null;
+  sum_lc3_emission_proportion: null;
+  sum_lc4_FU_qty: null;
+  sum_lc4_emission: null;
+  sum_lc4_emission_proportion: null;
+  sum_lc5_FU_qty: null;
+  sum_lc5_emission: null;
+  sum_lc5_emission_proportion: null;
+  total_sum_emission: number;
+  created_date: string;
+  updated_date: string;
+};
 export type ProcessType = {
   process_id: number;
   product_id: number;
@@ -112,12 +134,15 @@ export type ProcessType = {
   output?: OutputProcessType[];
   waste?: WasteProcessType[];
 };
-export type FR04DataType = {
-  form41?: {
+export type FR04ReportType = {
+  form41: {
     life_cycle_phase: number;
-    process: ProcessType[];
+    process: {
+      process_name: string;
+      product: { production_class: string; items: ItemProcessType[] }[];
+    }[];
   }[];
-  form42?: {
+  form42: {
     life_cycle_phase: number;
     process: ProcessType[];
   }[];
@@ -134,28 +159,7 @@ export type FR04DataType = {
       updated_date: string;
     }
   ];
-  report41Sum: {
-    report41_sum_id: number;
-    product_id: number;
-    sum_lc1_FU_qty: number;
-    sum_lc1_emission: number;
-    sum_lc1_emission_proportion: number;
-    sum_lc2_FU_qty: number;
-    sum_lc2_emission: number;
-    sum_lc2_emission_proportion: 1;
-    sum_lc3_FU_qty: null;
-    sum_lc3_emission: null;
-    sum_lc3_emission_proportion: null;
-    sum_lc4_FU_qty: null;
-    sum_lc4_emission: null;
-    sum_lc4_emission_proportion: null;
-    sum_lc5_FU_qty: null;
-    sum_lc5_emission: null;
-    sum_lc5_emission_proportion: null;
-    total_sum_emission: number;
-    created_date: string;
-    updated_date: string;
-  }[];
+  report41Sum: ReportSum[];
 };
 
 export type FR04_1Type = {

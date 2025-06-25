@@ -25,7 +25,7 @@ const SelectPage = () => {
         </div>{" "}
         <div
           className="bg-secondary-500/20 rounded-3xl px-8 hover:bg-secondary-500/30  transition flex mx-auto w-fit gap-3 cursor-pointer"
-          onClick={() => navigate(PROTECTED_PATH.CBAM)}
+          onClick={() => window.open("http://178.128.123.212:8080/cbam/Home")}
         >
           <img src="./Container ship-rafiki.svg" className="w-60" />
           <div className="mt-auto mb-9">
