@@ -16,7 +16,7 @@ import SelectPage from "../pages/selected";
 
 const Router = () => {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/cfp">
       <Routes>
         <Route path={UNPROTECTED_PATH.LOGIN} element={<Login />} />
         <Route path={UNPROTECTED_PATH.REGISTER} element={<Register />} />
