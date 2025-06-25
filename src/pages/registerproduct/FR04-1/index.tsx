@@ -8,7 +8,12 @@ import { ProcessStepper } from "../common/component/stepper";
 import { FR04Layout } from "../common/layout";
 
 import useViewModel from "./viewModel";
-import { type ItemProcessType } from "../../../service/api/fr04/type";
+import type {
+  ProcessType,
+  InputProcessType,
+  OutputProcessType,
+  WasteProcessType,
+} from "../../../service/api/fr04/type";
 
 import { Formik, Form } from "formik";
 import { Field, AutoCompleteField } from "../../../component/input/field";
@@ -28,28 +33,19 @@ const FR04_1 = () => {
         handleTabChange={handleTabChange}
       >
         <div>
-          {fr04Data?.form41?.[tab - 1]?.process.map((data) => (
+          {fr04Data?.[tab - 1]?.processes.map((data) => (
             <div className="border-b border-gray-300 pb-10 mb-10">
               <h3 className="font-semibold text-linear text-primary-linear text-3xl mb-5">
                 {data.process_name}
               </h3>
               {/* <h4>สารขาเข้า</h4> */}
-              {data.product
-                .filter((type) => type.production_class === "input")
-                .map((product) =>
-                  product.items
-                    .filter(
-                      (item): item is ItemProcessType =>
-                        (item as ItemProcessType).report_41_id !== undefined
-                    )
-                    .map((item) => (
-                      <div className="my-5">
-                        <Accordion title={item.item_name}>
-                          <FR04_1Form data={item} id={id} />
-                        </Accordion>
-                      </div>
-                    ))
-                )}
+              {data.input.map((product) => (
+                <div className="my-5">
+                  <Accordion title={product.input_name}>
+                    <FR04_1Form data={product} id={id} />
+                  </Accordion>
+                </div>
+              ))}
             </div>
           ))}
         </div>
@@ -68,7 +64,10 @@ const FR04_1 = () => {
 };
 export default FR04_1;
 
-const FR04_1Form = (props: { data: ItemProcessType; id: number }) => {
+const FR04_1Form = (props: {
+  data: InputProcessType | OutputProcessType | WasteProcessType;
+  id: number;
+}) => {
   const {
     initialValues,
     tgoEfCategoryDropdown,

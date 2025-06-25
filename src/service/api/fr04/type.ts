@@ -59,12 +59,58 @@ export type ItemTransportType = {
   updated_date: string;
   process_name: string;
 };
+export type InputProcessType = {
+  input_process_id: number;
+  process_id: number;
+  input_cat_id: number;
+  input_name: string;
+  input_unit: string;
+  input_quantity: number;
+  chemical_reaction: number;
+  created_date: string | Date;
+  updated_date: string | Date;
+  input_title_id: number | null;
+  input_title: string | null;
+  input_cat_name_TH: string | null;
+  input_cat_name: string | null;
+};
+export type OutputProcessType = {
+  output_process_id: number;
+  process_id: number;
+  output_cat_id: number;
+  output_name: string;
+  output_unit: string;
+  output_quantity: number;
+  finish_output: number;
+  packaging_output: number;
+  created_date: string | Date;
+  updated_date: string | Date;
+  output_cat_name: string;
+};
+export type WasteProcessType = {
+  waste_process_id: number;
+  process_id: number;
+  waste_cat_id: number;
+  waste_name: string;
+  waste_unit: string;
+  waste_qty: number;
+  created_date: string | Date;
+  updated_date: string | Date;
+  waste_cat_name: string;
+  life_cycle_phase: number;
+};
 export type ProcessType = {
+  process_id: number;
+  product_id: number;
+  ordering: number;
   process_name: string;
-  product: {
-    production_class: string;
-    items: ItemProcessType[] | ItemTransportType[] | [];
-  }[];
+  mass_balanced: number;
+  created_date: string | Date;
+  updated_date: string | Date;
+  life_cycle_phase: number;
+  input: InputProcessType[];
+  output?: OutputProcessType[];
+  waste?: WasteProcessType[];
 };
 export type FR04DataType = {
   form41?: {
@@ -110,4 +156,9 @@ export type FR04DataType = {
     created_date: string;
     updated_date: string;
   }[];
+};
+
+export type FR04_1Type = {
+  life_cycle_phase: number;
+  processes: ProcessType[];
 };

@@ -18,6 +18,8 @@ export const ProcessStepper = (props: stepperProps) => {
     { stepName: "FR04.1", navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR04_1 },
     { stepName: "FR04.2", navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR04_2 },
     { stepName: "FR04.3", navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR04_3 },
+    { stepName: "FR06.1", navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR06_1 },
+    { stepName: "FR06.2", navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR06_2 },
   ];
   const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
     [`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -85,7 +87,7 @@ export const ProcessStepper = (props: stepperProps) => {
     const { active, completed, className } = props;
 
     const icons: { [index: string]: React.ReactElement } = Object.fromEntries(
-      Array(5)
+      Array(7)
         .fill(null)
         .map((_, i) => [(i + 1).toString(), <p>{i + 1}</p>])
     );
@@ -100,7 +102,7 @@ export const ProcessStepper = (props: stepperProps) => {
     );
   }
   return (
-    <div className="mx-auto max-w-4xl mb-10 cursor-pointer">
+    <div className="mx-auto max-w-6xl mb-10 cursor-pointer">
       <Stepper activeStep={props.isActive} connector={<ColorlibConnector />}>
         {steps.map((label) => (
           <Step

@@ -12,11 +12,14 @@ import Product from "../pages/product";
 import FR03 from "../pages/registerproduct/FR03";
 import FR04_1 from "../pages/registerproduct/FR04-1";
 import FR04_2 from "../pages/registerproduct/FR04-2";
+import FR04_3 from "../pages/registerproduct/FR04-3";
+import FR06_1 from "../pages/registerproduct/FR06_1";
+import FR06_2 from "../pages/registerproduct/FR06_2";
 import SelectPage from "../pages/selected";
 
 const Router = () => {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/cfp">
       <Routes>
         <Route path={UNPROTECTED_PATH.LOGIN} element={<Login />} />
         <Route path={UNPROTECTED_PATH.REGISTER} element={<Register />} />
@@ -48,6 +51,18 @@ const Router = () => {
             <Route
               path={PROTECTED_PATH.REGISTER_PRODUCT_FR04_2}
               element={<FR04_2 />}
+            />
+            <Route
+              path={PROTECTED_PATH.REGISTER_PRODUCT_FR04_3}
+              element={<FR04_3 />}
+            />
+            <Route
+              path={PROTECTED_PATH.REGISTER_PRODUCT_FR06_1}
+              element={<FR06_1 />}
+            />
+            <Route
+              path={PROTECTED_PATH.REGISTER_PRODUCT_FR06_2}
+              element={<FR06_2 />}
             />
           </Route>
         </Route>

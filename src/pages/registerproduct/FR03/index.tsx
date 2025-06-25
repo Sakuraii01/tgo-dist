@@ -7,6 +7,7 @@ import {
   Edit,
   Clear,
   Check,
+  CreateRounded,
 } from "@mui/icons-material";
 import { MaterialCardItem } from "../common/component/card";
 import { ProcessStepper } from "../common/component/stepper";
@@ -177,7 +178,28 @@ const FR03Item = (props: FR03ItemProps) => {
   const { AddProcessValidationSchema } = FR03FormSchema();
   const { isOpen, onToggle } = props;
   const [isEdit, setIsEdit] = useState(false);
+  const [showform, setShowform] = useState(false);
 
+  const [editIsOpen, setEditIsOpen] = useState("open");
+
+  const cardButtonRender = (
+    process_id: number,
+    item_id: number,
+    type: string
+  ) => {
+    return (
+      <div className="flex gap-2 my-auto">
+        <button
+          onClick={() => setEditIsOpen(`open-${type}-${process_id}-${item_id}`)}
+        >
+          <CreateRounded sx={{ fontSize: "16px" }} className="text-primary" />
+        </button>
+        <button onClick={() => console.log(type, process_id, item_id)}>
+          <DeleteRounded sx={{ fontSize: "16px" }} className="text-error" />
+        </button>
+      </div>
+    );
+  };
   return (
     <div className="flex max-w-5xl mx-auto my-3 bg-white">
       <div className="rounded-full bg-primary/10 border border-primary text-primary font-semibold text-sm flex items-center justify-center w-8 h-8 mr-4">
@@ -271,7 +293,15 @@ const FR03Item = (props: FR03ItemProps) => {
         {isOpen && (
           <>
             <div className="px-6 py-4">
+              <button
+                onClick={() => setShowform(true)}
+                className={`text-white bg-primary-2 rounded-full px-4 py-2 text-xs font-semibold flex items-center gap-2 
+                    transition-colors hover:bg-primary-2/80`}
+              >
+                <p>+ เพิ่มรายการ</p>
+              </button>
               <FR03Form
+                showForm={showform}
                 initialValues={{
                   type: "input",
                   itemName: "",
@@ -282,6 +312,7 @@ const FR03Item = (props: FR03ItemProps) => {
                   isLastProduct: false,
                   sumPackage: false,
                 }}
+                handleOnClose={() => setShowform(false)}
                 handleOnSubmit={(data, type) =>
                   handleOnSubmitFR03Item(data, type, props.data.process_id)
                 }
@@ -304,15 +335,56 @@ const FR03Item = (props: FR03ItemProps) => {
                     )[0] ? (
                       props?.data?.input
                         ?.filter((data) => data.input_cat_id === 8)
-                        ?.map((data, index) => (
-                          <MaterialCardItem
-                            key={index}
-                            title={data.input_name}
-                            unit={data.input_unit}
-                            amount={data.input_quantity}
-                            type={data.input_cat_name_TH}
-                          />
-                        ))
+                        ?.map((data, index) => {
+                          console.log(data);
+                          return (
+                            <>
+                              <FR03Form
+                                initialValues={{
+                                  type: "input",
+                                  itemName: data.input_name,
+                                  materialType: data.input_cat_id,
+                                  unit: data.input_unit,
+                                  amount: Number(data.input_quantity),
+                                }}
+                                handleOnClose={() => setEditIsOpen("close")}
+                                handleOnSubmit={(
+                                  formData,
+                                  type,
+                                  process_id
+                                ) => {
+                                  handleOnSubmitFR03Item(
+                                    formData,
+                                    type,
+                                    Number(process_id),
+                                    data.input_process_id,
+                                    true
+                                  );
+                                  console.log(formData, type, process_id);
+                                }}
+                                showForm={
+                                  editIsOpen ===
+                                  `open-input-${data.process_id}-${
+                                    data?.input_process_id || 0
+                                  }`
+                                }
+                                isUpdate
+                              />
+                              <MaterialCardItem
+                                key={index}
+                                title={data.input_name}
+                                unit={data.input_unit}
+                                amount={data.input_quantity}
+                                type={data.input_cat_name_TH}
+                                button={cardButtonRender(
+                                  data.process_id,
+                                  data?.input_process_id || 0,
+                                  "input"
+                                )}
+                              />
+                            </>
+                          );
+                        })
                     ) : (
                       <p className="text-gray-300 text-sm italic mt-4 ml-3">
                         ไม่มีวัตถุดิบ
@@ -329,13 +401,47 @@ const FR03Item = (props: FR03ItemProps) => {
                       props?.data?.input
                         ?.filter((data) => data.input_cat_id === 9)
                         ?.map((data, index) => (
-                          <MaterialCardItem
-                            key={index}
-                            title={data.input_name}
-                            unit={data.input_unit}
-                            amount={data.input_quantity}
-                            type={data.input_cat_name_TH}
-                          />
+                          <>
+                            <FR03Form
+                              initialValues={{
+                                type: "input",
+                                itemName: data.input_name,
+                                materialType: data.input_cat_id,
+                                unit: data.input_unit,
+                                amount: Number(data.input_quantity),
+                              }}
+                              handleOnClose={() => setEditIsOpen("close")}
+                              handleOnSubmit={(formData, type, process_id) => {
+                                console.log(formData, type, process_id);
+                                handleOnSubmitFR03Item(
+                                  formData,
+                                  type,
+                                  Number(process_id),
+                                  data.input_process_id,
+                                  true
+                                );
+                              }}
+                              showForm={
+                                editIsOpen ===
+                                `open-input-${data.process_id}-${
+                                  data?.input_process_id || 0
+                                }`
+                              }
+                              isUpdate
+                            />
+                            <MaterialCardItem
+                              key={index}
+                              title={data.input_name}
+                              unit={data.input_unit}
+                              amount={data.input_quantity}
+                              type={data.input_cat_name_TH}
+                              button={cardButtonRender(
+                                data.process_id,
+                                data?.input_process_id || 0,
+                                "input"
+                              )}
+                            />
+                          </>
                         ))
                     ) : (
                       <p className="text-gray-300 text-sm italic mt-4 ml-3">
@@ -353,13 +459,47 @@ const FR03Item = (props: FR03ItemProps) => {
                       props?.data?.input
                         ?.filter((data) => data.input_cat_id === 7)
                         ?.map((data, index) => (
-                          <MaterialCardItem
-                            key={index}
-                            title={data.input_name}
-                            unit={data.input_unit}
-                            amount={data.input_quantity}
-                            type={data.input_cat_name_TH}
-                          />
+                          <>
+                            <FR03Form
+                              initialValues={{
+                                type: "input",
+                                itemName: data.input_name,
+                                materialType: data.input_cat_id,
+                                unit: data.input_unit,
+                                amount: Number(data.input_quantity),
+                              }}
+                              handleOnClose={() => setEditIsOpen("close")}
+                              handleOnSubmit={(formData, type, process_id) => {
+                                console.log(formData, type, process_id);
+                                handleOnSubmitFR03Item(
+                                  formData,
+                                  type,
+                                  Number(process_id),
+                                  data.input_process_id,
+                                  true
+                                );
+                              }}
+                              showForm={
+                                editIsOpen ===
+                                `open-input-${data.process_id}-${
+                                  data?.input_process_id || 0
+                                }`
+                              }
+                              isUpdate
+                            />
+                            <MaterialCardItem
+                              key={index}
+                              title={data.input_name}
+                              unit={data.input_unit}
+                              amount={data.input_quantity}
+                              type={data.input_cat_name_TH}
+                              button={cardButtonRender(
+                                data.process_id,
+                                data?.input_process_id || 0,
+                                "input"
+                              )}
+                            />
+                          </>
                         ))
                     ) : (
                       <p className="text-gray-300 text-sm italic mt-4 ml-3">
@@ -378,13 +518,49 @@ const FR03Item = (props: FR03ItemProps) => {
                   </div>
                   {props?.data?.output[0] ? (
                     props?.data?.output?.map((data, index) => (
-                      <MaterialCardItem
-                        key={index}
-                        title={data.output_name}
-                        unit={data.output_unit}
-                        amount={data.output_quantity}
-                        type={data.output_cat_name}
-                      />
+                      <>
+                        <FR03Form
+                          initialValues={{
+                            type: "intermediate",
+                            itemName: data.output_name,
+                            materialType: data.output_cat_id,
+                            unit: data.output_unit,
+                            amount: Number(data.output_quantity),
+                            isLastProduct: data.finish_output,
+                            sumPackage: data.packaging_output,
+                          }}
+                          handleOnClose={() => setEditIsOpen("close")}
+                          handleOnSubmit={(formData, type, process_id) => {
+                            console.log(formData, type, process_id);
+                            handleOnSubmitFR03Item(
+                              formData,
+                              type,
+                              Number(process_id),
+                              data.output_process_id,
+                              true
+                            );
+                          }}
+                          showForm={
+                            editIsOpen ===
+                            `open-intermediate-${data.process_id}-${
+                              data?.output_process_id || 0
+                            }`
+                          }
+                          isUpdate
+                        />
+                        <MaterialCardItem
+                          key={index}
+                          title={data.output_name}
+                          unit={data.output_unit}
+                          amount={data.output_quantity}
+                          type={data.output_cat_name}
+                          button={cardButtonRender(
+                            data.process_id,
+                            data?.output_process_id || 0,
+                            "intermediate"
+                          )}
+                        />
+                      </>
                     ))
                   ) : (
                     <p className="text-gray-300 text-sm italic">
@@ -400,13 +576,47 @@ const FR03Item = (props: FR03ItemProps) => {
                   </div>
                   {props?.data?.waste[0] ? (
                     props?.data?.waste?.map((data, index) => (
-                      <MaterialCardItem
-                        key={index}
-                        title={data.waste_name}
-                        unit={data.waste_unit}
-                        amount={data?.waste_qty || 0}
-                        type={data.waste_cat_name}
-                      />
+                      <>
+                        <FR03Form
+                          initialValues={{
+                            type: "waste",
+                            itemName: data.waste_name,
+                            materialType: data.waste_cat_id,
+                            unit: data.waste_unit,
+                            amount: Number(data.waste_qty),
+                          }}
+                          handleOnClose={() => setEditIsOpen("close")}
+                          handleOnSubmit={(formData, type, process_id) => {
+                            console.log(formData, type, process_id);
+                            handleOnSubmitFR03Item(
+                              formData,
+                              type,
+                              Number(process_id),
+                              Number(data.waste_process_id),
+                              true
+                            );
+                          }}
+                          showForm={
+                            editIsOpen ===
+                            `open-waste-${data.process_id}-${
+                              data?.waste_process_id || 0
+                            }`
+                          }
+                          isUpdate
+                        />
+                        <MaterialCardItem
+                          key={index}
+                          title={data.waste_name}
+                          unit={data.waste_unit}
+                          amount={data?.waste_qty || 0}
+                          type={data.waste_cat_name}
+                          button={cardButtonRender(
+                            data.process_id,
+                            data?.waste_process_id || 0,
+                            "waste"
+                          )}
+                        />
+                      </>
                     ))
                   ) : (
                     <p className="text-gray-300 text-sm italic">

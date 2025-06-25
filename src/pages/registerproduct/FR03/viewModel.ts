@@ -27,29 +27,35 @@ const useViewModel = (id: number) => {
     entity: any,
     type: "input" | "intermediate" | "waste",
     processId: number,
+    dataId?: number,
     isUpdate?: boolean
   ) => {
     if (isUpdate) {
       if (type === "input") {
         inputProcessService
-          .reqPutInputProcessByID(entity.process_id, entity as InputProcessType)
+          .reqPutInputProcessByID(dataId || 0, {
+            process_id: processId,
+            // input_process_id: dataId,
+            input_cat_id: entity.materialType,
+            input_name: entity.itemName,
+            input_unit: entity.unit,
+            input_quantity: entity.amount,
+            chemical_reaction: 0,
+          } as InputProcessType)
           .then((response) => {
             console.log("Input process updated:", response);
             fetchProcess();
           });
       } else if (type === "intermediate") {
         outputProcessService
-          .reqPutOutputProcessByID(
-            entity.process_id,
-            entity as OutputProcessType
-          )
+          .reqPutOutputProcessByID(dataId || 0, entity as OutputProcessType)
           .then((response) => {
             console.log("Output process updated:", response);
             fetchProcess();
           });
       } else if (type === "waste") {
         wasteProcessService
-          .reqPutWasteProcessByID(entity.process_id, entity as WasteProcessType)
+          .reqPutWasteProcessByID(dataId || 0, entity as WasteProcessType)
           .then((response) => {
             console.log("Waste process updated:", response);
             fetchProcess();
