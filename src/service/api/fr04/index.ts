@@ -12,7 +12,13 @@ export class Fr04Service extends RemoteA {
     const { data } = response;
     return data;
   };
-
+  reqGetFr04_1ByID = async (id: number): Promise<FR04_1Type> => {
+    const response = await this.getAxiosInstance().get(
+      PROTECTED_PATH.FR04_1_FORM + `/${id}`
+    );
+    const { data } = response;
+    return data;
+  };
   reqGetFr04_2 = async (
     company_id: number,
     product_id: number
