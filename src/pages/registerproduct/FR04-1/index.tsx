@@ -8,7 +8,11 @@ import { ProcessStepper } from "../common/component/stepper";
 import { FR04Layout } from "../common/layout";
 
 import useViewModel from "./viewModel";
-import { type ItemProcessType } from "../../../service/api/fr04/type";
+import type {
+  InputProcessType,
+  OutputProcessType,
+  WasteProcessType,
+} from "../../../service/api/fr04/type";
 
 import { Formik, Form } from "formik";
 import { Field, AutoCompleteField } from "../../../component/input/field";
@@ -28,28 +32,23 @@ const FR04_1 = () => {
         handleTabChange={handleTabChange}
       >
         <div>
-          {fr04Data?.form41?.[tab - 1]?.process.map((data) => (
+          {fr04Data?.[tab - 1]?.processes.map((data) => (
             <div className="border-b border-gray-300 pb-10 mb-10">
               <h3 className="font-semibold text-linear text-primary-linear text-3xl mb-5">
                 {data.process_name}
               </h3>
               {/* <h4>สารขาเข้า</h4> */}
-              {data.product
-                .filter((type) => type.production_class === "input")
-                .map((product) =>
-                  product.items
-                    .filter(
-                      (item): item is ItemProcessType =>
-                        (item as ItemProcessType).report_41_id !== undefined
-                    )
-                    .map((item) => (
-                      <div className="my-5">
-                        <Accordion title={item.item_name}>
-                          <FR04_1Form data={item} id={id} />
-                        </Accordion>
-                      </div>
-                    ))
-                )}
+              {data.input.map((product) => (
+                <div className="my-5">
+                  <Accordion title={product.input_name}>
+                    <FR04_1Form
+                      data={product}
+                      id={id}
+                      lifePhase={data.life_cycle_phase}
+                    />
+                  </Accordion>
+                </div>
+              ))}
             </div>
           ))}
         </div>
@@ -68,14 +67,13 @@ const FR04_1 = () => {
 };
 export default FR04_1;
 
-const FR04_1Form = (props: { data: ItemProcessType; id: number }) => {
-  const {
-    initialValues,
-    tgoEfCategoryDropdown,
-    tgoEfSubcategoryDropdown,
-    tgoEfSourceRef,
-    fetchTGOcategoryDropdown,
-  } = useViewModel(props.id);
+const FR04_1Form = (props: {
+  data: InputProcessType | OutputProcessType | WasteProcessType;
+  id: number;
+  lifePhase: number;
+}) => {
+  const { fr04Report, initialValues, tgoEfDropdown, fetchTGOEFDropdown } =
+    useViewModel(props.id);
   const [isEdit, setIsEdit] = useState(false);
 
   return (
@@ -92,9 +90,9 @@ const FR04_1Form = (props: { data: ItemProcessType; id: number }) => {
         useEffect(() => {
           console.log("Formik values changed:", values);
           if (values.EFSource === "tgo_ef") {
-            fetchTGOcategoryDropdown();
+            fetchTGOEFDropdown();
             console.log("Fetching TGO EF Dropdown");
-            console.log(tgoEfCategoryDropdown);
+            console.log(tgoEfDropdown);
           }
         }, [values]);
         return (
@@ -104,15 +102,31 @@ const FR04_1Form = (props: { data: ItemProcessType; id: number }) => {
                 <p>LCI</p>
                 <div className="flex gap-8">
                   <div>
-                    <label className="text-sm text-gray-300">หน่วย</label>
-                    <p>{props.data.item_unit}</p>
+                    <p className="text-sm text-gray-300">หน่วย</p>
+                    <p>
+                      {"input_unit" in props.data
+                        ? props.data.input_unit
+                        : "output_unit" in props.data
+                        ? props.data.output_unit
+                        : "waste_unit" in props.data
+                        ? props.data.waste_unit
+                        : "-"}
+                    </p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-300">ปริมาณ</label>
-                    <p>{props.data.item_quantity}</p>
+                    <p className="text-sm text-gray-300">ปริมาณ</p>
+                    <p>
+                      {"input_unit" in props.data
+                        ? props.data.input_quantity
+                        : "output_unit" in props.data
+                        ? props.data.output_quantity
+                        : "waste_unit" in props.data
+                        ? props.data.waste_qty
+                        : "-"}
+                    </p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-300">ปริมาณ/FU</label>
+                    <p className="text-sm text-gray-300">ปริมาณ/FU</p>
                     <p>{"-"}</p>
                   </div>
                   <div className="mt-auto w-64">
@@ -125,10 +139,32 @@ const FR04_1Form = (props: { data: ItemProcessType; id: number }) => {
                       />
                     ) : (
                       <div>
-                        <label className="text-sm text-gray-300">
-                          ที่มาของค่า LCI
-                        </label>
-                        <p>{props.data.lci_source_period}</p>
+                        <p className="text-sm text-gray-300">ที่มาของค่า LCI</p>
+                        <p>
+                          {fr04Report?.form41
+                            ?.find(
+                              (data) =>
+                                data?.life_cycle_phase === props.lifePhase &&
+                                data.process.some(
+                                  (item) =>
+                                    item.process_name ===
+                                    ("input_name" in props.data
+                                      ? props.data.input_name
+                                      : "output_name" in props.data
+                                      ? props.data.output_name
+                                      : "waste_name" in props.data
+                                      ? props.data.waste_name
+                                      : "")
+                                )
+                            )
+                            ?.process.map((data) =>
+                              data.product.map((item) =>
+                                item.items.map(
+                                  (subItem) => subItem.lci_source_period
+                                )
+                              )
+                            ) ?? "-"}
+                        </p>
                       </div>
                     )}
                   </div>
@@ -149,46 +185,40 @@ const FR04_1Form = (props: { data: ItemProcessType; id: number }) => {
                         }))}
                       />
                     </div>
-                    {tgoEfCategoryDropdown && (
-                      <div className="w-40">
+
+                    <div className="w-80">
+                      {tgoEfDropdown && values.EFSource === "tgo_ef" ? (
                         <AutoCompleteField
-                          name="TGOEFCategory"
-                          label="ประเภทของวัสดุ"
-                          placeholder="ประเภทของวัสดุ"
-                          items={tgoEfCategoryDropdown.map((item) => ({
-                            label: item?.tgo_ef_cat_name,
-                            value: item?.tgo_ef_cat_id,
+                          name="EFSourceRef"
+                          label="แหล่งอ้างอิง EF"
+                          placeholder="แหล่งอ้างอิง EF"
+                          items={tgoEfDropdown.map((item) => ({
+                            label: item.item_detail,
+                            value: item.ef_id,
                           }))}
                         />
-                      </div>
-                    )}
-                    <div className="w-60">
-                      {tgoEfSubcategoryDropdown && (
-                        <AutoCompleteField
-                          name="TGOEFSubcategory"
-                          label="ประเภทของวัสดุรอง"
-                          placeholder="ประเภทของวัสดุรอง"
-                          items={tgoEfSubcategoryDropdown.map((item) => ({
-                            label: item.tgo_ef_subcat_name,
-                            value: item.tgo_ef_subcat_id,
-                          }))}
+                      ) : (
+                        <Field
+                          name="EFSourceRef"
+                          label="แหล่งอ้างอิง EF"
+                          placeholder="แหล่งอ้างอิง EF"
                         />
                       )}
                     </div>
-                    <div className="w-80">
-                      <AutoCompleteField
-                        name="EFSourceRef"
-                        label="แหล่งอ้างอิง EF"
-                        placeholder="แหล่งอ้างอิง EF"
-                        items={tgoEfSourceRef.map((item) => ({
-                          label: item.ef_source_ref,
-                          value: item.ef_id,
-                        }))}
-                      />
-                    </div>
                     <div>
-                      <label className="text-sm text-gray-300">ค่า EF</label>
-                      <p>8.4819</p>
+                      {values.EFSource === "tgo_ef" ? (
+                        <div>
+                          <p className="text-sm text-gray-300">ค่า EF</p>
+                          <p>
+                            {tgoEfDropdown?.find(
+                              (data) =>
+                                data.ef_id === Number(values.EFSourceRef)
+                            )?.ef ?? "-"}
+                          </p>
+                        </div>
+                      ) : (
+                        <Field name="EF" label="ค่า EF" placeholder="ค่า EF" />
+                      )}
                     </div>
                   </div>
                 ) : (
@@ -197,7 +227,7 @@ const FR04_1Form = (props: { data: ItemProcessType; id: number }) => {
                       <label className="text-sm text-gray-300">
                         ที่มาของค่า EF
                       </label>
-                      <p className="w-fit">{props.data.ef_source}</p>
+                      <p className="w-fit">-</p>
                     </div>
                     <div>
                       <label className="text-sm text-gray-300">
@@ -215,11 +245,11 @@ const FR04_1Form = (props: { data: ItemProcessType; id: number }) => {
                       <label className="text-sm text-gray-300">
                         แหล่งอ้างอิง EF
                       </label>
-                      <p className="w-fit">{props.data.ef_source_ref}</p>
+                      <p className="w-fit">-</p>
                     </div>
                     <div>
                       <label className="text-sm text-gray-300">ค่า EF</label>
-                      <p>8.4819</p>
+                      <p>-</p>
                     </div>
                   </div>
                 )}
@@ -246,20 +276,18 @@ const FR04_1Form = (props: { data: ItemProcessType; id: number }) => {
                 ) : (
                   <div className="flex gap-8 mt-5">
                     <div>
-                      <label className="text-sm text-gray-300">
-                        การปันส่วน %
-                      </label>
-                      <p className="w-fit">{props.data.cut_off}</p>
+                      <p className="text-sm text-gray-300">การปันส่วน %</p>
+                      <p className="w-fit">-</p>
                     </div>
                     <div>
-                      <label className="text-sm text-gray-300">
+                      <p className="text-sm text-gray-300">
                         หมายเหตุ / คำอธิบายเพิ่มเติม
-                      </label>
-                      <p>{props.data.description ?? "-"}</p>
+                      </p>
+                      <p>-</p>
                     </div>
                   </div>
                 )}
-                <div className="flex gap-8 mt-5">
+                {/* <div className="flex gap-8 mt-5">
                   <div>
                     <label className="text-sm text-gray-300">ผลคูณ</label>
                     <p>0.0027</p>
@@ -268,20 +296,22 @@ const FR04_1Form = (props: { data: ItemProcessType; id: number }) => {
                     <label className="text-sm text-gray-300">สัดส่วน</label>
                     <p>0.07 %</p>
                   </div>
-                </div>
+                </div> */}
               </div>
 
               <div className="ml-auto">
                 {isEdit ? (
                   <div className="mt-4.5">
-                    <label className="text-red-500">อย่าลืมกด save na</label>
                     <button
                       onClick={() => setIsEdit(false)}
-                      className="border border-primary rounded-full text-primary text-sm flex items-center gap-2 h-fit  px-4 py-1 ml-4"
+                      className="border border-primary rounded-full text-primary text-sm flex items-center gap-2 h-fit  px-4 py-1 ml-auto"
                     >
                       <Save />
                       <p>บันทึก</p>
-                    </button>
+                    </button>{" "}
+                    <label className="text-red-500 text-end">
+                      กรุณากดบันทึกก่อนดำเนินการต่อ
+                    </label>
                   </div>
                 ) : (
                   <div className="flex gap-2">

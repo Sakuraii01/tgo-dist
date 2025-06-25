@@ -6,8 +6,10 @@ import {
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../constants/path.route";
+import { useAuth } from "../../auth/useAuth";
 export const Navbar = () => {
   const navigate = useNavigate();
+  const auth = useAuth();
   return (
     <nav
       className="flex justify-between items-center w-full py-2 px-10 bg-white sticky top-0 left-0"
@@ -23,8 +25,10 @@ export const Navbar = () => {
         <NotificationsRounded fontSize="small" className="text-secondary-500" />
         <div className="flex items-center gap-2">
           <div>
-            <p className="text-sm font-medium text-primary">Company Name</p>
-            <p className="text-xs text-gray-200">สถานประกอบการ</p>
+            <p className="text-sm font-medium text-primary">
+              {auth?.user?.user.name}
+            </p>
+            <p className="text-xs text-gray-200">{auth?.user?.user.email}</p>
           </div>
           <KeyboardArrowDownRounded />
         </div>

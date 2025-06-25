@@ -5,4 +5,9 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   base: "/cfp/",
   plugins: [react(), tailwindcss()],
+  resolve: {
+    alias: {
+      "@": "/src",
+    },
+  },
 });

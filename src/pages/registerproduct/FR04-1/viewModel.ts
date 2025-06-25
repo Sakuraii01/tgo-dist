@@ -3,9 +3,11 @@ import { TGOEFDropdownService } from "../../../service/api/dropdown";
 import type {
   TGOEFDropdownType,
   TGOEFCategoryType,
-  TGOEFSubcategoryType,
 } from "../../../service/api/dropdown/type";
-import { type FR04DataType } from "../../../service/api/fr04/type";
+import type {
+  FR04_1Type,
+  FR04ReportType,
+} from "../../../service/api/fr04/type";
 import { useState, useEffect, useCallback } from "react";
 const useViewModel = (id: number) => {
   const fr04Service = new Fr04Service();
@@ -13,22 +15,16 @@ const useViewModel = (id: number) => {
   const [tgoEfDropdown, setTgoEfDropdown] = useState<
     TGOEFDropdownType[] | null
   >([]);
-  const [tgoEfCategoryDropdown, setTgoEfCategoryDropdown] = useState<
-    TGOEFCategoryType[] | null
-  >([]);
   const [tgoEfSubcategoryDropdown, setTgoEfSubcategoryDropdown] = useState<
-    TGOEFSubcategoryType[] | null
-  >([]);
+    TGOEFCategoryType[] | null
+  >(null);
   const [tgoEfSourceRef, setTgoEfSourceRef] = useState<TGOEFDropdownType[]>([]);
-  const [fr04Data, setFr04Data] = useState<FR04DataType>();
+  const [fr04Data, setFr04Data] = useState<FR04_1Type[]>([]);
+  const [fr04Report, setFr04Report] = useState<FR04ReportType>();
   const [tab, setTab] = useState(1);
   const fetchTGOEFDropdown = async () => {
     const data = await tgoEfService.reqGetTGOEF();
     setTgoEfDropdown(data);
-  };
-  const fetchTGOcategoryDropdown = async () => {
-    const data = await tgoEfService.reqGetTGOcategory();
-    setTgoEfCategoryDropdown(data);
   };
   const fetchTGOEFSubcategory = async (categoryId: number) => {
     const data = await tgoEfService.reqGetTGOEFSubcategory(categoryId);
@@ -50,8 +46,10 @@ const useViewModel = (id: number) => {
   }, []);
 
   const fetchfr04Data = async () => {
-    const data = await fr04Service.reqGetFr04_1(id);
+    const data = await fr04Service.reqGetFr04_1(1005, id);
     setFr04Data(data);
+    const report = await fr04Service.reqGetFR04Report(id);
+    setFr04Report(report);
     await fetchTGOEFDropdown();
   };
   const initialValues = {
@@ -60,6 +58,7 @@ const useViewModel = (id: number) => {
     TGOEFSubcategory: "",
     EFSource: "",
     EFSourceRef: "",
+    EF: "",
     ratio: "",
     description: "",
   };
@@ -68,15 +67,14 @@ const useViewModel = (id: number) => {
   }, []);
   return {
     fr04Data,
+    fr04Report,
     tab,
     initialValues,
     tgoEfDropdown,
-    tgoEfCategoryDropdown,
     tgoEfSubcategoryDropdown,
     tgoEfSourceRef,
     fetchTGOEFBySubcategory,
     fetchTGOEFSubcategory,
-    fetchTGOcategoryDropdown,
     fetchTGOEFDropdown,
     handleTabChange,
   };

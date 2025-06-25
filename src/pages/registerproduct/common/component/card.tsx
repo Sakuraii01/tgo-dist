@@ -1,10 +1,9 @@
-import { CreateRounded, DeleteRounded } from "@mui/icons-material";
-export const MaterialCard = () => {};
 export type MaterialCardProps = {
   title: string;
   unit: string;
   amount: number;
   type?: string;
+  button: React.ReactNode;
 };
 export type InfoProps = {
   title: string;
@@ -23,10 +22,7 @@ export const MaterialCardItem = (props: MaterialCardProps) => {
     <div className="border-2 border-stroke rounded-lg py-3 px-5 w-full bg-white mb-2">
       <div className="mb-3 flex justify-between">
         <h3 className="font-semibold text-xl">{props.title}</h3>
-        <div className="flex gap-2 my-auto">
-          <CreateRounded sx={{ fontSize: "16px" }} className="text-primary" />
-          <DeleteRounded sx={{ fontSize: "16px" }} className="text-error" />
-        </div>
+        {props.button}
       </div>
       <div className="flex gap-6">
         <Info title="หน่วย" amount={props.unit} />

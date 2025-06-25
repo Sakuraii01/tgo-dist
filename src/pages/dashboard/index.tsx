@@ -2,9 +2,11 @@ import { Navbar } from "../../component/layout";
 import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../constants/path.route";
 import useViewModel from "./viewModel";
+import { useAuth } from "../../auth/useAuth";
 const Dashboard = () => {
   const { productList, tab, companyData, handleTabChange } = useViewModel();
   const navigate = useNavigate();
+  const auth = useAuth();
   return (
     <div>
       <Navbar />
@@ -13,7 +15,7 @@ const Dashboard = () => {
           <h1 className="text-4xl font-medium mb-5 mt-10">
             ยินดีต้อนรับ{" "}
             <span className="font-bold text-linear text-primary-linear">
-              {companyData?.name}
+              {auth?.user?.user.name}
             </span>
           </h1>
           <div className="flex gap-5">

@@ -5,7 +5,6 @@ import type {
   RegisterRounedType,
   TGOEFDropdownType,
   TGOEFCategoryType,
-  TGOEFSubcategoryType,
   TGOVehiclesWithEFType,
   ProvinceType,
   DistrincType,
@@ -50,7 +49,7 @@ export class TGOEFDropdownService extends RemoteA {
   };
   reqGetTGOEFSubcategory = async (
     categoryId: number
-  ): Promise<TGOEFSubcategoryType[]> => {
+  ): Promise<TGOEFCategoryType[]> => {
     const response = await this.getAxiosInstance().get(
       `${PROTECTED_PATH.TGO_EF_DROPDOWN_CATEGORY}/${categoryId}`
     );

@@ -1,5 +1,5 @@
 import { BreadcrumbNav, Navbar } from "../../component/layout";
-import { EditRounded } from "@mui/icons-material";
+import { EditRounded, FileDownloadRounded } from "@mui/icons-material";
 import useViewModel from "./viewModel";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -34,10 +34,23 @@ const Product = () => {
                     navigate(PROTECTED_PATH.REGISTER_PRODUCT_FR03 + `?id=${id}`)
                   }
                   type="button"
-                  className="bg-white font-semibold shadow px-4 py-1 rounded-full flex gap-1"
+                  className="bg-white font-semibold shadow px-4 py-1 rounded-full flex gap-1 ml-auto mb-4"
                 >
                   <EditRounded fontSize="small" />
                   <p>ดำเนินการต่อ</p>
+                </button>
+                <button
+                  onClick={() =>
+                    window.open(
+                      "http://178.128.123.212:5000/api/v1/excel/1005/7",
+                      "_blank"
+                    )
+                  }
+                  type="button"
+                  className="primary-button font-semibold shadow px-4 py-1 rounded-full flex gap-1 hover:opacity-90"
+                >
+                  <FileDownloadRounded fontSize="small" />
+                  <p>ดาวน์โหลดเอกสาร</p>
                 </button>
               </div>
             </div>

@@ -15,12 +15,20 @@ import {
 import { UnitsDropdownService } from "../../../service/api/dropdown";
 
 type FR03FormType = {
+  showForm: boolean;
   initialValues: any;
-  handleOnSubmit: (data: any, type: "input" | "intermediate" | "waste") => void;
+  handleOnClose: () => void;
+  handleOnSubmit: (
+    data: any,
+    type: "input" | "intermediate" | "waste",
+    process_id?: number
+  ) => void;
+  isUpdate?: boolean;
 };
 export const FR03Form = (props: FR03FormType) => {
-  const [showform, setShowform] = useState(false);
   const { FR03FomrValidationSchema } = FR03FormSchema();
+  console.log(props.initialValues);
+
   const initialValues = {
     type: "input",
     itemName: "",
@@ -35,14 +43,7 @@ export const FR03Form = (props: FR03FormType) => {
     FR03Function();
   return (
     <div>
-      <button
-        onClick={() => setShowform(true)}
-        className={`text-white bg-primary-2 rounded-full px-4 py-2 text-xs font-semibold flex items-center gap-2 
-                    transition-colors hover:bg-primary-2/80`}
-      >
-        <p>+ เพิ่มรายการ</p>
-      </button>
-      {showform && (
+      {props.showForm && (
         <Popup>
           <Formik
             initialValues={props.initialValues || initialValues}
@@ -141,7 +142,7 @@ export const FR03Form = (props: FR03FormType) => {
                   <button
                     type="button"
                     onClick={() => {
-                      setShowform(false);
+                      props.handleOnClose();
                     }}
                     className="border border-gray-200 rounded-full text-gray-200 hover:bg-gray-200/10 transition font-semibold text-sm flex items-center gap-2 h-fit my-3 px-3 py-1 transform"
                   >
@@ -151,7 +152,7 @@ export const FR03Form = (props: FR03FormType) => {
                     type="submit"
                     className="border border-primary rounded-full text-primary hover:bg-primary/10 transition font-semibold text-sm flex items-center gap-2 h-fit my-3 px-3 py-1 transform"
                   >
-                    + เพิ่มรายการ
+                    {props.isUpdate ? "แก้ไขรายการ" : "+ เพิ่มรายการ"}
                   </button>
                 </div>
               </Form>

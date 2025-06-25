@@ -16,46 +16,50 @@ import { useSearchParams } from "react-router-dom";
 const FR04_2 = () => {
   const [searchParams] = useSearchParams();
   const id = Number(searchParams.get("id"));
-  const { fr04Data, tab, handleTabChange } = useViewModel();
+  const { fr04Data, tab, handleTabChange } = useViewModel(id);
   return (
     <div>
       <ProcessStepper isActive={3} id={id} />
 
       <FR04Layout isB2B={true} tabIndex={tab} handleTabChange={handleTabChange}>
         <div>
-          {fr04Data?.form42?.[tab - 1]?.process.map((data) => (
-            <div className="border-b border-gray-300 pb-10 mb-10">
-              <h3 className="font-semibold text-linear text-primary-linear text-3xl mb-5">
-                {data.process_name}
-              </h3>
-              {/* <h4>สารขาเข้า</h4> */}
-              {data.product
-                .filter((type) => type.production_class === "input")
-                .map((product) =>
-                  product.items
-                    .filter(
-                      (item): item is ItemTransportType =>
-                        (item as ItemTransportType).report_42_id !== undefined
-                    )
-                    .map((item) => (
-                      <div className="my-5">
-                        <Accordion
-                          additionalHeader={
-                            <div className="flex gap-1 ml-5 h-fit my-auto">
-                              <label className="text-gray-300">ปริมาณ/FU</label>
-                              <p>{item.item_fu_qty ?? "-"}</p>{" "}
-                              <p>{item.item_unit ?? "-"}</p>
-                            </div>
-                          }
-                          title={item.item_name}
-                        >
-                          <FR04_2Form data={item} />
-                        </Accordion>
-                      </div>
-                    ))
-                )}
-            </div>
-          ))}
+          {fr04Data?.form42?.[tab - 1]?.process.map(
+            (data: any, index: number) => (
+              <div className="border-b border-gray-300 pb-10 mb-10" key={index}>
+                <h3 className="font-semibold text-linear text-primary-linear text-3xl mb-5">
+                  {data.process_name}
+                </h3>
+                {/* <h4>สารขาเข้า</h4> */}
+                {data.product
+                  .filter((type: any) => type.production_class === "input")
+                  .map((product: any) =>
+                    product.items
+                      .filter(
+                        (item: any): item is ItemTransportType =>
+                          (item as ItemTransportType).report_42_id !== undefined
+                      )
+                      .map((item: any, key: number) => (
+                        <div className="my-5" key={`${index}${key}`}>
+                          <Accordion
+                            additionalHeader={
+                              <div className="flex gap-1 ml-5 h-fit my-auto">
+                                <label className="text-gray-300">
+                                  ปริมาณ/FU
+                                </label>
+                                <p>{item.item_fu_qty ?? "-"}</p>{" "}
+                                <p>{item.item_unit ?? "-"}</p>
+                              </div>
+                            }
+                            title={item.item_name}
+                          >
+                            <FR04_2Form data={item} id={id} />
+                          </Accordion>
+                        </div>
+                      ))
+                  )}
+              </div>
+            )
+          )}
         </div>
       </FR04Layout>
     </div>
@@ -63,9 +67,10 @@ const FR04_2 = () => {
 };
 export default FR04_2;
 
-const FR04_2Form = (props: { data: ItemTransportType }) => {
+const FR04_2Form = (props: { data: ItemTransportType; id: number }) => {
   const [isEdit, setIsEdit] = useState(false);
   const [trafficType, setTrafficType] = useState("a");
+  const { tgoVehicles } = useViewModel(props.id);
   const handleTrafficTypeChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -137,11 +142,7 @@ const FR04_2Form = (props: { data: ItemTransportType }) => {
               <div className="w-80">
                 <label className="text-sm text-gray-300">พาหนะ</label>
                 <Autocomplete
-                  options={[
-                    "รถบรรทุก 8 ล้อ น้ำหนักรวม 12 ตัน",
-                    "รถบรรทุก 10 ล้อ น้ำหนักรวม 16 ตัน",
-                    "รถบรรทุก 12 ล้อ",
-                  ]}
+                  options={tgoVehicles.map((data) => data.item)}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -253,7 +254,7 @@ const FR04_2Form = (props: { data: ItemTransportType }) => {
               {isEdit ? (
                 <div className="w-64">
                   <Autocomplete
-                    options={LCIandEF}
+                    options={tgoVehicles.map((data) => data.item_detail)}
                     renderInput={(params) => (
                       <TextField
                         {...params}
@@ -292,44 +293,55 @@ const FR04_2Form = (props: { data: ItemTransportType }) => {
             <p>แบบการใช้เชื้อเพลิง</p>
             <div className="flex gap-8">
               {isEdit ? (
-                <div className="w-40">
-                  <TextField
-                    label="ภาระบรรทุกเที่ยวไป (KM)"
-                    variant="outlined"
-                    type="string"
-                    size="small"
-                    fullWidth
-                  />
+                <div className="flex gap-8">
+                  <div className="w-40">
+                    <TextField
+                      label="ชนิดเชื้อเพลิง"
+                      variant="outlined"
+                      type="string"
+                      size="small"
+                      fullWidth
+                    />
+                  </div>
+                  <div className="w-40">
+                    <TextField
+                      label="ปริมาณ"
+                      variant="outlined"
+                      type="string"
+                      size="small"
+                      fullWidth
+                    />
+                  </div>{" "}
+                  <div className="w-40">
+                    <Autocomplete
+                      options={EF}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="ที่มาของค่า EF"
+                          variant="outlined"
+                          size="small"
+                          fullWidth
+                        />
+                      )}
+                    />
+                  </div>
                 </div>
               ) : (
-                <div>
-                  <label className="text-sm text-gray-300">ปริมาณ</label>
-                  <p>{props.data.type1_gas_unit ?? "-"}</p>
+                <div className="flex gap-8">
+                  <div>
+                    <label className="text-sm text-gray-300">ปริมาณ</label>
+                    <p>{props.data.type1_gas_unit ?? "-"}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-300">
+                      ที่มาของค่า EF
+                    </label>
+                    <p>{props.data.type1_ef_source ?? "-"}</p>
+                  </div>
                 </div>
               )}
-              {isEdit ? (
-                <div className="w-40">
-                  <Autocomplete
-                    options={EF}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="ที่มาของค่า EF"
-                        variant="outlined"
-                        size="small"
-                        fullWidth
-                      />
-                    )}
-                  />
-                </div>
-              ) : (
-                <div>
-                  <label className="text-sm text-gray-300">
-                    ที่มาของค่า EF
-                  </label>
-                  <p>{props.data.type1_ef_source ?? "-"}</p>
-                </div>
-              )}
+
               <div className="w-40">
                 <label className="text-sm text-gray-300">ค่า EF</label>
                 <p>{props.data.type1_ef ?? "-"}</p>
@@ -339,25 +351,27 @@ const FR04_2Form = (props: { data: ItemTransportType }) => {
         </div>
       )}
       <div className="flex gap-8">
-        <div>
+        {/* <div>
           <label className="text-sm text-gray-300">การปันส่วน</label>
           <p>100 %</p>
         </div>
         <div>
           <label className="text-sm text-gray-300">ผลคูณ</label>
           <p>0.0027</p>
-        </div>
+        </div> */}
         <div className="ml-auto">
           {isEdit ? (
             <div className="mt-4.5">
-              <label className="text-red-500">อย่าลืมกด save na</label>
               <button
                 onClick={() => setIsEdit(false)}
-                className="border border-primary rounded-full text-primary text-sm flex items-center gap-2 h-fit  px-4 py-1 ml-4"
+                className="border border-primary rounded-full text-primary text-sm flex items-center gap-2 h-fit  px-4 py-1 ml-auto"
               >
                 <Save />
                 <p>บันทึก</p>
-              </button>
+              </button>{" "}
+              <label className="text-red-500 text-end">
+                กรุณากดบันทึกก่อนดำเนินการต่อ
+              </label>
             </div>
           ) : (
             <div className="flex gap-2">
@@ -380,9 +394,7 @@ const FR04_2Form = (props: { data: ItemTransportType }) => {
   );
 };
 
-const LCIandEF = [
-  "ข้อมูลการผลิตของโรงงาน ม.ค - ธ.ค. 66",
-  "ข้อมูลการผลิตของโรงงาน ม.ค - ธ.ค. 65",
+const EF = [
+  { label: "TGO EF", value: "tgo_ef" },
+  { label: "Int. DB", value: "int_db" },
 ];
-
-const EF = ["TGO EF", "self EF", "TGO LCI", "self LCI"];

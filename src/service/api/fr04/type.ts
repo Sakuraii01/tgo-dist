@@ -59,19 +59,90 @@ export type ItemTransportType = {
   updated_date: string;
   process_name: string;
 };
-export type ProcessType = {
-  process_name: string;
-  product: {
-    production_class: string;
-    items: ItemProcessType[] | ItemTransportType[] | [];
-  }[];
+export type InputProcessType = {
+  input_process_id: number;
+  process_id: number;
+  input_cat_id: number;
+  input_name: string;
+  input_unit: string;
+  input_quantity: number;
+  chemical_reaction: number;
+  created_date: string | Date;
+  updated_date: string | Date;
+  input_title_id: number | null;
+  input_title: string | null;
+  input_cat_name_TH: string | null;
+  input_cat_name: string | null;
 };
-export type FR04DataType = {
-  form41?: {
+export type OutputProcessType = {
+  output_process_id: number;
+  process_id: number;
+  output_cat_id: number;
+  output_name: string;
+  output_unit: string;
+  output_quantity: number;
+  finish_output: number;
+  packaging_output: number;
+  created_date: string | Date;
+  updated_date: string | Date;
+  output_cat_name: string;
+};
+export type WasteProcessType = {
+  waste_process_id: number;
+  process_id: number;
+  waste_cat_id: number;
+  waste_name: string;
+  waste_unit: string;
+  waste_qty: number;
+  created_date: string | Date;
+  updated_date: string | Date;
+  waste_cat_name: string;
+  life_cycle_phase: number;
+};
+export type ReportSum = {
+  report41_sum_id: number;
+  product_id: number;
+  sum_lc1_FU_qty: number;
+  sum_lc1_emission: number;
+  sum_lc1_emission_proportion: number;
+  sum_lc2_FU_qty: number;
+  sum_lc2_emission: number;
+  sum_lc2_emission_proportion: 1;
+  sum_lc3_FU_qty: null;
+  sum_lc3_emission: null;
+  sum_lc3_emission_proportion: null;
+  sum_lc4_FU_qty: null;
+  sum_lc4_emission: null;
+  sum_lc4_emission_proportion: null;
+  sum_lc5_FU_qty: null;
+  sum_lc5_emission: null;
+  sum_lc5_emission_proportion: null;
+  total_sum_emission: number;
+  created_date: string;
+  updated_date: string;
+};
+export type ProcessType = {
+  process_id: number;
+  product_id: number;
+  ordering: number;
+  process_name: string;
+  mass_balanced: number;
+  created_date: string | Date;
+  updated_date: string | Date;
+  life_cycle_phase: number;
+  input: InputProcessType[];
+  output?: OutputProcessType[];
+  waste?: WasteProcessType[];
+};
+export type FR04ReportType = {
+  form41: {
     life_cycle_phase: number;
-    process: ProcessType[];
+    process: {
+      process_name: string;
+      product: { production_class: string; items: ItemProcessType[] }[];
+    }[];
   }[];
-  form42?: {
+  form42: {
     life_cycle_phase: number;
     process: ProcessType[];
   }[];
@@ -88,26 +159,10 @@ export type FR04DataType = {
       updated_date: string;
     }
   ];
-  report41Sum: {
-    report41_sum_id: number;
-    product_id: number;
-    sum_lc1_FU_qty: number;
-    sum_lc1_emission: number;
-    sum_lc1_emission_proportion: number;
-    sum_lc2_FU_qty: number;
-    sum_lc2_emission: number;
-    sum_lc2_emission_proportion: 1;
-    sum_lc3_FU_qty: null;
-    sum_lc3_emission: null;
-    sum_lc3_emission_proportion: null;
-    sum_lc4_FU_qty: null;
-    sum_lc4_emission: null;
-    sum_lc4_emission_proportion: null;
-    sum_lc5_FU_qty: null;
-    sum_lc5_emission: null;
-    sum_lc5_emission_proportion: null;
-    total_sum_emission: number;
-    created_date: string;
-    updated_date: string;
-  }[];
+  report41Sum: ReportSum[];
+};
+
+export type FR04_1Type = {
+  life_cycle_phase: number;
+  processes: ProcessType[];
 };
