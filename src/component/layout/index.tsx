@@ -26,9 +26,9 @@ export const Navbar = () => {
         <div className="flex items-center gap-2">
           <div>
             <p className="text-sm font-medium text-primary">
-              {auth?.user?.user.name}
+              {auth?.user?.user?.name}
             </p>
-            <p className="text-xs text-gray-200">{auth?.user?.user.email}</p>
+            <p className="text-xs text-gray-200">{auth?.user?.user?.email}</p>
           </div>
           <KeyboardArrowDownRounded />
         </div>

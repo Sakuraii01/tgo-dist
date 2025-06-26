@@ -15,7 +15,7 @@ const Dashboard = () => {
           <h1 className="text-4xl font-medium mb-5 mt-10">
             ยินดีต้อนรับ{" "}
             <span className="font-bold text-linear text-primary-linear">
-              {auth?.user?.user.name}
+              {auth?.user?.user?.name}
             </span>
           </h1>
           <div className="flex gap-5">

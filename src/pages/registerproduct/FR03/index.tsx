@@ -313,9 +313,10 @@ const FR03Item = (props: FR03ItemProps) => {
                   sumPackage: false,
                 }}
                 handleOnClose={() => setShowform(false)}
-                handleOnSubmit={(data, type) =>
-                  handleOnSubmitFR03Item(data, type, props.data.process_id)
-                }
+                handleOnSubmit={(data, type) => {
+                  handleOnSubmitFR03Item(data, type, props.data.process_id);
+                  setShowform(false);
+                }}
               />
             </div>
             <div className="border-t border-gray-400 bg-gray-100 flex gap-2 px-5 py-4">
@@ -361,6 +362,7 @@ const FR03Item = (props: FR03ItemProps) => {
                                     true
                                   );
                                   console.log(formData, type, process_id);
+                                  setShowform(false);
                                 }}
                                 showForm={
                                   editIsOpen ===
@@ -420,6 +422,7 @@ const FR03Item = (props: FR03ItemProps) => {
                                   data.input_process_id,
                                   true
                                 );
+                                setShowform(false);
                               }}
                               showForm={
                                 editIsOpen ===
@@ -478,6 +481,7 @@ const FR03Item = (props: FR03ItemProps) => {
                                   data.input_process_id,
                                   true
                                 );
+                                setShowform(false);
                               }}
                               showForm={
                                 editIsOpen ===
@@ -539,6 +543,7 @@ const FR03Item = (props: FR03ItemProps) => {
                               data.output_process_id,
                               true
                             );
+                            setShowform(false);
                           }}
                           showForm={
                             editIsOpen ===
@@ -595,6 +600,7 @@ const FR03Item = (props: FR03ItemProps) => {
                               Number(data.waste_process_id),
                               true
                             );
+                            setShowform(false);
                           }}
                           showForm={
                             editIsOpen ===
