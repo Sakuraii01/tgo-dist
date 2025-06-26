@@ -93,7 +93,7 @@ function RequireAuth() {
   const auth = useAuth();
   const location = useLocation();
 
-  if (!auth?.user?.user.name) {
+  if (!auth?.user?.user?.name) {
     return (
       <Navigate
         to={UNPROTECTED_PATH.LOGIN}
@@ -114,7 +114,7 @@ function UnRequireAuth() {
   const auth = useAuth();
   const location = useLocation();
 
-  if (auth?.user?.user.name) {
+  if (auth?.user?.user?.name) {
     return (
       <Navigate
         to={PROTECTED_PATH.SELECT_CBAM_CFP}

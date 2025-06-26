@@ -1,15 +1,22 @@
 import {
   NotificationsRounded,
-  KeyboardArrowDownRounded,
+  // KeyboardArrowDownRounded,
   KeyboardArrowRightRounded,
   HomeRounded,
+  LogoutRounded,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../constants/path.route";
 import { useAuth } from "../../auth/useAuth";
+import { clearToken } from "../../utils/localStorage";
 export const Navbar = () => {
   const navigate = useNavigate();
   const auth = useAuth();
+  const navigateToLoginPage = async () => {
+    await clearToken();
+    window.location.reload();
+    localStorage.clear();
+  };
   return (
     <nav
       className="flex justify-between items-center w-full py-2 px-10 bg-white sticky top-0 left-0"
@@ -30,7 +37,13 @@ export const Navbar = () => {
             </p>
             <p className="text-xs text-gray-200">{auth?.user?.user?.email}</p>
           </div>
-          <KeyboardArrowDownRounded />
+          {/* <KeyboardArrowDownRounded /> */}
+          <div
+            className="text-error mx-5 cursor-pointer hover:bg-error/10"
+            onClick={navigateToLoginPage}
+          >
+            <LogoutRounded />
+          </div>
         </div>
       </div>
     </nav>
