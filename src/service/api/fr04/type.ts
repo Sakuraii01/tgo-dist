@@ -59,46 +59,46 @@ export type ItemTransportType = {
   updated_date: string;
   process_name: string;
 };
-export type InputProcessType = {
-  input_process_id: number;
-  process_id: number;
-  input_cat_id: number;
-  input_name: string;
-  input_unit: string;
-  input_quantity: number;
-  chemical_reaction: number;
-  created_date: string | Date;
-  updated_date: string | Date;
-  input_title_id: number | null;
-  input_title: string | null;
-  input_cat_name_TH: string | null;
-  input_cat_name: string | null;
-};
-export type OutputProcessType = {
-  output_process_id: number;
-  process_id: number;
-  output_cat_id: number;
-  output_name: string;
-  output_unit: string;
-  output_quantity: number;
-  finish_output: number;
-  packaging_output: number;
-  created_date: string | Date;
-  updated_date: string | Date;
-  output_cat_name: string;
-};
-export type WasteProcessType = {
-  waste_process_id: number;
-  process_id: number;
-  waste_cat_id: number;
-  waste_name: string;
-  waste_unit: string;
-  waste_qty: number;
-  created_date: string | Date;
-  updated_date: string | Date;
-  waste_cat_name: string;
-  life_cycle_phase: number;
-};
+// export type InputProcessType = {
+//   input_process_id: number;
+//   process_id: number;
+//   input_cat_id: number;
+//   input_name: string;
+//   input_unit: string;
+//   input_quantity: number;
+//   chemical_reaction: number;
+//   created_date: string | Date;
+//   updated_date: string | Date;
+//   input_title_id: number | null;
+//   input_title: string | null;
+//   input_cat_name_TH: string | null;
+//   input_cat_name: string | null;
+// };
+// export type OutputProcessType = {
+//   output_process_id: number;
+//   process_id: number;
+//   output_cat_id: number;
+//   output_name: string;
+//   output_unit: string;
+//   output_quantity: number;
+//   finish_output: number;
+//   packaging_output: number;
+//   created_date: string | Date;
+//   updated_date: string | Date;
+//   output_cat_name: string;
+// };
+// export type WasteProcessType = {
+//   waste_process_id: number;
+//   process_id: number;
+//   waste_cat_id: number;
+//   waste_name: string;
+//   waste_unit: string;
+//   waste_qty: number;
+//   created_date: string | Date;
+//   updated_date: string | Date;
+//   waste_cat_name: string;
+//   life_cycle_phase: number;
+// };
 export type ReportSum = {
   report41_sum_id: number;
   product_id: number;
@@ -107,7 +107,7 @@ export type ReportSum = {
   sum_lc1_emission_proportion: number;
   sum_lc2_FU_qty: number;
   sum_lc2_emission: number;
-  sum_lc2_emission_proportion: 1;
+  sum_lc2_emission_proportion: number;
   sum_lc3_FU_qty: null;
   sum_lc3_emission: null;
   sum_lc3_emission_proportion: null;
@@ -121,18 +121,19 @@ export type ReportSum = {
   created_date: string;
   updated_date: string;
 };
+export type ProcessItemType = {
+  item_id: number;
+  item_name: string;
+  item_unit: string;
+  item_quantity: number;
+  chemical_reaction: number;
+  input_title: string;
+  item_class: "input" | "output" | "waste";
+};
 export type ProcessType = {
   process_id: number;
-  product_id: number;
-  ordering: number;
   process_name: string;
-  mass_balanced: number;
-  created_date: string | Date;
-  updated_date: string | Date;
-  life_cycle_phase: number;
-  input: InputProcessType[];
-  output?: OutputProcessType[];
-  waste?: WasteProcessType[];
+  item: ProcessItemType[];
 };
 export type FR04ReportType = {
   form41: {
@@ -161,8 +162,209 @@ export type FR04ReportType = {
   ];
   report41Sum: ReportSum[];
 };
-
+export type FR04_reportType = {
+  form41: {
+    life_cycle_phase: number;
+    life_cycle_phase_name: string;
+    process: {
+      process_name: string;
+      product: {
+        item_id: number;
+        report_41_id: number;
+        company_id: number;
+        product_id: number;
+        process_id: number;
+        life_cycle_phase: number;
+        production_class: string;
+        item_name: string;
+        item_unit: string;
+        item_quantity: number;
+        lci_source_period: string;
+        ef: string;
+        ef_source: string;
+        ef_source_ref: string;
+        transport_type: string;
+        ratio: number;
+        ghg_emission: number;
+        ghg_emission_proportion: number;
+        cut_off: number;
+        description: string;
+        created_date: string;
+        updated_date: string;
+        process_name: string;
+      }[];
+    }[];
+  }[];
+  report41Sum: ReportSum[];
+};
 export type FR04_1Type = {
   life_cycle_phase: number;
+  life_cycle_phase_name: string;
+  product_id: number;
+  FU: number;
   processes: ProcessType[];
+};
+
+export type FR04_1ItemType = {
+  company_id: number;
+  product_id: number;
+  process_id: number;
+  life_cycle_phase: number;
+  item_name: string;
+  item_unit: string;
+  item_quantity: number;
+  lci_source_period: string;
+  ef: number;
+  ef_source: string;
+  ef_source_ref: string;
+  transport_type: string;
+  ratio: number;
+  ghg_emission: number;
+  ghg_emission_proportion: number;
+  cut_off: number;
+  description: string;
+};
+export type FR04_3ItemType = {
+  cfp_report43_selfcollect_efs_id: number;
+  self_collect_id: number;
+  item_name: string;
+  item_type: string;
+  item_unit: string;
+  item_qty: string;
+  item_fu_qty: string;
+  item_source: string;
+  item_ef: string;
+  item_ef_source: string;
+  item_ef_source_ref: string;
+  item_emission: string;
+  transport_type: string;
+  type1_gas: string;
+  type1_gas_unit: string;
+  type1_gas_qty: string;
+  type1_ef: string;
+  type1_ef_source: string;
+  type2_distance: string;
+  type2_outbound_load: string;
+  type2_return_load: string;
+  type2_vehicle: string;
+  type2_outbound_load_percent: string;
+  type2_return_load_percent: string;
+  type2_outbound_ef: string;
+  type2_return_ef: string;
+  type2_ef_source: string;
+  type2_ef_source_ref: string;
+  transport_emission: string;
+  total_emission: string;
+  proportion: string;
+  ratio: number;
+  cut_off: string;
+  add_on_detail: string;
+  created_date: string;
+  updated_date: string;
+};
+export type FR04_3ProcessType = {
+  self_collect_id: 1;
+  company_id: 1005;
+  product_id: 7;
+  self_collect_name: "Fr04.3 กระบวนการบำบัดน้ำเสีย";
+  self_collect_ef: "0.478900";
+  ratio: 1;
+  created_date: "2025-06-12T23:35:12.000Z";
+  updated_date: "2025-06-12T23:35:12.000Z";
+  input: FR04_3ItemType[];
+  output: FR04_3ItemType[];
+};
+
+export type FR04_3Type = {
+  processes: FR04_3ProcessType[];
+};
+
+export type FR04_1ItemInfoType = {
+  itemInfo: {
+    report_41_id: number;
+    company_id: number;
+    product_id: number;
+    process_id: number;
+    life_cycle_phase: number;
+    production_class: string;
+    item_name: string;
+    item_unit: string;
+    item_quantity: number;
+    lci_source_period: string;
+    ef: number;
+    ef_source: string;
+    ef_source_ref: string;
+    transport_type: string;
+    ratio: number;
+    ghg_emission: null;
+    ghg_emission_proportion: null;
+    cut_off: null;
+    description: string;
+    created_date: string;
+    updated_date: string;
+  };
+  processDetails: {
+    output_process_id: number;
+    process_id: number;
+    output_cat_id: number;
+    output_name: string;
+    output_unit: string;
+    output_quantity: number;
+    finish_output: number;
+    created_date: string;
+    updated_date: string;
+    packaging_output: number;
+  };
+};
+
+export type FR04_2ItemInfoType = {
+  itemInfo: FR04_2ItemItemInfo;
+  processDetails: {
+    input_process_id: number;
+    process_id: number;
+    input_cat_id: number;
+    input_name: string;
+    input_unit: string;
+    input_quantity: number;
+    chemical_reaction: number;
+    created_date: string;
+    updated_date: string;
+    input_title_id: number;
+  };
+};
+
+export type FR04_2ItemItemInfo = {
+  report_42_id?: number;
+  company_id: number;
+  product_id: number;
+  process_id: number;
+  production_class: string;
+  life_cycle_phase: number;
+  item_name: string;
+  item_unit: string;
+  item_fu_qty: number;
+  distance: number;
+  distance_source: string;
+  calculate_type: string;
+  type1_gas: number | null;
+  type1_gas_unit: string | null;
+  type1_gas_qty: number | null;
+  type1_ef: number | null;
+  type1_ef_source: string | null;
+  type2_outbound_load: number | null;
+  type2_return_load: number | null;
+  type2_vehicle_outbound: string;
+  type2_vehicle_return: string;
+  type2_outbound_load_percent: number;
+  type2_return_load_percent: number;
+  type2_outbound_ef: number;
+  type2_return_ef: number;
+  type2_ef_source: string;
+  type2_ef_source_ref: string;
+  ratio: number;
+  transport_emission: number;
+  cut_off: number;
+  add_on_detail: string;
+  created_date?: string;
+  updated_date?: string;
 };

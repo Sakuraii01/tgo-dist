@@ -17,21 +17,11 @@ const CreateProduct = () => {
     initialValues,
     FR03FomrValidationSchema,
     unitList,
+    pcrList,
     registerRoundList,
     handleSubmit,
   } = useViewModel(id);
-  console.log(initialValues);
 
-  const PRC = [
-    {
-      label: "ข้อกำหนดเฉพำะกลุ่มผลิตภัณฑ์สำหรับผลิตภัณฑ์ปูนซีเมนต์สำเร็จรูป",
-      value: "ข้อกำหนดเฉพำะกลุ่มผลิตภัณฑ์สำหรับผลิตภัณฑ์ปูนซีเมนต์สำเร็จรูป",
-    },
-    {
-      label: "ข้อกำหนดเฉพาะกลุ่มผลิตภัณฑ์ยางพาราและผลิตภัณฑ์จากยางพารา",
-      value: "ข้อกำหนดเฉพาะกลุ่มผลิตภัณฑ์ยางพาราและผลิตภัณฑ์จากยางพารา",
-    },
-  ];
   return (
     <div>
       <ProcessStepper isActive={0} id={id} />
@@ -155,9 +145,7 @@ const CreateProduct = () => {
                       name={`functionalUnit`}
                       label="หน่วยการทำงาน"
                       items={unitList.map((item) => ({
-                        label:
-                          item.product_unit_abbr_th +
-                          `(${item.product_unit_abbr_eng})`,
+                        label: item.product_unit_name_en,
                         value: Number(item.product_unit_id),
                       }))}
                     />
@@ -176,9 +164,7 @@ const CreateProduct = () => {
                       name={`functionalProduct`}
                       label="หน่วยผลิตภัณฑ์"
                       items={unitList.map((item) => ({
-                        label:
-                          item.product_unit_abbr_th +
-                          `(${item.product_unit_abbr_eng})`,
+                        label: item.product_unit_name_en,
                         value: Number(item.product_unit_id),
                       }))}
                     />
@@ -199,9 +185,9 @@ const CreateProduct = () => {
                 <AutoCompleteField
                   name={`pcrReference`}
                   label="อ้างอิง PCR"
-                  items={PRC.map((item) => ({
-                    label: item.label,
-                    value: item.value,
+                  items={pcrList?.map((item) => ({
+                    label: item.pcr_name,
+                    value: item.id,
                   }))}
                 />
               </div>

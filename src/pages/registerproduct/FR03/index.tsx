@@ -328,14 +328,14 @@ const FR03Item = (props: FR03ItemProps) => {
                 </div>
                 <div className="font-medium">
                   <div className="mb-6">
-                    <div className="w-full rounded bg-stroke px-3 my-2">
+                    <div className="w-full rounded bg-primary-2 text-white px-3 my-2">
                       <p>วัตถุดิบ</p>
                     </div>
                     {props?.data?.input?.filter(
-                      (data) => data.input_cat_id === 8
+                      (data) => data.input_cat_id === 7
                     )[0] ? (
                       props?.data?.input
-                        ?.filter((data) => data.input_cat_id === 8)
+                        ?.filter((data) => data.input_cat_id === 7)
                         ?.map((data, index) => {
                           console.log(data);
                           return (
@@ -349,19 +349,15 @@ const FR03Item = (props: FR03ItemProps) => {
                                   amount: Number(data.input_quantity),
                                 }}
                                 handleOnClose={() => setEditIsOpen("close")}
-                                handleOnSubmit={(
-                                  formData,
-                                  type,
-                                  process_id
-                                ) => {
+                                handleOnSubmit={(formData, type) => {
                                   handleOnSubmitFR03Item(
                                     formData,
                                     type,
-                                    Number(process_id),
+                                    props.data.process_id,
                                     data.input_process_id,
                                     true
                                   );
-                                  console.log(formData, type, process_id);
+
                                   setShowform(false);
                                 }}
                                 showForm={
@@ -394,7 +390,7 @@ const FR03Item = (props: FR03ItemProps) => {
                     )}
                   </div>
                   <div className="mb-6">
-                    <div className="w-full rounded bg-stroke px-3 my-2">
+                    <div className="w-full rounded bg-primary-2 text-white px-3 my-2">
                       <p>พลังงาน และเชื้อเพลิง</p>
                     </div>
                     {props?.data?.input?.filter(
@@ -413,12 +409,11 @@ const FR03Item = (props: FR03ItemProps) => {
                                 amount: Number(data.input_quantity),
                               }}
                               handleOnClose={() => setEditIsOpen("close")}
-                              handleOnSubmit={(formData, type, process_id) => {
-                                console.log(formData, type, process_id);
+                              handleOnSubmit={(formData, type) => {
                                 handleOnSubmitFR03Item(
                                   formData,
                                   type,
-                                  Number(process_id),
+                                  props.data.process_id,
                                   data.input_process_id,
                                   true
                                 );
@@ -453,14 +448,14 @@ const FR03Item = (props: FR03ItemProps) => {
                     )}
                   </div>
                   <div className="mb-6">
-                    <div className="w-full rounded bg-stroke px-3 my-2">
+                    <div className="w-full rounded bg-primary-2 text-white px-3 my-2">
                       <p>ทรัพยากร และวัสดุช่วยการผลิต</p>
                     </div>
                     {props?.data?.input?.filter(
-                      (data) => data.input_cat_id === 7
+                      (data) => data.input_cat_id === 8
                     )[0] ? (
                       props?.data?.input
-                        ?.filter((data) => data.input_cat_id === 7)
+                        ?.filter((data) => data.input_cat_id === 8)
                         ?.map((data, index) => (
                           <>
                             <FR03Form
@@ -472,12 +467,11 @@ const FR03Item = (props: FR03ItemProps) => {
                                 amount: Number(data.input_quantity),
                               }}
                               handleOnClose={() => setEditIsOpen("close")}
-                              handleOnSubmit={(formData, type, process_id) => {
-                                console.log(formData, type, process_id);
+                              handleOnSubmit={(formData, type) => {
                                 handleOnSubmitFR03Item(
                                   formData,
                                   type,
-                                  Number(process_id),
+                                  props.data.process_id,
                                   data.input_process_id,
                                   true
                                 );
@@ -534,12 +528,11 @@ const FR03Item = (props: FR03ItemProps) => {
                             sumPackage: data.packaging_output,
                           }}
                           handleOnClose={() => setEditIsOpen("close")}
-                          handleOnSubmit={(formData, type, process_id) => {
-                            console.log(formData, type, process_id);
+                          handleOnSubmit={(formData, type) => {
                             handleOnSubmitFR03Item(
                               formData,
                               type,
-                              Number(process_id),
+                              props.data.process_id,
                               data.output_process_id,
                               true
                             );
@@ -579,56 +572,58 @@ const FR03Item = (props: FR03ItemProps) => {
                       ของเสีย/สารขาออก
                     </h5>
                   </div>
-                  {props?.data?.waste[0] ? (
-                    props?.data?.waste?.map((data, index) => (
-                      <>
-                        <FR03Form
-                          initialValues={{
-                            type: "waste",
-                            itemName: data.waste_name,
-                            materialType: data.waste_cat_id,
-                            unit: data.waste_unit,
-                            amount: Number(data.waste_qty),
-                          }}
-                          handleOnClose={() => setEditIsOpen("close")}
-                          handleOnSubmit={(formData, type, process_id) => {
-                            console.log(formData, type, process_id);
-                            handleOnSubmitFR03Item(
-                              formData,
-                              type,
-                              Number(process_id),
-                              Number(data.waste_process_id),
-                              true
-                            );
-                            setShowform(false);
-                          }}
-                          showForm={
-                            editIsOpen ===
-                            `open-waste-${data.process_id}-${
-                              data?.waste_process_id || 0
-                            }`
-                          }
-                          isUpdate
-                        />
-                        <MaterialCardItem
-                          key={index}
-                          title={data.waste_name}
-                          unit={data.waste_unit}
-                          amount={data?.waste_qty || 0}
-                          type={data.waste_cat_name}
-                          button={cardButtonRender(
-                            data.process_id,
-                            data?.waste_process_id || 0,
-                            "waste"
-                          )}
-                        />
-                      </>
-                    ))
-                  ) : (
-                    <p className="text-gray-300 text-sm italic">
-                      ไม่มีของเสีย/สารขาออก
-                    </p>
-                  )}
+                  <div>
+                    <div className="w-full rounded bg-primary-2 text-white px-3 my-2">
+                      <p>ผลิตภัณฑ์ร่วม</p>
+                    </div>
+                    {props.data.waste[0] ? (
+                      props.data.waste
+                        .filter((data) => data.waste_cat_id === 1)
+                        .map((data, index) => (
+                          <div>
+                            <MaterialCardItem
+                              key={index}
+                              title={data.waste_name}
+                              unit={data.waste_unit}
+                              amount={data?.waste_qty || 0}
+                              button={cardButtonRender(
+                                data.process_id,
+                                data?.waste_process_id || 0,
+                                "waste"
+                              )}
+                            />
+                          </div>
+                        ))
+                    ) : (
+                      <p className="text-gray-300 text-sm italic">
+                        ผลิตภัณฑ์ร่วม
+                      </p>
+                    )}
+                    <div className="w-full rounded bg-primary-2 text-white px-3 my-2">
+                      <p>ของเสีย</p>
+                    </div>
+                    {props.data.waste[0] ? (
+                      props.data.waste
+                        .filter((data) => data.waste_cat_id === 2)
+                        .map((data, index) => (
+                          <div>
+                            <MaterialCardItem
+                              key={index}
+                              title={data.waste_name}
+                              unit={data.waste_unit}
+                              amount={data?.waste_qty || 0}
+                              button={cardButtonRender(
+                                data.process_id,
+                                data?.waste_process_id || 0,
+                                "waste"
+                              )}
+                            />
+                          </div>
+                        ))
+                    ) : (
+                      <p className="text-gray-300 text-sm italic">ของเสีย</p>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

@@ -15,6 +15,7 @@ export type OutputProcessType = {
 export type InputProcessType = {
   input_process_id?: number;
   process_id: number;
+  input_title_id?: number | null;
   input_cat_id: number;
   input_cat_name_TH?: string;
   input_name: string;

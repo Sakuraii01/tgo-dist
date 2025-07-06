@@ -15,15 +15,14 @@ export const Navbar = () => {
   const navigateToLoginPage = async () => {
     await clearToken();
     window.location.reload();
-    localStorage.clear();
   };
   return (
     <nav
-      className="flex justify-between items-center w-full py-2 px-10 bg-white sticky top-0 left-0"
+      className="flex justify-between items-center w-full py-2 px-10 bg-white sticky top-0 left-0 z-10"
       style={{ boxShadow: "inset 0px -5px 16px rgba(0, 0, 0, 0.05)" }}
     >
       <img
-        src="./icon.png"
+        src={`/cfp/icon.png`}
         alt="Logo"
         className="w-5"
         onClick={() => navigate(PROTECTED_PATH.DASHBOARD)}

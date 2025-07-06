@@ -32,11 +32,20 @@ const useViewModel = (id: number) => {
   ) => {
     if (isUpdate) {
       if (type === "input") {
+        console.log(processId);
+
         inputProcessService
           .reqPutInputProcessByID(dataId || 0, {
             process_id: processId,
-            // input_process_id: dataId,
             input_cat_id: entity.materialType,
+            input_title_id:
+              entity.materialType === 7
+                ? 1
+                : entity.materialType === 8
+                ? 3
+                : entity.materialType === 9
+                ? 2
+                : 0,
             input_name: entity.itemName,
             input_unit: entity.unit,
             input_quantity: entity.amount,
@@ -48,7 +57,15 @@ const useViewModel = (id: number) => {
           });
       } else if (type === "intermediate") {
         outputProcessService
-          .reqPutOutputProcessByID(dataId || 0, entity as OutputProcessType)
+          .reqPutOutputProcessByID(dataId || 0, {
+            process_id: processId,
+            output_cat_id: 2,
+            output_name: entity.itemName,
+            output_unit: entity.unit,
+            output_quantity: entity.amount,
+            finish_output: entity.isLastProduct,
+            packaging_output: entity.sumPackage,
+          } as OutputProcessType)
           .then((response) => {
             console.log("Output process updated:", response);
             fetchProcess();
@@ -69,6 +86,14 @@ const useViewModel = (id: number) => {
           .reqPostInputProcess({
             process_id: processId,
             input_cat_id: entity.materialType,
+            input_title_id:
+              entity.materialType === 7
+                ? 1
+                : entity.materialType === 8
+                ? 3
+                : entity.materialType === 9
+                ? 2
+                : 0,
             input_name: entity.itemName,
             input_unit: entity.unit,
             input_quantity: entity.amount,

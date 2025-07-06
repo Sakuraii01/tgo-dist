@@ -58,7 +58,6 @@ export function getUserFromStorage(): UserLoginInfo | null {
     if (!raw || raw === "undefined") return null;
     return JSON.parse(raw) as UserLoginInfo;
   } catch {
-    localStorage.removeItem("user_account");
     return null;
   }
 }

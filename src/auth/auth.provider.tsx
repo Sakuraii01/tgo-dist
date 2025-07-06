@@ -12,10 +12,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     JSON.parse(JSON.stringify(localStorage.getItem("user_account")))
   );
   function setCredential(user: UserLoginInfo) {
-    // console.log(user);
-
     setUser(user);
     localStorage.setItem("user_account", JSON.stringify(user));
+    const storedToken = localStorage.getItem("user_account");
+    console.log(storedToken);
   }
 
   return (

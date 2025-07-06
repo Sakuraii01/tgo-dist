@@ -4,10 +4,12 @@ import CreateFormSchema from "./validation";
 import {
   UnitsDropdownService,
   RegisterRoundDropdownService,
+  TGOEFDropdownService,
 } from "../../../service/api/dropdown";
 import type {
   UnitsDrowpdownType,
   RegisterRounedType,
+  PCRType,
 } from "../../../service/api/dropdown/type";
 import { type ProductType } from "../../../service/api/product/type";
 import { useNavigate } from "react-router-dom";
@@ -31,6 +33,7 @@ type productProps = {
 const useViewModel = (id?: number) => {
   const navigate = useNavigate();
   const unitService = new UnitsDropdownService();
+  const tgoEFDropdownService = new TGOEFDropdownService();
   const registerRoundService = new RegisterRoundDropdownService();
   const [registerRoundList, setRegisterRoundList] = useState<
     RegisterRounedType[]
@@ -52,6 +55,7 @@ const useViewModel = (id?: number) => {
     product_image: null,
     scope: "B2B",
   });
+  const [pcrList, setPcrList] = useState<PCRType[]>([]);
   const { FR03FomrValidationSchema } = CreateFormSchema();
   const productService = new ProductService();
 
@@ -113,7 +117,12 @@ const useViewModel = (id?: number) => {
         setUnitList(data || []);
       })
       .catch((err) => console.error(err));
-
+    tgoEFDropdownService
+      .reqGetPCRService()
+      .then((data) => {
+        setPcrList(data || []);
+      })
+      .catch((err) => console.error(err));
     registerRoundService
       .reqGetRegisterRound()
       .then((data) => {
@@ -162,6 +171,7 @@ const useViewModel = (id?: number) => {
     FR03FomrValidationSchema,
     unitList,
     registerRoundList,
+    pcrList,
     handleSubmit,
   };
 };

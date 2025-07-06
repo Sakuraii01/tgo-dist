@@ -1,0 +1,46 @@
+export type FR06Report = {
+  report61_sum_id: number;
+  product_id: number;
+  company_id: number;
+  document_name_by_TGO: string | null;
+  document_no_by_TGO: string | null;
+  lc1_based_emission: string;
+  lc2_based_emission: string;
+  lc3_based_emission: string;
+  lc4_based_emission: string;
+  lc5_based_emission: string;
+  land_used_based_emission: string | number;
+  lc1_diff_emission: string | number;
+  lc2_diff_emission: string | number;
+  lc3_diff_emission: string | number;
+  lc4_diff_emission: string | number;
+  lc5_diff_emission: string | number;
+  land_used_diff_emission: string | number;
+  lc1_diff_emission_percent: string | number;
+  lc2_diff_emission_percent: string | number;
+  lc3_diff_emission_percent: string | number;
+  lc4_diff_emission_percent: string | number;
+  lc5_diff_emission_percent: string | number;
+  land_used_diff_emission_percent: string | number;
+  sum_based_emission: string | number;
+  sum_diff_emission: string | number;
+  sum_diff_emission_percent: string | number;
+  verified_date?: string;
+  created_date?: string;
+  updated_date?: string;
+};
+
+export type FR06_2Report = {
+  report62_sum_id: number;
+  product_id: number;
+  company_id: number;
+  document_name_by_TGO: string | null;
+  document_no_by_TGO: string | null;
+  std_emission: string;
+  product_emission: string;
+  diff_emission: string | number;
+  std_emission_source: string | null;
+  verified_date?: string;
+  created_date?: string;
+  updated_date?: string;
+};

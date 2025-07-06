@@ -10,6 +10,7 @@ import type {
   DistrincType,
   SubDistricType,
   IndustryType,
+  PCRType,
 } from "./type";
 
 export class UnitsDropdownService extends RemoteA {
@@ -65,6 +66,13 @@ export class TGOEFDropdownService extends RemoteA {
     );
     const { data } = response;
     return data;
+  };
+  reqGetPCRService = async (): Promise<PCRType[]> => {
+    const response = await this.getAxiosInstance().get(
+      PROTECTED_PATH.PRC_DROPDOWN
+    );
+    const { data } = response;
+    return data.ข้อกำหนดระดับประเทศ;
   };
 }
 

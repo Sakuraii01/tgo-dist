@@ -18,11 +18,7 @@ type FR03FormType = {
   showForm: boolean;
   initialValues: any;
   handleOnClose: () => void;
-  handleOnSubmit: (
-    data: any,
-    type: "input" | "intermediate" | "waste",
-    process_id?: number
-  ) => void;
+  handleOnSubmit: (data: any, type: "input" | "intermediate" | "waste") => void;
   isUpdate?: boolean;
 };
 export const FR03Form = (props: FR03FormType) => {
@@ -107,7 +103,7 @@ export const FR03Form = (props: FR03FormType) => {
                           label="หน่วย"
                           items={unitList.map((item) => ({
                             label: item.label,
-                            value: Number(item.value),
+                            value: item.value,
                           }))}
                         />
                       </div>
@@ -193,7 +189,7 @@ export const InputFr03 = ({
           label="หน่วย"
           items={unitList.map((item) => ({
             label: item.label,
-            value: Number(item.value),
+            value: item.value,
           }))}
         />
       </div>
@@ -227,7 +223,7 @@ const FR03Function = () => {
   const [wasteCategoryDropdown, setWasteCategoryDropdown] = useState<
     { value: number; label: string }[]
   >([]);
-  const [unitList, setUnitList] = useState<{ value: number; label: string }[]>(
+  const [unitList, setUnitList] = useState<{ value: string; label: string }[]>(
     []
   );
   const fetchCategoryDropdown = async () => {
@@ -249,8 +245,8 @@ const FR03Function = () => {
       );
     const unitList = await unitService.reqGetUnits().then((data) =>
       data.map((item) => ({
-        value: item.product_unit_id,
-        label: `${item.product_unit_abbr_th} (${item.product_unit_abbr_eng})`,
+        value: item.product_unit_name_en,
+        label: item.product_unit_name_en,
       }))
     );
     setUnitList(unitList);

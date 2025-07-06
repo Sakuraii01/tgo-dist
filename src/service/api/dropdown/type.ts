@@ -71,3 +71,11 @@ export type IndustryType = {
   industrial_name: string;
   required_cbam: number;
 };
+
+export type PCRType = {
+  id: number;
+  pcr_name: string;
+  approval_date: string;
+  pcr_type: string;
+  pcr_type_id: number;
+};
