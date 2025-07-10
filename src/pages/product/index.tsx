@@ -4,6 +4,7 @@ import useViewModel from "./viewModel";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../constants/path.route";
+
 const Product = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -31,16 +32,6 @@ const Product = () => {
               <div className="ml-auto">
                 <button
                   onClick={() =>
-                    navigate(PROTECTED_PATH.REGISTER_PRODUCT_FR03 + `?id=${id}`)
-                  }
-                  type="button"
-                  className="bg-white font-semibold shadow px-4 py-1 rounded-full flex gap-1 ml-auto mb-4"
-                >
-                  <EditRounded fontSize="small" />
-                  <p>ดำเนินการต่อ</p>
-                </button>
-                <button
-                  onClick={() =>
                     window.open(
                       "http://178.128.123.212:5000/api/v1/excel/1005/7",
                       "_blank"
@@ -57,19 +48,21 @@ const Product = () => {
           </div>
           <div className="w-full rounded-xl bg-stroke py-4 px-6 my-4">
             <p className="text-xs font-semibold mb-1">คำอธิบาย</p>
-            {productData?.product_techinfo_array?.map((data) => (
-              <p>{data}</p>
+            {productData?.product_techinfo_array?.map((data, index) => (
+              <p key={index}>{data}</p>
             ))}
           </div>
         </section>
+
         <section className="flex gap-5">
           {(() => {
             let photoSrc: string = "/";
             if (typeof productData?.product_photo === "string") {
               photoSrc = "http://178.128.123.212:5000" + productData.photo_path;
             }
-            return <img src={photoSrc} className="w-80" />;
+            return <img src={photoSrc} alt="Product" className="w-80" />;
           })()}
+
           <div className="w-full">
             <table className="rounded-2xl w-full mb-10">
               <tbody>
@@ -117,6 +110,7 @@ const Product = () => {
                 </tr>
               </tbody>
             </table>
+
             <div className="flex gap-10">
               <table>
                 <tbody>
@@ -138,6 +132,7 @@ const Product = () => {
                   </tr>
                 </tbody>
               </table>
+
               <div>
                 <table>
                   <tbody>
@@ -155,8 +150,37 @@ const Product = () => {
             </div>
           </div>
         </section>
+        {/* Comment Box Section */}
+        <div className="mt-8">
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+            {/* Header */}
+            <div className="bg-gradient-to-r text-black px-6 py-4 rounded-t-xl">
+              <h3 className="text-lg font-semibold">ประเด็น</h3>
+            </div>
+
+            {/* Content */}
+            <div className="p-5">
+              <textarea
+                className="w-full h-32 p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                placeholder="กรอกประเด็นที่ต้องการแสดงความคิดเห็น..."
+                rows={4}
+              />
+
+              {/* Action Buttons */}
+              <div className="flex justify-end gap-3 mt-4">
+                <button
+                  type="button"
+                  className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
+                >
+                  บันทึกความคิดเห็น
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
+
 export default Product;
