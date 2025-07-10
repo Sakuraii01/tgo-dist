@@ -9,6 +9,7 @@ export const PROTECTED_PATH = {
   VERIFIER: "/verifier",
 
   PRODUCT_DETAIL: "/product_detail",
+  PRODUCT_DETAIL_VERIFIER: "/product_detail_verifier",
   SELF_COLLECT: "/selfcollect",
   CREATE_SELF_COLLECT: "/selfcollect/create",
 

@@ -1,9 +1,9 @@
-import { BreadcrumbNav, Navbar } from "../../component/layout";
+import { BreadcrumbNav, Navbar } from "../../../component/layout";
 import { EditRounded, FileDownloadRounded } from "@mui/icons-material";
 import useViewModel from "./viewModel";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { PROTECTED_PATH } from "../../constants/path.route";
+import { PROTECTED_PATH } from "../../../constants/path.route";
 
 const Product = () => {
   const navigate = useNavigate();
@@ -150,8 +150,36 @@ const Product = () => {
             </div>
           </div>
         </section>
+        {/* Comment Box Section */}
+        <div className="mt-8">
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+            {/* Header */}
+            <div className="bg-gradient-to-r text-black px-6 py-4 rounded-t-xl">
+              <h3 className="text-lg font-semibold">ประเด็น</h3>
+            </div>
+
+            {/* Content */}
+            <div className="p-5">
+              <textarea
+                className="w-full h-32 p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                placeholder="กรอกประเด็นที่ต้องการแสดงความคิดเห็น..."
+                rows={4}
+              />
+
+              {/* Action Buttons */}
+              <div className="flex justify-end gap-3 mt-4">
+                <button
+                  type="button"
+                  className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
+                >
+                  บันทึกความคิดเห็น
+                </button>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
+    </div>
   );
 };
 

@@ -123,7 +123,7 @@ const Verifier = () => {
                       <button
                         onClick={() =>
                           navigate(
-                            PROTECTED_PATH.PRODUCT_DETAIL +
+                            PROTECTED_PATH.PRODUCT_DETAIL_VERIFIER +
                               `?id=${data.product_id}`
                           )
                         }

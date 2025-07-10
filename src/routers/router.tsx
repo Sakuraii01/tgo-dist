@@ -23,6 +23,7 @@ import FR06_1 from "../pages/registerproduct/FR06_1";
 import FR06_2 from "../pages/registerproduct/FR06_2";
 import SelectPage from "../pages/selected";
 import Verifier from "../pages/verifier";
+import Product_verifier from "../pages/verifier/product"
 
 import { useAuth } from "../auth/useAuth";
 
@@ -51,6 +52,8 @@ const Router = () => {
                 path={PROTECTED_PATH.VERIFIER} 
                 element={<Verifier />} />
           <Route path={PROTECTED_PATH.PRODUCT_DETAIL} element={<Product />} />
+          <Route path={PROTECTED_PATH.PRODUCT_DETAIL_VERIFIER} element={<Product_verifier />} />
+
           <Route element={<Outlet />}>
             <Route
               path={PROTECTED_PATH.REGISTER_PRODUCT}
