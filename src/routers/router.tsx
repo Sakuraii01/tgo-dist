@@ -22,8 +22,8 @@ import FR04_3 from "../pages/registerproduct/FR04-3";
 import FR06_1 from "../pages/registerproduct/FR06_1";
 import FR06_2 from "../pages/registerproduct/FR06_2";
 import SelectPage from "../pages/selected";
-import Verifier from "../pages/verifier";
-import Product_verifier from "../pages/verifier/product"
+import Auditor from "../pages/auditor";
+import AProduct from "../pages/auditor/product";
 
 import { useAuth } from "../auth/useAuth";
 
@@ -48,11 +48,14 @@ const Router = () => {
             path={PROTECTED_PATH.SELECT_CBAM_CFP}
             element={<SelectPage />}
           />
-           <Route 
-                path={PROTECTED_PATH.VERIFIER} 
-                element={<Verifier />} />
+
           <Route path={PROTECTED_PATH.PRODUCT_DETAIL} element={<Product />} />
-          <Route path={PROTECTED_PATH.PRODUCT_DETAIL_VERIFIER} element={<Product_verifier />} />
+
+          <Route path={PROTECTED_PATH.AUDITOR} element={<Auditor />} />
+          <Route
+            path={PROTECTED_PATH.PRODUCT_DETAIL_AUDITOR}
+            element={<AProduct/>}
+          />
 
           <Route element={<Outlet />}>
             <Route

@@ -6,10 +6,10 @@ export const PROTECTED_PATH = {
   SELECT_CBAM_CFP: "/select_cbam_cfp",
   CBAM: "/cbam",
   DASHBOARD: "/",
-  VERIFIER: "/verifier",
+  AUDITOR: "/auditor",
 
   PRODUCT_DETAIL: "/product_detail",
-  PRODUCT_DETAIL_VERIFIER: "/product_detail_verifier",
+  PRODUCT_DETAIL_AUDITOR: "/product_adetail",
   SELF_COLLECT: "/selfcollect",
   CREATE_SELF_COLLECT: "/selfcollect/create",
 
