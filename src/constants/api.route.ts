@@ -41,4 +41,9 @@ export const PROTECTED_PATH = {
 
   VEHICLES: "/tgo/categories/3/23",
   OVERALL: "/f1/1005",
+
+  AUDITOR: "/auditor",
+  AUDITOR_REPORT: "/auditor/report",
+  AUDITOR_PRODUCT: "/auditor/product",
+  AUDITOR_COMMENT: "/auditor/comment",
 };
