@@ -17,6 +17,16 @@ export class ProductService extends RemoteA {
     const { data } = response;
     return data;
   };
+  reqPostProduct = async (
+    entity: ProductType
+  ): Promise<ProductResponseType> => {
+    const response = await this.getAxiosInstance().post(
+      PROTECTED_PATH.PRODUCT,
+      entity
+    );
+    const { data } = response;
+    return data;
+  };
   reqPutProduct = async (
     product_id: number,
     entity: ProductType
@@ -28,11 +38,13 @@ export class ProductService extends RemoteA {
     const { data } = response;
     return data;
   };
-  reqPostProduct = async (
-    entity: ProductType
+
+  reqPutProductPicture = async (
+    product_id: number,
+    entity: FormData
   ): Promise<ProductResponseType> => {
     const response = await this.getAxiosInstance().post(
-      PROTECTED_PATH.PRODUCT,
+      PROTECTED_PATH.PRODUCT + `/${product_id}`,
       entity
     );
     const { data } = response;

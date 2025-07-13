@@ -47,3 +47,72 @@ export type SelfCollectType = {
   input: SelfCollectItemType[];
   output: SelfCollectItemType[];
 };
+
+export type SelfCollectListType = {
+  self_collect_id: number;
+  company_id: number;
+  self_collect_name: string;
+  self_collect_ef: string;
+  ratio: 1;
+  created_date: string;
+  updated_date: string;
+};
+export type SelfCollectItemListType = {
+  self_collect: SelfCollectListType;
+  items: {
+    cfp_report43_selfcollect_efs_id: number;
+    item_name: string;
+    item_type: "input" | "output";
+  }[];
+};
+export type SelfCollectProcessEntityType = {
+  company_id?: number;
+  self_collect_name: string;
+  self_collect_ef?: string;
+  ratio?: number;
+};
+
+export type SelfCollectProcessItemType = {
+  cfp_report43_selfcollect_efs_id?: number;
+  self_collect_id: number;
+  item_name: string;
+  item_type: string;
+  item_unit: string;
+  item_qty: string | number;
+  item_fu_qty: string | number;
+  item_source: string;
+  item_ef: string | number;
+  item_ef_source: string;
+  item_ef_source_ref: string;
+  item_emission: string | number;
+  transport_type: string;
+
+  type1_gas: null;
+  type1_gas_unit: null;
+  type1_gas_qty: null;
+  type1_ef: null;
+  type1_ef_source: null;
+
+  type2_distance: string | number;
+  type2_outbound_load: string | number;
+  type2_return_load: string | number;
+  type2_vehicle: string;
+
+  type2_vehicle_return: string;
+  type2_outbound_load_percent: string | number;
+  type2_return_load_percent: string | number;
+  type2_outbound_ef: string | number;
+
+  type2_return_ef: string | number;
+  type2_ef_source: string;
+  type2_ef_source_ref: string;
+
+  transport_emission: number;
+  total_emission: number;
+  proportion: null;
+  ratio: number;
+  cut_off: number;
+  add_on_detail: string;
+  created_date?: string;
+  updated_date?: string;
+};

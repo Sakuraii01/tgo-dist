@@ -19,7 +19,9 @@ const CreateProduct = () => {
     unitList,
     pcrList,
     registerRoundList,
+    savePicture,
     handleSubmit,
+    handleChangePicture,
   } = useViewModel(id);
 
   return (
@@ -192,8 +194,8 @@ const CreateProduct = () => {
                 />
               </div>
               <Dropzone
-                file={values.product_image}
-                handleUpload={(file) => setFieldValue("product_image", file)}
+                file={savePicture}
+                handleUpload={(file) => handleChangePicture(file)}
               />
               <div className="flex gap-4 text-center text-gray-300">
                 {["B2B", "B2C"].map((type) => (

@@ -3,7 +3,7 @@ import { useCallback, useState, useEffect } from "react";
 
 type dropZoneType = {
   handleUpload: (file: File) => void;
-  file: File | null;
+  file: File | string | null;
 };
 export const Dropzone = (props: dropZoneType) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -25,11 +25,13 @@ export const Dropzone = (props: dropZoneType) => {
     multiple: false,
   });
   useEffect(() => {
-    if (props.file) {
+    if (props.file instanceof File) {
       const url = URL.createObjectURL(props.file);
       setPreviewUrl(url);
 
-      return () => URL.revokeObjectURL(url); // cleanup
+      // return () => URL.revokeObjectURL(url); /
+    } else if (typeof props.file === "string") {
+      setPreviewUrl(props.file);
     } else {
       setPreviewUrl(null);
     }

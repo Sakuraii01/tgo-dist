@@ -2,6 +2,7 @@ export const PROTECTED_PATH = {
   LOGIN: "/login",
   COMPANY: "/company",
   USER: "/users",
+  AUDITORS: "/auditor",
   PRODUCT: "/product",
   OUTPUT_PROCESS: "/output/process",
   INPUT_PROCESS: "/input/process",
@@ -28,7 +29,10 @@ export const PROTECTED_PATH = {
   FR06_2: "/f6-2/sum",
 
   SELF_COLLECT: "/selfcollect",
+  SELF_COLLECT_PROCESS: "/selfcollect/process",
   SELF_COLLECT_LIST: "/selfcollect/list",
+  SELF_COLLECT_PROCESS_LIST: "/selfcollect/process/list",
+  SELF_COLLECT_PROCESS_ITEM: "/selfcollect/process/item",
 
   UNITS_DROPDOWN: "/units",
   REGISTER_ROUND_DROPDOWN: "/rounded",
