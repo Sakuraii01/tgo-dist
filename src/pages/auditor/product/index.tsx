@@ -37,13 +37,13 @@ const AProduct: React.FC = () => {
         comment: comment.trim(),
       });
 
-      // อัพเดทสถานะเป็น 1 (ระหว่างพิจารณา) หลังจากเพิ่ม comment
-      if (productDetail?.status?.status === 0) {
+      // อัพเดทสถานะเป็น 2 (ระหว่างพิจารณา) หลังจากเพิ่ม comment
+      if (productDetail?.status?.status === 1) {
         await productService.reqUpdateProductStatus(
           auditorId,
           productDetail.product.product_id,
           productDetail.status.status_id,
-          1
+          2
         );
       }
 
@@ -62,16 +62,16 @@ const AProduct: React.FC = () => {
   // Helper function to get status display based on API response
   const getStatusDisplay = () => {
     // Check the status object first for detailed status
-    if (productDetail?.status?.status === 3) {
+    if (productDetail?.status?.status === 4) {
       return { text: "ปฏิเสธ", class: "bg-red-100 text-red-800" };
-    } else if (productDetail?.status?.status === 2) {
+    } else if (productDetail?.status?.status === 3) {
       return { text: "อนุมัติ", class: "bg-green-100 text-green-800" };
-    } else if (productDetail?.status?.status === 1) {
+    } else if (productDetail?.status?.status === 2) {
       return {
         text: "อยู่ระหว่างการพิจารณา",
         class: "bg-yellow-100 text-yellow-800",
       };
-    } else if (productDetail?.status?.status === 0) {
+    } else if (productDetail?.status?.status === 1) {
       return { text: "รอการพิจารณา", class: "bg-gray-100 text-gray-800" };
     }
 
@@ -91,7 +91,7 @@ const AProduct: React.FC = () => {
     }
   };
 
-  const handleUpdateStatus = async (newStatus: 2 | 3) => {
+  const handleUpdateStatus = async (newStatus: 3 | 4) => {
     if (!productDetail) return;
     try {
       setSubmitting(true);
@@ -109,7 +109,7 @@ const AProduct: React.FC = () => {
 
       // Refetch data to get updated status
       await refetch();
-      const statusText = newStatus === 2 ? "อนุมัติ" : "ปฏิเสธ";
+      const statusText = newStatus === 3 ? "อนุมัติ" : "ปฏิเสธ";
       alert(`${statusText}ผลิตภัณฑ์เรียบร้อยแล้ว`);
     } catch (error) {
       console.error("Error updating status:", error);
@@ -339,8 +339,8 @@ const AProduct: React.FC = () => {
           </div>
         </section>
 
-        {/* New Comment Box Section - แสดงเฉพาะเมื่อ status = 0 */}
-        {productDetail?.status?.status === 0 && (
+        {/* New Comment Box Section - แสดงเฉพาะเมื่อ status = 1,2*/}
+        {(productDetail?.status?.status === 1||productDetail?.status?.status === 2) && (
           <div className="mt-8">
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
               {/* Header */}
@@ -382,7 +382,7 @@ const AProduct: React.FC = () => {
         )}
 
         {/* Existing Comments Section - แสดงเสมอ */}
-        {productDetail.comments && productDetail.comments.length > 0 && (
+        {productDetail.comments && productDetail.comments.length > 1 && (
           <div className="mt-8">
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
               <div className="bg-gradient-to-r text-black px-6 py-4 rounded-t-xl">
@@ -432,13 +432,13 @@ const AProduct: React.FC = () => {
 
               <div className="flex gap-3 mt-4 flex-wrap">
                 {/* ปุ่มอนุมัติ/ปฏิเสธ - แสดงเฉพาะเมื่อ status = 0 */}
-                {productDetail?.status?.status === 0 && (
+                {(productDetail?.status?.status === 1 || productDetail?.status?.status === 2) && (
                   <>
                     <button
                       type="button"
                       disabled={submitting}
                       className="bg-green-600 text-white font-semibold shadow px-4 py-2 rounded-full hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      onClick={() => handleUpdateStatus(2)}
+                      onClick={() => handleUpdateStatus(3)}
                     >
                       {submitting ? "กำลังดำเนินการ..." : "อนุมัติ"}
                     </button>
@@ -446,7 +446,7 @@ const AProduct: React.FC = () => {
                       type="button"
                       disabled={submitting}
                       className="bg-red-600 text-white font-semibold shadow px-4 py-2 rounded-full hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      onClick={() => handleUpdateStatus(3)}
+                      onClick={() => handleUpdateStatus(4)}
                     >
                       {submitting ? "กำลังดำเนินการ..." : "ปฏิเสธ"}
                     </button>
@@ -454,18 +454,18 @@ const AProduct: React.FC = () => {
                 )}
 
                 {/* แสดงข้อความเมื่อไม่สามารถแก้ไขได้ */}
-                {(productDetail?.status?.status === 1 ||
-                  productDetail?.status?.status === 2 ||
-                  productDetail?.status?.status === 3) && (
+                {(
+                  productDetail?.status?.status === 3||
+                  productDetail?.status?.status === 4) && (
                   <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-2 w-full">
                     <p className="text-blue-800 text-sm">
                       <span className="font-semibold">หมายเหตุ:</span>{" "}
                       ผลิตภัณฑ์นี้อยู่ในสถานะ "{statusInfo.text}"
-                      {productDetail?.status?.status === 1 &&
-                        " - สามารถดูข้อมูลได้เท่านั้น"}
-                      {productDetail?.status?.status === 2 &&
-                        " - การพิจารณาเสร็จสิ้นแล้ว"}
+                      {/* {productDetail?.status?.status === 2 &&
+                        " - สามารถดูข้อมูลได้เท่านั้น"} */}
                       {productDetail?.status?.status === 3 &&
+                        " - การพิจารณาเสร็จสิ้นแล้ว"}
+                      {productDetail?.status?.status === 4 &&
                         " - การพิจารณาเสร็จสิ้นแล้ว"}
                     </p>
                   </div>

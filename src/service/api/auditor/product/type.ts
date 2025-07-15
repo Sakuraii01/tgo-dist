@@ -106,7 +106,7 @@ export type UpdateStatusRequest = {
   auditor_id: number;
   company_id: number;
   product_id: number;
-  status: 0 | 1 | 2 | 3; // 0=รอพิจารณา, 1=ระหว่างพิจารณา, 2=อนุมัติ, 3=ปฏิเสธ
+  status: 1 | 2 | 3 | 4; 
 };
 
 export type UpdateProductRequest = Partial<Omit<ProductType, 'product_id' | 'created_date' | 'updated_date'>>;

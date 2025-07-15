@@ -87,7 +87,7 @@ const Auditor = () => {
               </p>
               <p className="border rounded-full border-warn text-center px-3 text-warn text-xs h-fit py-1 my-auto">
                 {
-                  productList.filter((data) => data.products_status === 0)
+                  productList.filter((data) => (data.products_status === 1))
                     .length
                 }{" "}
                 รายการ
@@ -108,7 +108,7 @@ const Auditor = () => {
               </p>
               <p className="border rounded-full border-yellow-500 text-center px-3 text-yellow-500 text-xs h-fit py-1 my-auto">
                 {
-                  productList.filter((data) => data.products_status === 1)
+                  productList.filter((data) => data.products_status === 2)
                     .length
                 }{" "}
                 รายการ
@@ -132,8 +132,8 @@ const Auditor = () => {
                 {
                   productList.filter(
                     (data) =>
-                      data.products_status === 2 ||
-                      data.products_status === 3
+                      data.products_status === 3 ||
+                      data.products_status === 4
                   ).length
                 }{" "}
                 รายการ
@@ -159,15 +159,14 @@ const Auditor = () => {
                 {productList
                   .filter((data) => {
                     if (tab === 0)
-                      return data.products_status === 0; // status = 0
+                      return data.products_status === 1; 
                     else if (tab === 1)
-                      return data.products_status === 1; // status = 1
+                      return data.products_status === 2; 
                     else if (tab === 2)
                       return (
-                        data.products_status === 2 ||
-                        data.products_status === 3
+                        data.products_status === 3 ||
+                        data.products_status === 4
                       );
-                    // status = 2,3
                     else return true;
                   })
                   ?.map((data, key) => (
@@ -194,20 +193,20 @@ const Auditor = () => {
                       <td className="px-4 py-5">
                         <span
                           className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                            data.products_status === 2
+                            data.products_status === 3
                               ? "bg-green-100 text-green-800"
-                              : data.products_status === 3
+                              : data.products_status === 4
                               ? "bg-red-100 text-red-800"
-                              : data.products_status === 1
+                              : data.products_status === 2
                               ? "bg-yellow-100 text-yellow-800"
                               : "bg-gray-100 text-gray-800"
                           }`}
                         >
-                          {data.products_status === 2
+                          {data.products_status === 3
                             ? "อนุมัติ"
-                            : data.products_status === 3
+                            : data.products_status === 4
                             ? "ปฏิเสธ"
-                            : data.products_status === 1
+                            : data.products_status === 2
                             ? "อยู่ระหว่างการพิจารณา"
                             : "รอการพิจารณา"}
                         </span>
@@ -228,12 +227,12 @@ const Auditor = () => {
                     </tr>
                   ))}
                 {productList.filter((data) => {
-                  if (tab === 0) return data.products_status === 0;
-                  else if (tab === 1) return data.products_status === 1;
+                  if (tab === 0) return data.products_status === 1;
+                  else if (tab === 1) return data.products_status === 2;
                   else if (tab === 2)
                     return (
-                      data.products_status === 2 ||
-                      data.products_status === 3
+                      data.products_status === 3 ||
+                      data.products_status === 4
                     );
                   else return true;
                 }).length === 0 && (
