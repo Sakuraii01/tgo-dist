@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../../constants/path.route";
 import { useState } from "react";
 import { ProductService } from "../../../service/api/auditor/product";
+
 // import { useAuth } from "../../../auth/useAuth";
 
 const AProduct: React.FC = () => {
@@ -16,6 +17,7 @@ const AProduct: React.FC = () => {
   const { productDetail, loading, error, refetch } = useViewModel(Number(id));
 
   const [comment, setComment] = useState("");
+  const [showCommentBox, setShowCommentBox] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const productService = new ProductService();
   // const auth = useAuth();
@@ -27,7 +29,6 @@ const AProduct: React.FC = () => {
       const auditorId = 1;
       // const auditorId = localStorage.getItem(auditorId);
       // const auditorId = auth?.user?.auditor_id;
-
 
       // เพิ่ม comment ก่อน
       await productService.reqAddComment({
@@ -49,8 +50,10 @@ const AProduct: React.FC = () => {
 
       // Reset comment and refetch data
       setComment("");
+      setShowCommentBox(false); // Hide comment box after submission
       await refetch();
       alert("บันทึกความคิดเห็นเรียบร้อยแล้ว");
+      navigate("/auditor");
     } catch (error) {
       console.error("Error saving comment:", error);
       alert("เกิดข้อผิดพลาดในการบันทึกความคิดเห็น");
@@ -99,7 +102,6 @@ const AProduct: React.FC = () => {
       // const auditorId = localStorage.getItem(auditorId);
       // const auditorId = auth?.user?.auditor_id;
 
-
       await productService.reqUpdateProductStatus(
         auditorId,
         productDetail.product.product_id,
@@ -111,6 +113,7 @@ const AProduct: React.FC = () => {
       await refetch();
       const statusText = newStatus === 3 ? "อนุมัติ" : "ปฏิเสธ";
       alert(`${statusText}ผลิตภัณฑ์เรียบร้อยแล้ว`);
+      navigate("/auditor");
     } catch (error) {
       console.error("Error updating status:", error);
       alert("เกิดข้อผิดพลาดในการอัพเดทสถานะ");
@@ -160,6 +163,10 @@ const AProduct: React.FC = () => {
       </div>
     );
   }
+
+  const toggleCommentBox = () => {
+    setShowCommentBox((prev) => !prev);
+  };
 
   const productData = productDetail.product;
   const statusInfo = getStatusDisplay();
@@ -339,150 +346,162 @@ const AProduct: React.FC = () => {
           </div>
         </section>
 
-        {/* New Comment Box Section - แสดงเฉพาะเมื่อ status = 1,2*/}
-        {(productDetail?.status?.status === 1||productDetail?.status?.status === 2) && (
+        {/* Status Update Section - แสดงเสมอ */}
+        <div>
           <div className="mt-8">
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-              {/* Header */}
-              <div className="bg-gradient-to-r text-black px-6 py-4 rounded-t-xl">
-                <h3 className="text-lg font-semibold">เพิ่มประเด็นใหม่</h3>
+              {/* Header with gradient */}
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200 px-6 py-5 rounded-t-xl flex justify-between items-center">
+                {/* Left side title */}
+                <h3 className="text-lg font-semibold text-gray-800 flex items-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2 text-blue-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  สถานะการตรวจสอบ
+                </h3>
+
+                {/* Right side button */}
+                <button
+                  onClick={() => navigate(`/response?id=${id}`)}
+                  className="px-2 py-1 border-gray-300 border rounded-full h-fit font-semibold my-auto"
+                >
+                  ประวัติการรายงาน
+                </button>
               </div>
-              {/* Content */}
+
               <div className="p-5">
-                <textarea
-                  className="w-full h-32 p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                  placeholder="กรอกประเด็นที่ต้องการแสดงความคิดเห็น..."
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  rows={4}
-                  disabled={submitting}
-                />
-                {/* Action Buttons */}
-                <div className="flex justify-end gap-3 mt-4">
+                <div className="flex items-center gap-4">
+                  <span className="text-gray-700">สถานะปัจจุบัน:</span>
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm font-semibold ${statusInfo.class}`}
+                  >
+                    {statusInfo.text}
+                  </span>
+                </div>
+
+                <div className="flex gap-3 mt-4 flex-wrap">
+                  {/* ปุ่มอนุมัติ/ปฏิเสธ - แสดงเฉพาะเมื่อ status = 1,2 และไม่ได้อยู่ในโหมดแก้ไข */}
+                  {(productDetail?.status?.status === 1 ||
+                    productDetail?.status?.status === 2) && (
+                    <>
+                      {!showCommentBox && (
+                        <>
+                          <button
+                            type="button"
+                            disabled={submitting}
+                            className="bg-green-600 text-white font-semibold shadow px-4 py-2 rounded-full hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            onClick={() => handleUpdateStatus(3)}
+                          >
+                            {submitting ? "กำลังดำเนินการ..." : "อนุมัติ"}
+                          </button>
+                          <button
+                            type="button"
+                            disabled={submitting}
+                            className="bg-red-600 text-white font-semibold shadow px-4 py-2 rounded-full hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            onClick={() => handleUpdateStatus(4)}
+                          >
+                            {submitting ? "กำลังดำเนินการ..." : "ปฏิเสธ"}
+                          </button>
+                        </>
+                      )}
+                      <button
+                        type="button"
+                        disabled={submitting}
+                        className="primary-button font-semibold shadow px-4 py-2 rounded-full flex gap-1 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={toggleCommentBox} // Toggle comment box visibility
+                      >
+                        {submitting
+                          ? "กำลังดำเนินการ..."
+                          : showCommentBox
+                          ? "ยกเลิกการแก้ไข"
+                          : "แก้ไข"}
+                      </button>
+                    </>
+                  )}
+
+                  {/* แสดงข้อความเมื่อไม่สามารถแก้ไขได้ */}
+                  {(productDetail?.status?.status === 3 ||
+                    productDetail?.status?.status === 4) && (
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-2 w-full">
+                      <p className="text-blue-800 text-sm">
+                        <span className="font-semibold">หมายเหตุ:</span>{" "}
+                        ผลิตภัณฑ์นี้อยู่ในสถานะ "{statusInfo.text}"
+                        {productDetail?.status?.status === 3 &&
+                          " - การพิจารณาเสร็จสิ้นแล้ว"}
+                        {productDetail?.status?.status === 4 &&
+                          " - การพิจารณาเสร็จสิ้นแล้ว"}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Back to List Button */}
                   <button
                     type="button"
-                    onClick={() => setComment("")}
-                    disabled={submitting}
-                    className="px-4 py-2 border border-gray-300 rounded-full font-semibold hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={() => navigate(PROTECTED_PATH.AUDITOR)}
+                    className="bg-gray-600 text-white font-semibold shadow px-4 py-2 rounded-full hover:bg-gray-700 transition-colors ml-auto"
                   >
-                    ล้างข้อความ
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleSaveComment}
-                    disabled={!comment.trim() || submitting}
-                    className="primary-button font-semibold shadow px-4 py-2 rounded-full flex gap-1 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {submitting ? "กำลังบันทึก..." : "บันทึกความคิดเห็น"}
+                    กลับไปรายการผลิตภัณฑ์
                   </button>
                 </div>
               </div>
             </div>
           </div>
-        )}
-
-        {/* Existing Comments Section - แสดงเสมอ */}
-        {productDetail.comments && productDetail.comments.length > 1 && (
-          <div className="mt-8">
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-              <div className="bg-gradient-to-r text-black px-6 py-4 rounded-t-xl">
-                <h3 className="text-lg font-semibold">
-                  ประเด็นที่แสดงความคิดเห็นแล้ว
-                </h3>
-              </div>
-              <div className="p-5 space-y-4">
-                {productDetail.comments.map((commentItem) => (
-                  <div
-                    key={commentItem.comments_id}
-                    className="border-l-4 border-blue-400 pl-4 py-2 bg-gray-50 rounded-r-lg"
-                  >
-                    <p className="text-gray-800">{commentItem.comment}</p>
-                    <p className="text-sm text-gray-500 mt-2">
-                      วันที่:{" "}
-                      {new Date(commentItem.created_at).toLocaleDateString(
-                        "th-TH"
-                      )}{" "}
-                      เวลา:{" "}
-                      {new Date(commentItem.created_at).toLocaleTimeString(
-                        "th-TH"
-                      )}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Status Update Section - แสดงเสมอ */}
-        <div className="mt-8">
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-            <div className="bg-gradient-to-r text-black px-6 py-4 rounded-t-xl">
-              <h3 className="text-lg font-semibold">สถานะการตรวจสอบ</h3>
-            </div>
-            <div className="p-5">
-              <div className="flex items-center gap-4">
-                <span className="text-gray-700">สถานะปัจจุบัน:</span>
-                <span
-                  className={`px-3 py-1 rounded-full text-sm font-semibold ${statusInfo.class}`}
-                >
-                  {statusInfo.text}
-                </span>
-              </div>
-
-              <div className="flex gap-3 mt-4 flex-wrap">
-                {/* ปุ่มอนุมัติ/ปฏิเสธ - แสดงเฉพาะเมื่อ status = 0 */}
-                {(productDetail?.status?.status === 1 || productDetail?.status?.status === 2) && (
-                  <>
-                    <button
-                      type="button"
-                      disabled={submitting}
-                      className="bg-green-600 text-white font-semibold shadow px-4 py-2 rounded-full hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      onClick={() => handleUpdateStatus(3)}
-                    >
-                      {submitting ? "กำลังดำเนินการ..." : "อนุมัติ"}
-                    </button>
-                    <button
-                      type="button"
-                      disabled={submitting}
-                      className="bg-red-600 text-white font-semibold shadow px-4 py-2 rounded-full hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      onClick={() => handleUpdateStatus(4)}
-                    >
-                      {submitting ? "กำลังดำเนินการ..." : "ปฏิเสธ"}
-                    </button>
-                  </>
-                )}
-
-                {/* แสดงข้อความเมื่อไม่สามารถแก้ไขได้ */}
-                {(
-                  productDetail?.status?.status === 3||
-                  productDetail?.status?.status === 4) && (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-2 w-full">
-                    <p className="text-blue-800 text-sm">
-                      <span className="font-semibold">หมายเหตุ:</span>{" "}
-                      ผลิตภัณฑ์นี้อยู่ในสถานะ "{statusInfo.text}"
-                      {/* {productDetail?.status?.status === 2 &&
-                        " - สามารถดูข้อมูลได้เท่านั้น"} */}
-                      {productDetail?.status?.status === 3 &&
-                        " - การพิจารณาเสร็จสิ้นแล้ว"}
-                      {productDetail?.status?.status === 4 &&
-                        " - การพิจารณาเสร็จสิ้นแล้ว"}
-                    </p>
-                  </div>
-                )}
-
-                {/* Back to List Button */}
-                <button
-                  type="button"
-                  onClick={() => navigate(PROTECTED_PATH.AUDITOR)}
-                  className="bg-gray-600 text-white font-semibold shadow px-4 py-2 rounded-full hover:bg-gray-700 transition-colors ml-auto"
-                >
-                  กลับไปรายการผลิตภัณฑ์
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
+
+        {/* New Comment Box Section - แสดงเฉพาะเมื่อ status = 1,2*/}
+        {showCommentBox &&
+          (productDetail?.status?.status === 1 ||
+            productDetail?.status?.status === 2) && (
+            <div className="mt-8">
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+                {/* Header */}
+                <div className="bg-gradient-to-r text-black px-6 py-4 rounded-t-xl">
+                  <h3 className="text-lg font-semibold">เพิ่มประเด็นใหม่</h3>
+                </div>
+                {/* Content */}
+                <div className="p-5">
+                  <textarea
+                    className="w-full h-32 p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    placeholder="กรอกประเด็นที่ต้องการแสดงความคิดเห็น..."
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    rows={4}
+                    disabled={submitting}
+                  />
+                  {/* Action Buttons */}
+                  <div className="flex justify-end gap-3 mt-4">
+                    <button
+                      type="button"
+                      onClick={() => setComment("")}
+                      disabled={submitting}
+                      className="px-4 py-2 border border-gray-300 rounded-full font-semibold hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      ล้างข้อความ
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleSaveComment}
+                      disabled={!comment.trim() || submitting}
+                      className="primary-button font-semibold shadow px-4 py-2 rounded-full flex gap-1 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {submitting ? "กำลังบันทึก..." : "บันทึกความคิดเห็น"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
       </div>
     </div>
   );
