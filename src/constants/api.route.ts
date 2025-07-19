@@ -1,3 +1,5 @@
+import FR04_1 from "../pages/registerproduct/FR04-1";
+
 export const PROTECTED_PATH = {
   LOGIN: "/login",
   COMPANY: "/company",
@@ -19,9 +21,11 @@ export const PROTECTED_PATH = {
   FR04_1_REPORT: "/f4-1/reportweb",
   FR04_1_FORM: "/f4-1/form",
   FR04_1_ITEM: "/f4-1/item",
+  FR04_1_SUM: "/f4-1/sum",
 
   FR04_2_ITEM: "/f4-2/item",
   FR04_2_FORM: "/f4-2/form",
+  FR04_2_SUM: "/f4-2/sum",
 
   FR04_3_REPORT: "/selfcollect/product",
 

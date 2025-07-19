@@ -2,8 +2,11 @@ import { PROTECTED_PATH } from "../../../constants/api.route";
 import { RemoteA } from "../../remote";
 
 import type { ProductType, ProductResponseType } from "./type";
+import { useToken } from "../../../utils/localStorage";
 
 export class ProductService extends RemoteA {
+  token = useToken();
+  company_id = this.token.company[0].company_id;
   reqGetAllProducts = async (): Promise<ProductType[]> => {
     const response = await this.getAxiosInstance().get(PROTECTED_PATH.PRODUCT);
     const { data } = response;
@@ -22,7 +25,7 @@ export class ProductService extends RemoteA {
   ): Promise<ProductResponseType> => {
     const response = await this.getAxiosInstance().post(
       PROTECTED_PATH.PRODUCT,
-      entity
+      { ...entity, company_id: this.company_id }
     );
     const { data } = response;
     return data;
@@ -43,7 +46,7 @@ export class ProductService extends RemoteA {
     product_id: number,
     entity: FormData
   ): Promise<ProductResponseType> => {
-    const response = await this.getAxiosInstance().post(
+    const response = await this.getAxiosInstance().put(
       PROTECTED_PATH.PRODUCT + `/${product_id}`,
       entity
     );

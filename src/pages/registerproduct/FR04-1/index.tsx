@@ -88,21 +88,15 @@ const FR04_1Form = (props: {
   const [fr4_1ReportId, setFr4_1ReportId] = useState<number>(0);
   const handleSetInitialValues = async (
     life_cycle_phase: number,
-    company_id: number,
     product_id: number,
     class_type: string,
     item_id: number
   ) => {
     await fr04Service
-      .reqGetFR04Item(
-        life_cycle_phase,
-        company_id,
-        product_id,
-        class_type,
-        item_id
-      )
+      .reqGetFR04Item(life_cycle_phase, product_id, class_type, item_id)
       .then(
         (data) => (
+          console.log("data", data),
           setInitialValues({
             lci_source_period: data?.itemInfo.lci_source_period ?? "",
             ef_source: data?.itemInfo.ef_source ?? "",
@@ -119,7 +113,6 @@ const FR04_1Form = (props: {
   useEffect(() => {
     handleSetInitialValues(
       props.lifePhase,
-      1005,
       props.id,
       props.data.item_class,
       props.data.item_id
@@ -131,10 +124,10 @@ const FR04_1Form = (props: {
       <Formik
         initialValues={initialValues}
         enableReinitialize
-        validationSchema={validationSchema}
+        // validationSchema={validationSchema}
         onSubmit={(values) => {
           handleSubmit(
-            initialValues.ef === "" ? "POST" : "PUT",
+            fr4_1ReportId === 0 ? "POST" : "PUT",
             {
               company_id: 1005,
               product_id: props.id,
@@ -259,7 +252,7 @@ const FR04_1Form = (props: {
                           </div>
                         ) : (
                           <Field
-                            name="EF"
+                            name="ef"
                             label="ค่า EF"
                             placeholder="ค่า EF"
                             type="number"

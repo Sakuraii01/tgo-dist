@@ -323,21 +323,15 @@ const FormTypeB = ({
     type2_return_ef: 0,
     type2_ef_source: "",
   });
+  const [fr4_2ReportId, setFr4_2ReportId] = useState<number>(0);
   const handleSetInitialValue = async (
     life_cycle_phase: number,
-    company_id: number,
     product_id: number,
     class_type: string,
     item_id: number
   ) => {
     await fr04Service
-      .reqGetFr04_2Item(
-        life_cycle_phase,
-        company_id,
-        product_id,
-        class_type,
-        item_id
-      )
+      .reqGetFr04_2Item(life_cycle_phase, product_id, class_type, item_id)
       .then((data) => {
         const itemInfo = data.itemInfo;
         setInitialValues({
@@ -364,17 +358,12 @@ const FormTypeB = ({
           type2_return_ef: itemInfo.type2_return_ef || 0,
           type2_ef_source: itemInfo.type2_ef_source || "",
         });
+        setFr4_2ReportId(data.itemInfo.report_42_id || 0);
       });
   };
   useEffect(() => {
     (async () => {
-      await handleSetInitialValue(
-        lifePhase,
-        1005,
-        id,
-        data.item_class,
-        data.item_id
-      );
+      await handleSetInitialValue(lifePhase, id, data.item_class, data.item_id);
     })();
   }, []);
 
@@ -384,7 +373,7 @@ const FormTypeB = ({
         initialValues={initialValues}
         onSubmit={(values) =>
           handleSubmit(
-            data.item_id ? "PUT" : "POST",
+            fr4_2ReportId === 0 ? "POST" : "PUT",
             {
               company_id: 1005,
               product_id: id,
@@ -394,9 +383,9 @@ const FormTypeB = ({
               item_name: data.item_name,
               item_fu_qty: values.item_fu_qty,
               item_unit: "",
-              type1_gas_unit: "",
-              type1_ef_source: "",
-              type1_ef: 0,
+              type1_gas_unit: null,
+              type1_ef_source: null,
+              type1_ef: null,
               type2_vehicle_outbound: values.type2_vehicle_outbound,
               type2_vehicle_return: values.type2_vehicle_return,
               type2_outbound_load:
@@ -505,7 +494,7 @@ const FormTypeB = ({
                         />
                       </div>
                       <div className="w-80">
-                        {tgoVehicles && values.type2_ef_source === "TGO EF" ? (
+                        {tgoVehicles && values.type2_ef_source === "TGO_ef" ? (
                           <AutoCompleteField
                             items={tgoVehicles.map((data) => {
                               return {
@@ -526,7 +515,7 @@ const FormTypeB = ({
                         )}
                       </div>
                       <div className="w-80">
-                        {tgoVehicles && values.type2_ef_source === "TGO EF" ? (
+                        {tgoVehicles && values.type2_ef_source === "TGO_ef" ? (
                           <AutoCompleteField
                             items={tgoVehicles.map((data) => {
                               return {
@@ -604,7 +593,7 @@ const FormTypeB = ({
                     {isEdit ? (
                       <div className="flex gap-4">
                         <div className="w-80">
-                          {values.type2_ef_source === "TGO EF" ? (
+                          {values.type2_ef_source === "TGO_ef" ? (
                             <div>
                               <p className="text-sm text-gray-300">
                                 แหล่งอ้างอิง EF
@@ -628,7 +617,7 @@ const FormTypeB = ({
                           )}
                         </div>
                         <div className="w-40">
-                          {values.type2_ef_source === "TGO EF" ? (
+                          {values.type2_ef_source === "TGO_ef" ? (
                             <div>
                               <p className="text-sm text-gray-300">
                                 ค่า EF เที่ยวไป
@@ -653,7 +642,7 @@ const FormTypeB = ({
                           )}
                         </div>
                         <div className="w-40">
-                          {values.type2_ef_source === "TGO EF" ? (
+                          {values.type2_ef_source === "TGO_ef" ? (
                             <div>
                               <p className="text-sm text-gray-300">
                                 ค่า EF เที่ยวกลับ
@@ -747,8 +736,8 @@ const FormTypeB = ({
 };
 
 const EF = [
-  { label: "TGO EF", value: "TGO EF" },
-  { label: "Int. DB", value: "Int. DB" },
+  { label: "TGO EF", value: "TGO_ef" },
+  { label: "Int. DB", value: "Int_DB" },
 ];
 function extractWeightFromDetail(item_detail: string) {
   const match = item_detail.match(/น้ำหนักบรรทุกสูงสุด\s+(\d+(\.\d+)?)/);

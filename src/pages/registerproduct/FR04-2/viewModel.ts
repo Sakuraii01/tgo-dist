@@ -37,22 +37,17 @@ const useViewModel = (id: number) => {
     entity: FR04_2ItemItemInfo,
     item_id?: number
   ) => {
+    console.log(item_id);
+
     if (method === "POST") {
       fr04Service.reqPostFr04_2(entity);
     } else {
       fr04Service.reqPutFr04_2(item_id || 0, entity);
-      // fr04Service.reqPutFr04_2(
-      //   entity.life_cycle_phase,
-      //   1005,
-      //   entity.product_id,
-      //   entity.production_class,
-      //   item_id || 0
-      // );
     }
   };
 
   const fetchfr04Data = async () => {
-    const data = await fr04Service.reqGetFr04_2(1005, id);
+    const data = await fr04Service.reqGetFr04_2(id);
     setFr04Data(data);
     await fetchTGOEFDropdown();
   };

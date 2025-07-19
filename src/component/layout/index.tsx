@@ -1,17 +1,16 @@
 import {
   NotificationsRounded,
-  // KeyboardArrowDownRounded,
   KeyboardArrowRightRounded,
   HomeRounded,
   LogoutRounded,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../constants/path.route";
-import { useAuth } from "../../auth/useAuth";
-import { clearToken } from "../../utils/localStorage";
+
+import { clearToken, useToken } from "../../utils/localStorage";
 export const Navbar = () => {
   const navigate = useNavigate();
-  const auth = useAuth();
+  const userData = useToken();
   const navigateToLoginPage = async () => {
     await clearToken();
     window.location.reload();
@@ -32,9 +31,9 @@ export const Navbar = () => {
         <div className="flex items-center gap-2">
           <div>
             <p className="text-sm font-medium text-primary">
-              {auth?.user?.user?.name}
+              {userData?.user?.name}
             </p>
-            <p className="text-xs text-gray-200">{auth?.user?.user?.email}</p>
+            <p className="text-xs text-gray-200">{userData?.user?.email}</p>
           </div>
           {/* <KeyboardArrowDownRounded /> */}
           <div

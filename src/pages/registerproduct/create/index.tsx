@@ -20,6 +20,7 @@ const CreateProduct = () => {
     pcrList,
     registerRoundList,
     savePicture,
+    auditorList,
     handleSubmit,
     handleChangePicture,
   } = useViewModel(id);
@@ -69,6 +70,17 @@ const CreateProduct = () => {
                     </div>
                   </div>
                 </div>
+              </section>
+              <section className="my-2">
+                <h3 className="font-bold">ผู้ทวนสอบ</h3>
+                <AutoCompleteField
+                  name={`auditor_id`}
+                  label="ผู้ทวนสอบ"
+                  items={auditorList?.map((item) => ({
+                    label: item.name,
+                    value: item.auditor_id,
+                  }))}
+                />
               </section>
               <section className="my-2">
                 <h3 className="font-bold">ชื่อผลิตภัณฑ์</h3>
@@ -194,7 +206,7 @@ const CreateProduct = () => {
                 />
               </div>
               <Dropzone
-                file={savePicture}
+                file={values.product_image ?? savePicture}
                 handleUpload={(file) => handleChangePicture(file)}
               />
               <div className="flex gap-4 text-center text-gray-300">

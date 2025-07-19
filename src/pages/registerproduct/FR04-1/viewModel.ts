@@ -50,7 +50,6 @@ const useViewModel = (id: number) => {
     data: FR04_1ItemType,
     item_id?: number
   ) => {
-    console.log("submit", data);
     if (method === "POST") {
       await fr04Service.reqPostFr04_1(data);
     } else {
@@ -58,7 +57,7 @@ const useViewModel = (id: number) => {
     }
   };
   const fetchfr04Data = async () => {
-    const data = await fr04Service.reqGetFr04_1(1005, id);
+    const data = await fr04Service.reqGetFr04_1(id);
     setFr04Data(data);
 
     await fetchTGOEFDropdown();
