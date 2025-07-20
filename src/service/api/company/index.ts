@@ -5,6 +5,7 @@ import {
   type ExcelType,
   type AddCommentRequest,
   type CommentResponseType,
+  type NotificationType,
 } from "./type";
 
 export class CompanyService extends RemoteA {
@@ -22,6 +23,16 @@ export class CompanyService extends RemoteA {
   ): Promise<ExcelType> => {
     const response = await this.getAxiosInstance().get(
       PROTECTED_PATH.EXCEL + `/${auditor_id}/${product_id}`
+    );
+    const { data } = response;
+    return data;
+  };
+
+  reqGetNotification = async (
+    company_id: number
+  ): Promise<NotificationType> => {
+    const response = await this.getAxiosInstance().get(
+      PROTECTED_PATH.COMPANY_NOTIFICATION + `/${company_id}`
     );
     const { data } = response;
     return data;

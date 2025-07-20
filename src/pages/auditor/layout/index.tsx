@@ -7,13 +7,13 @@ import {
 
 import { Badge } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { PROTECTED_PATH } from "../../constants/path.route";
-import { useAuth } from "../../auth/useAuth";
-import { clearToken } from "../../utils/localStorage";
+import { PROTECTED_PATH } from "../../../constants/path.route";
+import { useAuth } from "../../../auth/useAuth";
+import { clearToken } from "../../../utils/localStorage";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-export const Navbar = () => {
+export const ANavbar = () => {
   const navigate = useNavigate();
   const auth = useAuth();
   const auditorId = 1;
@@ -31,7 +31,7 @@ export const Navbar = () => {
   const fetchNotifications = async () => {
     try {
       const res = await axios.get(
-        `http://178.128.123.212:5000/api/v1/notifications/company/${companyId}`
+        `http://178.128.123.212:5000/api/v1/notifications/auditor/${auditorId}`
       );
       const unread = res.data.filter((n: any) => n.is_read === 0);
       setNotifications(res.data);
@@ -90,7 +90,7 @@ export const Navbar = () => {
             className="cursor-pointer"
             onClick={handleNotificationClick}
           >
-            <NotificationsRounded color="success" />
+            <NotificationsRounded color="success"/>
           </Badge>
 
           {showNotifications && (

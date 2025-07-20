@@ -1,5 +1,6 @@
 import React from "react";
-import { BreadcrumbNav, Navbar } from "../../../component/layout";
+import { BreadcrumbNav } from "../../../component/layout";
+import { ANavbar } from "../layout";
 import { FileDownloadRounded } from "@mui/icons-material";
 import useViewModel from "./viewModel";
 import { useSearchParams } from "react-router-dom";
@@ -136,7 +137,7 @@ const AProduct: React.FC = () => {
   if (loading) {
     return (
       <div>
-        <Navbar />
+        <ANavbar />
         <BreadcrumbNav step="View Product" />
         <div className="max-w-7xl mx-auto my-15">
           <div className="flex justify-center items-center h-64">
@@ -150,7 +151,7 @@ const AProduct: React.FC = () => {
   if (error) {
     return (
       <div>
-        <Navbar />
+        <ANavbar />
         <BreadcrumbNav step="View Product" />
         <div className="max-w-7xl mx-auto my-15">
           <div className="flex justify-center items-center h-64">
@@ -164,7 +165,7 @@ const AProduct: React.FC = () => {
   if (!productDetail) {
     return (
       <div>
-        <Navbar />
+        <ANavbar />
         <BreadcrumbNav step="View Product" />
         <div className="max-w-7xl mx-auto my-15">
           <div className="flex justify-center items-center h-64">
@@ -184,7 +185,7 @@ const AProduct: React.FC = () => {
 
   return (
     <div>
-      <Navbar />
+      <ANavbar />
       <BreadcrumbNav step="View Product" />
       <div className="max-w-7xl mx-auto my-15">
         <h1 className="text-3xl font-medium mb-5 mt-10">รายละเอียดผลิตภัณฑ์</h1>

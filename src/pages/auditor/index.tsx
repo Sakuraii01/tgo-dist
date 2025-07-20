@@ -1,4 +1,4 @@
-import { Navbar } from "../../component/layout";
+import { ANavbar } from "./layout";
 import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../constants/path.route";
 import useViewModel from "./viewModel";
@@ -20,7 +20,7 @@ const Auditor = () => {
   if (loading) {
     return (
       <div>
-        <Navbar />
+        <ANavbar />
         <div className="max-w-7xl mx-auto my-15">
           <div className="flex justify-center items-center h-64">
             <p>กำลังโหลดข้อมูล...</p>
@@ -33,7 +33,7 @@ const Auditor = () => {
   if (error) {
     return (
       <div>
-        <Navbar />
+        <ANavbar />
         <div className="max-w-7xl mx-auto my-15">
           <div className="flex justify-center items-center h-64">
             <p className="text-red-500">เกิดข้อผิดพลาด: {error}</p>
@@ -45,7 +45,7 @@ const Auditor = () => {
 
   return (
     <div>
-      <Navbar />
+      <ANavbar />
       <div className="max-w-7xl mx-auto my-15">
         <section>
           <h1 className="text-4xl font-medium mb-5 mt-10">

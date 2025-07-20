@@ -14,6 +14,13 @@ export type ExcelType ={
   message: string;
 };
 
+export type NotificationType = {
+  company_id: number;
+  notification: string;
+  created_at: Date | string;
+  updated_at: Date | string;
+};
+
 export type AddCommentRequest = {
   auditor_id: number;
   company_id: number;
