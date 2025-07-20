@@ -46,4 +46,6 @@ export const PROTECTED_PATH = {
   AUDITOR_REPORT: "/auditor/report",
   AUDITOR_PRODUCT: "/auditor/product",
   AUDITOR_COMMENT: "/auditor/comment",
+
+  EXCEL: "/excel/auditor",
 };

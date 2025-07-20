@@ -3,7 +3,7 @@ import { ProductService } from "../../../service/api/auditor/product";
 import type{ ProductDetailType } from "../../../service/api/auditor/product/type";
 // import { useAuth } from "../../../auth/useAuth";
 
-const useProductDetail = (productId: number) => {
+const useProductDetail = (productId: number, auditorId:number) => {
   const [productDetail, setProductDetail] = useState<ProductDetailType>();
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +25,6 @@ const useProductDetail = (productId: number) => {
       // const auditorId = auth?.user?.auditor_id;
       // const auditorId = localStorage.getItem(auditorId);
 
-      const auditorId=1;
       
       const data = await productService.reqGetProductDetail(auditorId, productId);
       setProductDetail(data);

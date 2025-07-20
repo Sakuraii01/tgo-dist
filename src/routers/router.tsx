@@ -24,6 +24,7 @@ import FR06_2 from "../pages/registerproduct/FR06_2";
 import SelectPage from "../pages/selected";
 import Auditor from "../pages/auditor";
 import AProduct from "../pages/auditor/product";
+import CProduct from "../pages/company/product";
 import ProductComments from "../pages/auditor/product/response";
 
 import { useAuth } from "../auth/useAuth";
@@ -56,6 +57,10 @@ const Router = () => {
           <Route
             path={PROTECTED_PATH.PRODUCT_DETAIL_AUDITOR}
             element={<AProduct/>}
+          />
+          <Route
+            path={PROTECTED_PATH.PRODUCT_DETAIL_COMPANY}
+            element={<CProduct/>}
           />
           <Route
             path={PROTECTED_PATH.PRODUCT_COMMENT}

@@ -9,3 +9,19 @@ export type CompanyType = {
   created_date: Date | string;
   updated_date: Date | string;
 };
+
+export type ExcelType ={
+  message: string;
+};
+
+export type AddCommentRequest = {
+  auditor_id: number;
+  company_id: number;
+  product_id: number;
+  comment: string;
+};
+
+export type CommentResponseType = {
+  message: string;
+  comment_id: number;
+};

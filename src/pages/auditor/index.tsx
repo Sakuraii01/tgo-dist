@@ -87,7 +87,7 @@ const Auditor = () => {
               </p>
               <p className="border rounded-full border-warn text-center px-3 text-warn text-xs h-fit py-1 my-auto">
                 {
-                  productList.filter((data) => (data.products_status === 1))
+                  productList.filter((data) => (data.products_status === 1 || data.products_status === 0))
                     .length
                 }{" "}
                 รายการ
@@ -159,7 +159,7 @@ const Auditor = () => {
                 {productList
                   .filter((data) => {
                     if (tab === 0)
-                      return data.products_status === 1; 
+                      return (data.products_status === 1 || data.products_status === 0); 
                     else if (tab === 1)
                       return data.products_status === 2; 
                     else if (tab === 2)
@@ -227,7 +227,7 @@ const Auditor = () => {
                     </tr>
                   ))}
                 {productList.filter((data) => {
-                  if (tab === 0) return data.products_status === 1;
+                  if (tab === 0) return (data.products_status === 1 || data.products_status === 0);
                   else if (tab === 1) return data.products_status === 2;
                   else if (tab === 2)
                     return (

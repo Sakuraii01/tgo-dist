@@ -1,4 +1,4 @@
-import type{ AuditorType } from "../type";
+import type { AuditorType } from "../type";
 
 // Individual Product
 export type ProductType = {
@@ -20,7 +20,7 @@ export type ProductType = {
   collect_data_end: string;
   product_photo: string | null;
   auditor_id: number;
-  verify_status: "Pending" | "Under" | "Approved" | "Rejected" ;
+  verify_status: "Pending" | "Under" | "Approved" | "Rejected";
   submitted_round: string | null;
   submitted_date: string;
   created_date: string | null;
@@ -106,7 +106,9 @@ export type UpdateStatusRequest = {
   auditor_id: number;
   company_id: number;
   product_id: number;
-  status: 1 | 2 | 3 | 4; 
+  status: 1 | 2 | 3 | 4;
 };
 
-export type UpdateProductRequest = Partial<Omit<ProductType, 'product_id' | 'created_date' | 'updated_date'>>;
+export type UpdateProductRequest = Partial<
+  Omit<ProductType, "product_id" | "created_date" | "updated_date">
+>;

@@ -8,13 +8,12 @@ import type {
 } from "./type";
 
 export class ProductService extends RemoteA {
-
   // Get all products for an auditor (same as report for now)
   reqGetAllProducts = async (
     auditorId?: number
   ): Promise<AuditorReportType> => {
     const response = await this.getAxiosInstance().get(
-       `${PROTECTED_PATH.AUDITOR}/report/${auditorId}`);
+      `${PROTECTED_PATH.AUDITOR}/report/${auditorId}`);
     const { data } = response;
     return data;
   };
@@ -58,4 +57,49 @@ export class ProductService extends RemoteA {
     return data;
   };
 
+  // Update review status - CORRECTED to use getAxiosInstance()
+  // reqUpdateReviewStatus = async (
+  //   auditorId: number,
+  //   productId: number,
+  //   reviewIndex: number,
+  //   status: string,
+  //   newDate?: string
+  // ): Promise<void> => {
+  //   try {
+  //     const response = await this.getAxiosInstance().put(
+  //       `${PROTECTED_PATH.AUDITOR}/product/reviews/${auditorId}/${productId}/${reviewIndex}/status`, 
+  //       {
+  //         status,
+  //         newDate
+  //       }
+  //     );
+  //     return response.data;
+  //   } catch (error) {
+  //     console.error('Error updating review status:', error);
+  //     throw error;
+  //   }
+  // };
+
+  // Create new review - CORRECTED to use getAxiosInstance()
+  // reqCreateNewReview = async (
+  //   auditorId: number,
+  //   productId: number,
+  //   newIndex: number,
+  //   auditDate: string
+  // ): Promise<void> => {
+  //   try {
+  //     const response = await this.getAxiosInstance().post(
+  //       `${PROTECTED_PATH.AUDITOR}/product/reviews/${auditorId}/${productId}`, 
+  //       {
+  //         index: newIndex,
+  //         dateAuditor: auditDate,
+  //         status: 'pending'
+  //       }
+  //     );
+  //     return response.data;
+  //   } catch (error) {
+  //     console.error('Error creating new review:', error);
+  //     throw error;
+  //   }
+  // };
 }

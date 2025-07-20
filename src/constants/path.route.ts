@@ -11,6 +11,8 @@ export const PROTECTED_PATH = {
   PRODUCT_DETAIL_AUDITOR: "/product_adetail",
   PRODUCT_COMMENT: "/response",
 
+  PRODUCT_DETAIL_COMPANY: "/product_cdetail",
+
   PRODUCT_DETAIL: "/product_detail",
   SELF_COLLECT: "/selfcollect",
   CREATE_SELF_COLLECT: "/selfcollect/create",
