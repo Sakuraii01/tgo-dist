@@ -1,22 +1,16 @@
 import { PROTECTED_PATH } from "../../../../constants/api.route";
 import { RemoteA } from "../../../remote";
 import type {
-  AuditorReportType,
+  ProductType,
   ProductDetailType,
-  CommentResponseType,
-  AddCommentRequest,
-} from "./type";
+} from "../type";
+import type { AddCommentRequest, CommentResponseType } from "./type";
+
+import type { AuditorReportType } from "../type";
 
 export class ProductService extends RemoteA {
   // Get all products for an auditor (same as report for now)
-  reqGetAllProducts = async (
-    auditorId?: number
-  ): Promise<AuditorReportType> => {
-    const response = await this.getAxiosInstance().get(
-      `${PROTECTED_PATH.AUDITOR}/report/${auditorId}`);
-    const { data } = response;
-    return data;
-  };
+ 
 
   // Get specific product detail with comments and status
   reqGetProductDetail = async (
@@ -24,18 +18,45 @@ export class ProductService extends RemoteA {
     productId: number
   ): Promise<ProductDetailType> => {
     const response = await this.getAxiosInstance().get(
-      `${PROTECTED_PATH.AUDITOR}/product/${auditorId}/${productId}`
+      `${PROTECTED_PATH.AUDITOR_PRODUCT}/${auditorId}/${productId}`
+      // `http://178.128.123.212:5000/api/v1/1/7`
     );
-    const { data } = response;
-    return data;
+    console.log("Response from reqGetProductDetail:", response);
+    
+    return response.data;
   };
+
+  reqGetProduct = async (productId: number): Promise<ProductType> => {
+      const response = await this.getAxiosInstance().get(
+       `${PROTECTED_PATH.PRODUCT}/${productId}`
+      );
+      const { data } = response;
+      return data;
+    };
+
+  
+
+//   reqGetProductDetail = async (
+//     auditorId: 1| number,
+//     productId: 7 | number
+// ): Promise<ProductDetailType> => {
+//     try {
+//         const response = await this.getAxiosInstance().get<ProductDetailType>(
+//             `http://178.128.123.212:5000/api/v1/${auditorId}/${productId}`
+//         );
+//         return response.data;  // Returning only the data object
+//     } catch (error) {
+//         console.error("Error fetching product details:", error);
+//         throw error; // Optionally, re-throw or handle the error as needed
+//     }
+// };
 
   // Add comment to a product
   reqAddComment = async (
     commentData: AddCommentRequest
   ): Promise<CommentResponseType> => {
     const response = await this.getAxiosInstance().post(
-      `${PROTECTED_PATH.AUDITOR}/comment`,
+      `${PROTECTED_PATH.AUDITOR_COMMENT}`,
       commentData
     );
     const { data } = response;
@@ -50,7 +71,7 @@ export class ProductService extends RemoteA {
     newStatus: number
   ): Promise<any> => {
     const response = await this.getAxiosInstance().put(
-      `${PROTECTED_PATH.AUDITOR}/product/status/${auditorId}/${productId}/${statusId}`,
+      `${PROTECTED_PATH.AUDITOR_PRODUCT}status/${auditorId}/${productId}/${statusId}`,
       { status: newStatus }
     );
     const { data } = response;

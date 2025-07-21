@@ -1,65 +1,64 @@
+// First file: CProduct.tsx
 import React from "react";
 import { BreadcrumbNav, Navbar } from "../../../component/layout";
-import { FileDownloadRounded } from "@mui/icons-material";
+import { FileOpen } from "@mui/icons-material";
 import useViewModel from "./viewModel";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH as API_PATH } from "../../../constants/api.route";
 import { PROTECTED_PATH } from "../../../constants/path.route";
 import { useState } from "react";
-// import { ProductService } from "../../../service/api/auditor/product";
 import { CompanyService } from "../../../service/api/company";
-
-// import { useAuth } from "../../../auth/useAuth";
 
 const CProduct: React.FC = () => {
   const navigate = useNavigate();
   const auditorId = 1;
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
-  const { productDetail, loading, error, refetch } = useViewModel(
-    Number(id),
-    auditorId
-  );
-  const productId = productDetail?.product?.product_id;
+
+  // Rename productData to individualProduct to avoid conflicts
+  const {
+    productData: individualProduct,
+    productDetail,
+    loading,
+    error,
+    refetch,
+  } = useViewModel(auditorId, Number(id));
+
+  // Use optional chaining to safely access properties
+  const productId = productDetail?.product?.[0]?.product_id;
   const [comment, setComment] = useState("");
   const [showCommentBox, setShowCommentBox] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const companyService = new CompanyService();
-  // const auth = useAuth();
 
   const handleSaveComment = async () => {
     if (!comment.trim() || !productDetail) return;
     try {
       setSubmitting(true);
-
       const payload = {
         auditor_id: auditorId,
-        company_id: productDetail.product.company_id,
-        product_id: productDetail.product.product_id,
-        comment: comment.trim(), 
+        company_id: productDetail.product[0].company_id,
+        product_id: productDetail.product[0].product_id,
+        comment: comment.trim(),
       };
-
       console.log("Comment payload:", payload);
 
-      // เพิ่ม comment ก่อน
       await companyService.reqAddComment({
         auditor_id: auditorId,
-        company_id: productDetail.product.company_id,
-        product_id: productDetail.product.product_id,
+        company_id: productDetail.product[0].company_id,
+        product_id: productDetail.product[0].product_id,
         comment: comment.trim(),
       });
 
-      // Reset comment and refetch data
       setComment("");
-      setShowCommentBox(false); // Hide comment box after submission
+      setShowCommentBox(false);
       await refetch();
       alert("บันทึกความคิดเห็นเรียบร้อยแล้ว");
       navigate("/auditor");
     } catch (error) {
       console.error("Error saving comment:", error);
       alert("เกิดข้อผิดพลาดในการบันทึกความคิดเห็น");
-      // navigate("/auditor");
     } finally {
       setSubmitting(false);
     }
@@ -85,7 +84,8 @@ const CProduct: React.FC = () => {
     }
 
     // Fall back to verify_status from product
-    switch (productData?.verify_status) {
+    const verifyStatus = productDetail?.product?.[0]?.verify_status;
+    switch (verifyStatus) {
       case "Rejected":
         return { text: "ปฏิเสธ", class: "bg-red-100 text-red-800" };
       case "Approved":
@@ -146,7 +146,8 @@ const CProduct: React.FC = () => {
     setShowCommentBox((prev) => !prev);
   };
 
-  const productData = productDetail.product;
+  // Rename to avoid conflicts with individualProduct
+  const currentProduct = productDetail.product[0];
   const statusInfo = getStatusDisplay();
 
   return (
@@ -155,62 +156,52 @@ const CProduct: React.FC = () => {
       <BreadcrumbNav step="View Product" />
       <div className="max-w-7xl mx-auto my-15">
         <h1 className="text-3xl font-medium mb-5 mt-10">รายละเอียดผลิตภัณฑ์</h1>
-
         <section>
           <div>
             <div className="flex gap-4">
               <div className="text-primary">
                 <p className="text-xl text-gradient text-gradient-primary font-bold">
-                  {productData?.product_name_th}
+                  {individualProduct?.product_name_th}
                 </p>
-                <p>{productData?.product_name_en}</p>
+                <p>{individualProduct?.product_name_en}</p>
               </div>
               <p className="px-2 py-1 border-gray-300 border rounded-full h-fit text-xs font-semibold my-auto">
                 {statusInfo.text}
               </p>
             </div>
           </div>
-
           <div className="w-full rounded-xl bg-stroke py-4 px-6 my-4">
             <p className="text-xs font-semibold mb-1">คำอธิบาย</p>
-            {productData?.product_techinfo && (
+            {individualProduct?.product_techinfo && (
               <div>
-                {typeof productData.product_techinfo === "string" ? (
+                {typeof individualProduct.product_techinfo === "string" ? (
                   (() => {
                     try {
-                      return JSON.parse(productData.product_techinfo).map(
+                      return JSON.parse(individualProduct.product_techinfo).map(
                         (data: string, index: number) => (
                           <p key={index}>{data}</p>
                         )
                       );
                     } catch {
-                      return <p>{productData.product_techinfo}</p>;
+                      return <p>{individualProduct.product_techinfo}</p>;
                     }
                   })()
                 ) : (
-                  <p>{productData.product_techinfo}</p>
+                  <p>{individualProduct.product_techinfo}</p>
                 )}
               </div>
             )}
           </div>
         </section>
-
         <section className="flex gap-5">
           {(() => {
-            let photoSrc: string = "/placeholder-image.png";
-            if (productData?.product_photo) {
+            let photoSrc: string = "/";
+            if (typeof individualProduct?.product_photo === "string") {
               photoSrc =
-                "http://178.128.123.212:5000/" + productData.product_photo;
+                "http://178.128.123.212:5000" + individualProduct.photo_path;
             }
-            return (
-              <img
-                src={photoSrc}
-                alt="Product"
-                className="w-80 object-cover rounded-lg"
-              />
-            );
+            return <img src={photoSrc} className="w-80" />;
           })()}
-
           <div className="w-full">
             <table className="rounded-2xl w-full mb-10">
               <tbody>
@@ -219,7 +210,7 @@ const CProduct: React.FC = () => {
                     ชื่อผลิตภัณฑ์ และรุ่น (TH)
                   </td>
                   <td className="border-b border-gray-300 py-2 px-4 bg-[#FAFAFA]">
-                    {productData?.product_name_th}
+                    {individualProduct?.product_name_th}
                   </td>
                 </tr>
                 <tr>
@@ -227,7 +218,7 @@ const CProduct: React.FC = () => {
                     ชื่อผลิตภัณฑ์ และรุ่น (EN)
                   </td>
                   <td className="border-b border-gray-300 py-2 px-4 bg-stroke">
-                    {productData?.product_name_en}
+                    {individualProduct?.product_name_en}
                   </td>
                 </tr>
                 <tr>
@@ -235,7 +226,7 @@ const CProduct: React.FC = () => {
                     ขอบเขตของการประเมิน
                   </td>
                   <td className="border-b border-gray-300 py-2 px-4 bg-[#FAFAFA]">
-                    {productData?.scope}
+                    {individualProduct?.scope}
                   </td>
                 </tr>
                 <tr>
@@ -243,7 +234,7 @@ const CProduct: React.FC = () => {
                     รอบขึ้นทะเบียน
                   </td>
                   <td className="border-b border-gray-300 py-2 px-4 bg-stroke">
-                    {productData?.submitted_round ?? "-"}
+                    {individualProduct?.submitted_round ?? "-"}
                   </td>
                 </tr>
                 <tr className="rounded-bl-2xl">
@@ -251,16 +242,15 @@ const CProduct: React.FC = () => {
                     วันที่ขอขึ้นทะเบียน
                   </td>
                   <td className="border-b border-gray-300 py-2 px-4 bg-[#FAFAFA]">
-                    {productData?.submitted_date
-                      ? new Date(productData.submitted_date).toLocaleDateString(
-                          "th-TH"
-                        )
+                    {individualProduct?.submitted_date
+                      ? new Date(
+                          individualProduct.submitted_date
+                        ).toLocaleDateString("th-TH")
                       : "-"}
                   </td>
                 </tr>
               </tbody>
             </table>
-
             <div className="flex gap-10">
               <table>
                 <tbody>
@@ -277,16 +267,15 @@ const CProduct: React.FC = () => {
                       วันที่ตรวจสอบ
                     </td>
                     <td className="border-b border-stroke py-2 px-4 bg-stroke w-72">
-                      {productData?.updated_date
-                        ? new Date(productData.updated_date).toLocaleDateString(
-                            "th-TH"
-                          )
+                      {individualProduct?.updated_date
+                        ? new Date(
+                            individualProduct.updated_date
+                          ).toLocaleDateString("th-TH")
                         : "-"}
                     </td>
                   </tr>
                 </tbody>
               </table>
-
               <div>
                 <table>
                   <tbody>
@@ -295,9 +284,9 @@ const CProduct: React.FC = () => {
                         วันที่ขึ้นทะเบียน
                       </td>
                       <td className="border-b border-stroke py-2 px-4 bg-stroke w-72">
-                        {productData?.created_date
+                        {individualProduct?.created_date
                           ? new Date(
-                              productData.created_date
+                              individualProduct.created_date
                             ).toLocaleDateString("th-TH")
                           : "-"}
                       </td>
@@ -308,7 +297,6 @@ const CProduct: React.FC = () => {
             </div>
           </div>
         </section>
-
         {/* Status Update Section - แสดงเสมอ */}
         <div>
           <div className="mt-8">
@@ -334,46 +322,63 @@ const CProduct: React.FC = () => {
                     </svg>
                     ความคิดเห็นล่าสุด
                   </h3>
-                  <span className="text-xs text-gray-500 mt-1 ml-7">
-                    {new Date(
-                      productDetail.comments[0].created_at
-                    ).toLocaleDateString("th-TH")}
-                  </span>
+                  <p className="text-sm text-gray-600">
+                    {productDetail?.comments?.length > 0
+                      ? productDetail.comments[0] && (
+                          <span className="text-xs text-gray-500 mt-1 ml-7">
+                            {new Date(
+                              productDetail.comments[0].created_at
+                            ).toLocaleDateString("th-TH")}
+                          </span>
+                        )
+                      : "ยังไม่มีความคิดเห็น"}
+                  </p>
                 </div>
-                <div className="ml-auto mr-2">
+                <div className="ml-auto mr-4">
                   <button
-                    onClick={() =>
-                      window.open(
-                        `http://178.128.123.212:5000/api/v1/excel/${productData?.company_id}/${productData?.product_id}`,
-                        "_blank"
-                      )
-                    }
+                    onClick={() => {
+                      try {
+                        window.open(
+                          `http://178.128.123.212:5000/api/v1/excel/${individualProduct?.company_id}/${individualProduct?.product_id}`,
+                          "_blank"
+                        );
+                      } catch (error) {
+                        console.error(
+                          "Error opening Excel download URL:",
+                          error
+                        );
+                        alert("ไม่สามารถเปิดลิงก์ดาวน์โหลดเอกสาร");
+                      }
+                    }}
                     type="button"
-                    className="primary-button font-semibold shadow px-4 py-1 rounded-full flex gap-1 hover:opacity-90"
+                    className="border border-green-500 shadow px-4 py-1 rounded-full flex gap-1 hover:bg-green-50 hover:opacity-90 transition-colors"
                   >
-                    <FileDownloadRounded fontSize="small" />
-                    <p>ดาวน์โหลดเอกสาร (เวอร์ชันล่าสุด)</p>
+                    <FileOpen fontSize="small" color="success" />
+                    <p>ดาวน์โหลดเอกสาร</p>
                   </button>
                 </div>
-
                 <button
-                  onClick={() => navigate(`/response?id=${id}`)}
+                  onClick={() =>
+                    navigate(
+                      `${PROTECTED_PATH.COMPANY_COMMENT_HISTORY}?id=${id}`
+                    )
+                  }
                   className="px-2 py-1 border-gray-300 border rounded-full h-fit font-semibold my-auto"
                 >
                   ประวัติการรายงาน
                 </button>
               </div>
-
               <div className="p-5">
                 <div className="flex items-center gap-4">
                   <span className="text-gray-700">
                     {" "}
-                    <div className=" overflow-y-auto whitespace-pre-wrap break-words">
-                      {productDetail.comments[0].comment}
-                    </div>
+                    {productDetail.comments?.length > 0 && (
+                      <div className="overflow-y-auto whitespace-pre-wrap break-words">
+                        {productDetail.comments[0].comment}
+                      </div>
+                    )}
                   </span>
                 </div>
-
                 <div className="flex gap-3 mt-4 flex-wrap justify-end">
                   {/* ปุ่มอนุมัติ/ปฏิเสธ - แสดงเฉพาะเมื่อ status = 1,2 และไม่ได้อยู่ในโหมดแก้ไข */}
                   {(productDetail?.status?.status === 0 ||
@@ -430,7 +435,6 @@ const CProduct: React.FC = () => {
                       </button>
                     </>
                   )}
-
                   {/* แสดงข้อความเมื่อไม่สามารถแก้ไขได้ */}
                   {(productDetail?.status?.status === 3 ||
                     productDetail?.status?.status === 4) && (
@@ -450,29 +454,27 @@ const CProduct: React.FC = () => {
             </div>
           </div>
         </div>
-
         {/* New Comment Box Section - แสดงเฉพาะเมื่อ status = 1,2*/}
         {showCommentBox &&
           (productDetail?.status?.status === 0 ||
             productDetail?.status?.status === 1 ||
-            productDetail?.status?.status === 2) && (
+            productDetail?.status?.status === 2 ||
+            productDetail.comments.length != 0) && (
             <div className="mt-8">
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
                 {/* Header */}
                 <div className="bg-gradient-to-r text-black px-6 py-4 rounded-t-xl">
                   <div className="flex justify-between items-center">
-
-                  <h3 className="text-lg font-semibold">เพิ่มประเด็นใหม่</h3>
-                  <button
+                    <h3 className="text-lg font-semibold">เพิ่มประเด็นใหม่</h3>
+                    <button
                       type="button"
                       disabled={submitting}
-                      className="flex px-4 py-2 border border-gray-300 rounded-full  hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex px-4 py-2 border border-gray-300 rounded-full hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       แนบแบบฟอร์ม CFP (เวอร์ชันที่ได้ทำการแก้ไข)
                     </button>
-                    </div>
+                  </div>
                   <p className="text-sm flex justify-end mt-2 ">อัพเดตเมื่อ</p>
-
                 </div>
                 {/* Content */}
                 <div className="p-5">
@@ -508,7 +510,6 @@ const CProduct: React.FC = () => {
               </div>
             </div>
           )}
-
         {/* Back to List Button */}
         <button
           type="button"

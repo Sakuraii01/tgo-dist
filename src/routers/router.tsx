@@ -25,7 +25,8 @@ import SelectPage from "../pages/selected";
 import Auditor from "../pages/auditor";
 import AProduct from "../pages/auditor/product";
 import CProduct from "../pages/company/product";
-import ProductComments from "../pages/auditor/product/response";
+import AResponse from "../pages/auditor/product/response";
+import CResponse from "../pages/company/product/response";
 
 import { useAuth } from "../auth/useAuth";
 
@@ -63,8 +64,12 @@ const Router = () => {
             element={<CProduct/>}
           />
           <Route
-            path={PROTECTED_PATH.PRODUCT_COMMENT}
-            element={<ProductComments/>}
+            path={PROTECTED_PATH.AUDITOR_COMMENT_HISTORY}
+            element={<AResponse/>}
+          />
+          <Route
+            path={PROTECTED_PATH.COMPANY_COMMENT_HISTORY}
+            element={<CResponse/>}
           />
 
           <Route element={<Outlet />}>

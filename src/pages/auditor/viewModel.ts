@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import type {
   ProductType,
   AuditorReportType,
-} from "../../service/api/auditor/product/type";
+} from "../../service/api/auditor/type";
 import { ProductService } from "../../service/api/auditor/product";
 import { AuditorService } from "../../service/api/auditor";
 import type { AuditorType } from "../../service/api/auditor/type";
@@ -16,7 +16,7 @@ import type { CompanyType } from "../../service/api/company/type";
 const auditorId = 1;
 const companyId = 1005;
 
-const useAViewModel = () => {
+const useViewModel = () => {
   const productService = new ProductService();
   const auditorService = new AuditorService();
   const companyService = new CompanyService();
@@ -44,8 +44,6 @@ const useAViewModel = () => {
     }
   };
 
- 
-
   const fetchProductList = async () => {
     try {
       setLoading(true);
@@ -55,14 +53,29 @@ const useAViewModel = () => {
       await fetchAuditorData(auditorId);
 
       // Fetch products report
-      const reportData = await productService.reqGetAllProducts(auditorId);
+      const reportData = await auditorService.reqGetAllProducts(auditorId);
+
+      // Store the complete report data
       setAuditorReportData(reportData);
 
       // Flatten all products from all groups
       const allProducts: ProductType[] = [];
-      reportData.products.forEach((group) => {
-        allProducts.push(...group.items);
-      });
+
+      if (reportData?.products && Array.isArray(reportData.products)) {
+        reportData.products.forEach((group) => {
+          if (group.items && Array.isArray(group.items)) {
+            group.items.forEach((item) => {
+              allProducts.push({
+                ...item,
+                products_status:
+                  item.products_status !== undefined
+                    ? item.products_status
+                    : group.products_status,
+              });
+            });
+          }
+        });
+      }
 
       setProductList(allProducts);
     } catch (error) {
@@ -100,4 +113,4 @@ const useAViewModel = () => {
   };
 };
 
-export default useAViewModel;
+export default useViewModel;

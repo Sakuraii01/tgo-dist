@@ -9,7 +9,9 @@ export const PROTECTED_PATH = {
 
   AUDITOR: "/auditor",
   PRODUCT_DETAIL_AUDITOR: "/product_adetail",
-  PRODUCT_COMMENT: "/response",
+  AUDITOR_COMMENT_HISTORY: "/aresponse",
+  COMPANY_COMMENT_HISTORY: "/cresponse",
+
 
   PRODUCT_DETAIL_COMPANY: "/product_cdetail",
 
