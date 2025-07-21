@@ -460,7 +460,19 @@ const CProduct: React.FC = () => {
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
                 {/* Header */}
                 <div className="bg-gradient-to-r text-black px-6 py-4 rounded-t-xl">
+                  <div className="flex justify-between items-center">
+
                   <h3 className="text-lg font-semibold">เพิ่มประเด็นใหม่</h3>
+                  <button
+                      type="button"
+                      disabled={submitting}
+                      className="flex px-4 py-2 border border-gray-300 rounded-full  hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      แนบแบบฟอร์ม CFP (เวอร์ชันที่ได้ทำการแก้ไข)
+                    </button>
+                    </div>
+                  <p className="text-sm flex justify-end mt-2 ">อัพเดตเมื่อ</p>
+
                 </div>
                 {/* Content */}
                 <div className="p-5">

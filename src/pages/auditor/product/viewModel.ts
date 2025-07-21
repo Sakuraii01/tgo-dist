@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { ProductService } from "../../../service/api/auditor/product";
 import type{ ProductDetailType } from "../../../service/api/auditor/product/type";
+import { type ProductType } from "../../../service/api/product/type";
 // import { useAuth } from "../../../auth/useAuth";
 
 const useProductDetail = (productId: number, auditorId:number) => {
   const [productDetail, setProductDetail] = useState<ProductDetailType>();
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [productData, setProductData] = useState<ProductType>();
   
   const productService = new ProductService();
   // const auth = useAuth();

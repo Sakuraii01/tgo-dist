@@ -1,7 +1,6 @@
 import React from "react";
 import { BreadcrumbNav} from "../../../../component/layout";
-import { ANavbar } from "../../layout";
-
+import { Navbar } from "../../../../component/layout";
 import useViewModel from "../viewModel";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -17,7 +16,7 @@ const Response: React.FC = () => {
   if (loading) {
     return (
       <div>
-        < ANavbar />
+        < Navbar />
         <BreadcrumbNav step="View Product" />
         <div className="max-w-7xl mx-auto my-15">
           <div className="flex justify-center items-center h-64">
@@ -31,7 +30,7 @@ const Response: React.FC = () => {
   if (error) {
     return (
       <div>
-        < ANavbar />
+        < Navbar />
         <BreadcrumbNav step="View Product" />
         <div className="max-w-7xl mx-auto my-15">
           <div className="flex justify-center items-center h-64">
@@ -45,7 +44,7 @@ const Response: React.FC = () => {
   if (!productDetail) {
     return (
       <div>
-        < ANavbar />
+        < Navbar />
         <BreadcrumbNav step="View Product" />
         <div className="max-w-7xl mx-auto my-15">
           <div className="flex justify-center items-center h-64">
@@ -64,7 +63,7 @@ const Response: React.FC = () => {
 
   return (
     <div>
-      < ANavbar />
+      < Navbar />
       <BreadcrumbNav step="View Product" />
       <div className="max-w-7xl mx-auto my-15">
         <h1 className="text-3xl font-medium mb-5 mt-10">
@@ -222,7 +221,7 @@ const Response: React.FC = () => {
         <div className="mt-10 flex justify-end">
           <button
             type="button"
-            onClick={() => navigate(`/product_adetail?id=${id}`)}
+            onClick={() => navigate(`/product_cdetail?id=${id}`)}
             // onClick={() => window.history.back()}
             className="bg-gray-600 text-white font-semibold shadow px-6 py-2 rounded-full hover:bg-gray-700 transition-colors"
           >

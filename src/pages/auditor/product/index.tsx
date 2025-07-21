@@ -1,14 +1,14 @@
 import React from "react";
 import { BreadcrumbNav } from "../../../component/layout";
 import { ANavbar } from "../layout";
-import { FileDownloadRounded } from "@mui/icons-material";
-import useViewModel from "./viewModel";
+import { FileOpen } from "@mui/icons-material";
+import useAViewModel from "./viewModel";
+// import useViewModel   from "../../product/viewModel";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../../constants/path.route";
 import { useState } from "react";
 import { ProductService } from "../../../service/api/auditor/product";
-
 // import { useAuth } from "../../../auth/useAuth";
 
 const AProduct: React.FC = () => {
@@ -16,8 +16,12 @@ const AProduct: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
-  const { productDetail, loading, error, refetch } = useViewModel(Number(id), auditorId); // Assuming auditorId is 1 for this example
+  const { productDetail, loading, error, refetch } = useAViewModel(
+    Number(id),
+    auditorId
+  ); // Assuming auditorId is 1 for this example
 
+  // const { productData } = useViewModel(Number(id));
   const [comment, setComment] = useState("");
   const [showCommentBox, setShowCommentBox] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -28,19 +32,9 @@ const AProduct: React.FC = () => {
     if (!comment.trim() || !productDetail) return;
     try {
       setSubmitting(true);
-      
+
       // const auditorId = localStorage.getItem(auditorId);
       // const auditorId = auth?.user?.auditor_id;
-
-       const payload = {
-      auditor_id: auditorId,
-      company_id: productDetail.product.company_id,
-      product_id: productDetail.product.product_id,
-      comment: comment.trim() // ลอง trim ดูเพื่อลดความซับซ้อน
-    };
-    
-    console.log("Comment payload:", payload);
-
       // เพิ่ม comment ก่อน
       await productService.reqAddComment({
         auditor_id: auditorId,
@@ -50,7 +44,10 @@ const AProduct: React.FC = () => {
       });
 
       // อัพเดทสถานะเป็น 2 (ระหว่างพิจารณา) หลังจากเพิ่ม comment
-      if (productDetail?.status?.status === 0 || productDetail?.status?.status === 1) {
+      if (
+        productDetail?.status?.status === 0 ||
+        productDetail?.status?.status === 1
+      ) {
         await productService.reqUpdateProductStatus(
           auditorId,
           productDetail.product.product_id,
@@ -86,7 +83,10 @@ const AProduct: React.FC = () => {
         text: "อยู่ระหว่างการพิจารณา",
         class: "bg-yellow-100 text-yellow-800",
       };
-    } else if (productDetail?.status?.status === 0 || productDetail?.status?.status === 1) {
+    } else if (
+      productDetail?.status?.status === 0 ||
+      productDetail?.status?.status === 1
+    ) {
       return { text: "รอการพิจารณา", class: "bg-gray-100 text-gray-800" };
     }
 
@@ -199,29 +199,14 @@ const AProduct: React.FC = () => {
                 </p>
                 <p>{productData?.product_name_en}</p>
               </div>
-              <p className="px-2 py-1 border-gray-300 border rounded-full h-fit text-xs font-semibold my-auto">
+              <p className="px-2 py-1 border-gray-300 border rounded-full h-fit text-xs  my-auto">
                 {statusInfo.text}
               </p>
-              <div className="ml-auto">
-                <button
-                  onClick={() =>
-                    window.open(
-                      `http://178.128.123.212:5000/api/v1/excel/${productData?.company_id}/${productData?.product_id}`,
-                      "_blank"
-                    )
-                  }
-                  type="button"
-                  className="primary-button font-semibold shadow px-4 py-1 rounded-full flex gap-1 hover:opacity-90"
-                >
-                  <FileDownloadRounded fontSize="small" />
-                  <p>ดาวน์โหลดเอกสาร</p>
-                </button>
-              </div>
             </div>
           </div>
 
           <div className="w-full rounded-xl bg-stroke py-4 px-6 my-4">
-            <p className="text-xs font-semibold mb-1">คำอธิบาย</p>
+            <p className="text-xs  mb-1">คำอธิบาย</p>
             {productData?.product_techinfo && (
               <div>
                 {typeof productData.product_techinfo === "string" ? (
@@ -365,7 +350,7 @@ const AProduct: React.FC = () => {
               {/* Header with gradient */}
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200 px-6 py-5 rounded-t-xl flex justify-between items-center">
                 {/* Left side title */}
-                <h3 className="text-lg font-semibold text-gray-800 flex items-center">
+                <h3 className="text-lg  text-gray-800 flex items-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-5 w-5 mr-2 text-blue-600"
@@ -384,9 +369,26 @@ const AProduct: React.FC = () => {
                 </h3>
 
                 {/* Right side button */}
+
+                <div className="ml-auto pr-6">
+                  <button
+                    onClick={() =>
+                      window.open(
+                        `http://178.128.123.212:5000/api/v1/excel/${productData?.company_id}/${productData?.product_id}`,
+                        "_blank"
+                      )
+                    }
+                    type="button"
+                    className="border border-green-500   shadow px-4 py-1 rounded-full flex gap-1 hover:opacity-90"
+                  >
+                    <FileOpen fontSize="small" color="success" />
+                    <p>ดาวน์โหลดเอกสาร</p>
+                  </button>
+                </div>
+
                 <button
                   onClick={() => navigate(`/response?id=${id}`)}
-                  className="px-2 py-1 border-gray-300 border rounded-full h-fit font-semibold my-auto"
+                  className="px-2 py-1 border-gray-300 border rounded-full h-fit  my-auto"
                 >
                   ประวัติการรายงาน
                 </button>
@@ -396,7 +398,7 @@ const AProduct: React.FC = () => {
                 <div className="flex items-center gap-4">
                   <span className="text-gray-700">สถานะปัจจุบัน:</span>
                   <span
-                    className={`px-3 py-1 rounded-full text-sm font-semibold ${statusInfo.class}`}
+                    className={`px-3 py-1 rounded-full text-sm  ${statusInfo.class}`}
                   >
                     {statusInfo.text}
                   </span>
@@ -406,14 +408,26 @@ const AProduct: React.FC = () => {
                   {/* ปุ่มอนุมัติ/ปฏิเสธ - แสดงเฉพาะเมื่อ status = 1,2 และไม่ได้อยู่ในโหมดแก้ไข */}
                   {(productDetail?.status?.status === 0 ||
                     productDetail?.status?.status === 1 ||
-                    productDetail?.status?.status === 2 ) && (
+                    productDetail?.status?.status === 2) && (
                     <>
+                      <button
+                        type="button"
+                        disabled={submitting}
+                        className="primary-button  shadow px-4 py-2 rounded-full flex gap-1 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={toggleCommentBox} // Toggle comment box visibility
+                      >
+                        {submitting
+                          ? "กำลังดำเนินการ..."
+                          : showCommentBox
+                          ? "ยกเลิกการเพิ่มประเด็น"
+                          : "เพิ่มประเด็นที่ต้องปรับปรุง"}
+                      </button>
                       {!showCommentBox && (
                         <>
                           <button
                             type="button"
                             disabled={submitting}
-                            className="bg-green-600 text-white font-semibold shadow px-4 py-2 rounded-full hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="bg-green-600 text-white  shadow px-4 py-2 rounded-full hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             onClick={() => handleUpdateStatus(3)}
                           >
                             {submitting ? "กำลังดำเนินการ..." : "อนุมัติ"}
@@ -421,25 +435,13 @@ const AProduct: React.FC = () => {
                           <button
                             type="button"
                             disabled={submitting}
-                            className="bg-red-600 text-white font-semibold shadow px-4 py-2 rounded-full hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="bg-red-600 text-white  shadow px-4 py-2 rounded-full hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             onClick={() => handleUpdateStatus(4)}
                           >
                             {submitting ? "กำลังดำเนินการ..." : "ปฏิเสธ"}
                           </button>
                         </>
                       )}
-                      <button
-                        type="button"
-                        disabled={submitting}
-                        className="primary-button font-semibold shadow px-4 py-2 rounded-full flex gap-1 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-                        onClick={toggleCommentBox} // Toggle comment box visibility
-                      >
-                        {submitting
-                          ? "กำลังดำเนินการ..."
-                          : showCommentBox
-                          ? "ยกเลิกการแก้ไข"
-                          : "แก้ไข"}
-                      </button>
                     </>
                   )}
 
@@ -448,7 +450,7 @@ const AProduct: React.FC = () => {
                     productDetail?.status?.status === 4) && (
                     <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-2 w-full">
                       <p className="text-blue-800 text-sm">
-                        <span className="font-semibold">หมายเหตุ:</span>{" "}
+                        <span className="">หมายเหตุ:</span>{" "}
                         ผลิตภัณฑ์นี้อยู่ในสถานะ "{statusInfo.text}"
                         {productDetail?.status?.status === 3 &&
                           " - การพิจารณาเสร็จสิ้นแล้ว"}
@@ -457,15 +459,6 @@ const AProduct: React.FC = () => {
                       </p>
                     </div>
                   )}
-
-                  {/* Back to List Button */}
-                  <button
-                    type="button"
-                    onClick={() => navigate(PROTECTED_PATH.AUDITOR)}
-                    className="bg-gray-600 text-white font-semibold shadow px-4 py-2 rounded-full hover:bg-gray-700 transition-colors ml-auto"
-                  >
-                    กลับไปรายการผลิตภัณฑ์
-                  </button>
                 </div>
               </div>
             </div>
@@ -481,10 +474,11 @@ const AProduct: React.FC = () => {
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
                 {/* Header */}
                 <div className="bg-gradient-to-r text-black px-6 py-4 rounded-t-xl">
-                  <h3 className="text-lg font-semibold">เพิ่มประเด็นใหม่</h3>
+                  <h3 className="text-lg ">เพิ่มประเด็นใหม่</h3>
                 </div>
+
                 {/* Content */}
-                <div className="p-5">
+                <div className="p-3">
                   <textarea
                     className="w-full h-32 p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                     placeholder="กรอกประเด็นที่ต้องการแสดงความคิดเห็น..."
@@ -501,7 +495,7 @@ const AProduct: React.FC = () => {
                       type="button"
                       onClick={() => setComment("")}
                       disabled={submitting}
-                      className="px-4 py-2 border border-gray-300 rounded-full font-semibold hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-4 py-2 border border-gray-300 rounded-full  hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       ล้างข้อความ
                     </button>
@@ -509,7 +503,7 @@ const AProduct: React.FC = () => {
                       type="button"
                       onClick={handleSaveComment}
                       disabled={!comment.trim() || submitting}
-                      className="primary-button font-semibold shadow px-4 py-2 rounded-full flex gap-1 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="primary-button  shadow px-4 py-2 rounded-full flex gap-1 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {submitting ? "กำลังบันทึก..." : "บันทึกความคิดเห็น"}
                     </button>
@@ -518,6 +512,15 @@ const AProduct: React.FC = () => {
               </div>
             </div>
           )}
+        {/* Back to List Button */}
+        <button
+          type="button"
+          onClick={() => navigate(PROTECTED_PATH.AUDITOR)}
+          className="flex 
+              bg-gray-600 text-white  shadow px-4 py-2 rounded-full hover:bg-gray-700 transition-colors ml-auto justify-end mt-4"
+        >
+          กลับไปรายการผลิตภัณฑ์
+        </button>
       </div>
     </div>
   );

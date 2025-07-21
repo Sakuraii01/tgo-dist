@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { ProductService } from "../../../service/api/auditor/product";
 import { CompanyService } from "../../../service/api/company";
-import type { ExcelType } from "../../../service/api/company/type";
 import type { ProductDetailType } from "../../../service/api/auditor/product/type";
 // import { useAuth } from "../../../auth/useAuth";
 

@@ -16,7 +16,7 @@ import type { CompanyType } from "../../service/api/company/type";
 const auditorId = 1;
 const companyId = 1005;
 
-const useViewModel = () => {
+const useAViewModel = () => {
   const productService = new ProductService();
   const auditorService = new AuditorService();
   const companyService = new CompanyService();
@@ -100,4 +100,4 @@ const useViewModel = () => {
   };
 };
 
-export default useViewModel;
+export default useAViewModel;
