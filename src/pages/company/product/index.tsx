@@ -7,18 +7,15 @@ import { PROTECTED_PATH } from "../../../constants/path.route";
 import { PROTECTED_PATH as API_PATH } from "../../../constants/api.route";
 import { CompanyService } from "../../../service/api/company";
 import React, { useRef, useState } from "react";
-import { WarningAmber } from "@mui/icons-material";
 
 const CProduct: React.FC = () => {
   const navigate = useNavigate();
   const auditorId = 1;
-  const companyId = 1005;
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
 
   const {
     productData: individualProduct,
-    fetchLatestExcel,
     fetchGenExcel,
     fetchUploadExcel,
     excelLink,
@@ -26,7 +23,7 @@ const CProduct: React.FC = () => {
     loading,
     error,
     refetch,
-  } = useViewModel(auditorId, Number(id), companyId);
+  } = useViewModel(auditorId, Number(id));
 
   const productId = productDetail?.product?.[0]?.product_id;
   const [comment, setComment] = useState("");
@@ -73,24 +70,10 @@ const CProduct: React.FC = () => {
     if (!comment.trim() || !productDetail) return;
     try {
       setSubmitting(true);
-      // const latestCommentId = productDetail.comments && productDetail.comments.length > 0
-      //   ? productDetail.comments[productDetail.comments.length - 1].comment_id
-      //   : null;
-
-      const latestCommentId = 25;
-
-      if (!latestCommentId) {
-        console.error("ไม่พบ ID ของความคิดเห็นล่าสุด");
-        return;
-      }
-
-      const currentDateTime = new Date().toISOString();
 
       await companyService.reqUpdateCommentCompany(
-        latestCommentId,
-        comment.trim(),
-        currentDateTime,
-        currentDateTime
+        productDetail?.comments[0]?.comments_id || 0,
+        comment.trim()
       );
 
       setComment("");

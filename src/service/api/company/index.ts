@@ -23,34 +23,25 @@ export class CompanyService extends RemoteA {
     return data;
   };
 
-  reqGetExcel = async (
-    company_id: number,
-    product_id: number
-  ): Promise<ExcelType> => {
+  reqGetExcel = async (product_id: number): Promise<ExcelType> => {
     const response = await this.getAxiosInstance().get(
-      PROTECTED_PATH.EXCEL + `/${company_id}/${product_id}`
+      PROTECTED_PATH.EXCEL + `/${this.company_id}/${product_id}`
     );
     const { data } = response;
     return data;
   };
 
-  reqGetGenExcel = async (
-    company_id: number,
-    product_id: number
-  ): Promise<ExcelGenType> => {
+  reqGetGenExcel = async (product_id: number): Promise<ExcelGenType> => {
     const response = await this.getAxiosInstance().get(
-      `${PROTECTED_PATH.EXCEL_GENERATE}/${company_id}/${product_id}`
+      `${PROTECTED_PATH.EXCEL_GENERATE}/${this.company_id}/${product_id}`
     );
     const { data } = response;
     return data[0] as ExcelGenType;
   };
 
-  reqGetLatestExcel = async (
-    auditor_id: number,
-    product_id: number
-  ): Promise<LatestExcelType> => {
+  reqGetLatestExcel = async (product_id: number): Promise<LatestExcelType> => {
     const response = await this.getAxiosInstance().get(
-      PROTECTED_PATH.EXCEL_DOWNLOAD + `/${auditor_id}/${product_id}`
+      PROTECTED_PATH.EXCEL_DOWNLOAD + `/${this.company_id}/${product_id}`
     );
     const { data } = response;
     return data;
@@ -61,7 +52,7 @@ export class CompanyService extends RemoteA {
     product_id: number
   ): Promise<ListExcelType[]> => {
     const response = await this.getAxiosInstance().get(
-      PROTECTED_PATH.EXCEL_DOWNLOAD+ `/${auditor_id}/${product_id}`
+      PROTECTED_PATH.EXCEL_DOWNLOAD + `/${auditor_id}/${product_id}`
     );
     const { data } = response;
     return data;
@@ -95,16 +86,12 @@ export class CompanyService extends RemoteA {
   };
   reqUpdateCommentCompany = async (
     comment_id: number,
-    comment_company: string,
-    updated_at_company: string,
-    created_at_company: string
+    comment_company: string
   ): Promise<any> => {
     const response = await this.getAxiosInstance().put(
       `${PROTECTED_PATH.AUDITOR}/comment/${comment_id}`,
       {
-        comment_company,
-        updated_at_company,
-        created_at_company,
+        comment_company: comment_company,
       }
     );
     return response.data;

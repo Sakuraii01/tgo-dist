@@ -7,11 +7,7 @@ import type {
 } from "../../../service/api/auditor/type";
 import type { ListExcelType } from "../../../service/api/company/type";
 
-const useViewModel = (
-  auditorId: number,
-  productId: number,
-  companyId: number
-) => {
+const useViewModel = (auditorId: number, productId: number) => {
   const [productDetail, setProductDetail] = useState<
     ProductDetailType | undefined
   >(undefined);
@@ -74,7 +70,7 @@ const useViewModel = (
 
     try {
       const companyService = new CompanyService();
-      const data = await companyService.reqGetExcel(companyId, productId);
+      const data = await companyService.reqGetExcel(productId);
       return data;
     } catch (error) {
       console.error("Error fetching Excel:", error);
@@ -90,7 +86,6 @@ const useViewModel = (
 
     try {
       const data = await companyService.reqGetGenExcel(
-        productData?.company_id || 0,
         productId
       );
 
@@ -106,7 +101,6 @@ const useViewModel = (
 
     try {
       const data = await companyService.reqGetGenExcel(
-        productData?.company_id || 0,
         productId
       );
 
@@ -118,15 +112,11 @@ const useViewModel = (
   };
 
   const fetchLatestExcel = async () => {
-    if (!companyId) {
-      setError("Company ID is required");
-      return null;
-    }
     setLoading(true);
     setError(null);
     try {
       const companyService = new CompanyService();
-      const data = await companyService.reqGetLatestExcel(companyId, productId);
+      const data = await companyService.reqGetLatestExcel(productId);
       return data;
     } catch (error) {
       console.error("Error fetching latest Excel:", error);
@@ -138,11 +128,6 @@ const useViewModel = (
   };
 
   const fetchListExcel = async () => {
-    if (!companyId) {
-      setError("Company ID is required");
-      return [];
-    }
-
     setLoading(true);
     setError(null);
 
@@ -176,7 +161,7 @@ const useViewModel = (
       setExcelList(list);
     };
     loadExcelList();
-  }, [companyId, productId, auditorId]);
+  }, [productId, auditorId]);
 
   useEffect(() => {
     fetchProductDetail();

@@ -46,8 +46,8 @@ export interface ProductDetailType {
     created_at: string;
     updated_at: string;
   };
-  comments: Array<{
-    comment_id?: number;
+  comments: {
+    comments_id?: number;
     auditor_id?: number;
     company_id?: number;
     product_id?: number;
@@ -56,7 +56,7 @@ export interface ProductDetailType {
     created_at: string;
     created_at_company: string;
     updated_at?: string;
-  }>;
+  }[];
 }
 
 // Single product type
