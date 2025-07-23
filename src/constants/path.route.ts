@@ -7,6 +7,14 @@ export const PROTECTED_PATH = {
   CBAM: "/cbam",
   DASHBOARD: "/",
 
+  AUDITOR: "/auditor",
+  PRODUCT_DETAIL_AUDITOR: "/product_adetail",
+  AUDITOR_COMMENT_HISTORY: "/aresponse",
+  COMPANY_COMMENT_HISTORY: "/cresponse",
+
+
+  PRODUCT_DETAIL_COMPANY: "/product_cdetail",
+
   PRODUCT_DETAIL: "/product_detail",
   SELF_COLLECT: "/selfcollect",
   CREATE_SELF_COLLECT: "/selfcollect/create",
@@ -20,4 +28,6 @@ export const PROTECTED_PATH = {
   REGISTER_PRODUCT_FR05: "/register_product/fr05",
   REGISTER_PRODUCT_FR06_1: "/register_product/fr06_1",
   REGISTER_PRODUCT_FR06_2: "/register_product/fr06_2",
+
+  
 };

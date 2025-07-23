@@ -49,4 +49,18 @@ export const PROTECTED_PATH = {
 
   VEHICLES: "/tgo/categories/3/23",
   OVERALL: "/f1/1005",
+
+  AUDITOR: "/auditor",
+  AUDITOR_REPORT: "/auditor/report",
+  AUDITOR_PRODUCT: "/auditor/product",
+  AUDITOR_COMMENT: "/auditor/comment",
+
+  COMPANY_NOTIFICATION: "/notification/company",
+
+  EXCEL: "/excel/auditor",
+  EXCEL_GENERATE: "/excel/company",
+  EXCEL_DOWNLOAD: "/download/excel/auditor",
+  EXCEL_ADD: "/notifications/company",
+  
+  
 };
