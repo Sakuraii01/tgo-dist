@@ -5,7 +5,6 @@ import { Navbar } from "../../../../component/layout";
 import useViewModel from "../viewModel";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { PROTECTED_PATH } from "../../../../constants/path.route";
 
 const Response: React.FC = () => {
   const navigate = useNavigate();
@@ -21,13 +20,11 @@ const Response: React.FC = () => {
 
   // Rename productData to individualProduct to avoid conflicts
   const {
-    fetchListExcel,
     productData: individualProduct,
     productDetail,
     loading,
     error,
     excelList,
-    loadingExcel,
     errorExcel,
   } = useViewModel(auditorId, Number(id), companyId);
 

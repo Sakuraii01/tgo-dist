@@ -1,4 +1,3 @@
-// viewModel.ts
 import { useState, useEffect } from "react";
 import { ProductService } from "../../../service/api/auditor/product";
 import { CompanyService } from "../../../service/api/company";
@@ -7,32 +6,25 @@ import type {
   ProductType,
 } from "../../../service/api/auditor/type";
 import type { ListExcelType } from "../../../service/api/company/type";
-import { Handle } from "@xyflow/react";
 
-// Custom hook for managing product detail data
 const useViewModel = (
   auditorId: number,
   productId: number,
   companyId: number
 ) => {
-  // State for storing product details, including comments and status
   const [productDetail, setProductDetail] = useState<
     ProductDetailType | undefined
   >(undefined);
 
-  // State for storing basic product data
   const [productData, setProductData] = useState<ProductType | undefined>(
     undefined
   );
 
-  // Loading and error states
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [excelList, setExcelList] = useState<ListExcelType[]>([]);
-  // Service instance
   const productService = new ProductService();
 
-  // Function to fetch detailed product information including comments and status
   const fetchProductDetail = async () => {
     if (!productId) {
       setLoading(false);
@@ -57,7 +49,6 @@ const useViewModel = (
     }
   };
 
-  // Function to fetch just the product data
   const fetchProductData = async () => {
     if (!productId) return;
 
@@ -70,7 +61,6 @@ const useViewModel = (
     }
   };
 
-  // Function to fetch Excel file for a product
   const fetchExcel = async () => {
     if (!productId) {
       setError("Product ID is required");
@@ -115,7 +105,6 @@ const useViewModel = (
     }
   };
 
-  // Function to fetch the latest Excel file
   const fetchLatestExcel = async () => {
     if (!companyId) {
       setError("Company ID is required");
@@ -175,9 +164,8 @@ const useViewModel = (
       setExcelList(list);
     };
     loadExcelList();
-  }, [companyId, productId, auditorId]); // เพิ่ม dependency
+  }, [companyId, productId, auditorId]);
 
-  // Fetch data when the component mounts or when productId changes
   useEffect(() => {
     fetchProductDetail();
     fetchProductData();
@@ -192,11 +180,10 @@ const useViewModel = (
     fetchLatestExcel,
     fetchListExcel,
     fetchGenExcel,
-    excelList, // เพิ่มตรงนี้
-    loadingExcel: loading, // เปลี่ยนชื่อถ้าจะดี แนะนำใช้แยกกัน แต่ตอนนี้ return loading state เดียวกันได้
-    errorExcel: error, // ถ้าแยก error ก็แยกด้วย (แต่ตัวนี้คุณใช้ state เดียวกัน)
+    excelList, 
+    loadingExcel: loading, 
+    errorExcel: error,
     refetch: fetchProductDetail,
-    // uploadExcel,
   };
 };
 

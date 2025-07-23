@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../../constants/path.route";
 import { useState } from "react";
 import { ProductService } from "../../../service/api/auditor/product";
-import { CompanyService } from "../../../service/api/company";
 
 const AProduct: React.FC = () => {
   const auditorId = 1;

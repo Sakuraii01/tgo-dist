@@ -1,24 +1,20 @@
-// First file: CProduct.tsx
 import { BreadcrumbNav, Navbar } from "../../../component/layout";
 import { FileOpen } from "@mui/icons-material";
 import useViewModel from "./viewModel";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { PROTECTED_PATH as API_PATH } from "../../../constants/api.route";
 import { PROTECTED_PATH } from "../../../constants/path.route";
 import { CompanyService } from "../../../service/api/company";
-import { url } from "inspector";
 import React, { useRef, useState } from "react";
-import { FileUpload, InsertDriveFile, Close } from "@mui/icons-material"; // เพิ่ม import ไอคอนถ้าใช้ MUI
+import { FileUpload, InsertDriveFile, Close } from "@mui/icons-material";
 
 const CProduct: React.FC = () => {
   const navigate = useNavigate();
   const auditorId = 1;
-  const companyId = 1005; // Assuming companyId is 1 for this example
+  const companyId = 1005; 
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
 
-  // Rename productData to individualProduct to avoid conflicts
   const {
     productData: individualProduct,
     fetchLatestExcel,
@@ -37,7 +33,7 @@ const CProduct: React.FC = () => {
   const companyService = new CompanyService();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploadError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,13 +61,10 @@ const CProduct: React.FC = () => {
 
       console.log("Upload result:", result);
 
-      // แสดง success message พร้อมข้อความจาก API
       alert(`อัปโหลดไฟล์เรียบร้อยแล้ว: ${result.message}`);
 
-      // ล้างไฟล์ที่เลือกหลังจากอัพโหลดสำเร็จ
       clearSelectedFile();
 
-      // รีเฟรชข้อมูลหากจำเป็น
       if (refetch) {
         await refetch();
       }
@@ -108,7 +101,6 @@ const CProduct: React.FC = () => {
 
       const currentDateTime = new Date().toISOString();
 
-      // เรียกฟังก์ชันโดยส่งพารามิเตอร์ทั้ง 4 ตัว
       await companyService.reqUpdateCommentCompany(
         latestCommentId,
         comment.trim(),
@@ -120,7 +112,7 @@ const CProduct: React.FC = () => {
       setShowCommentBox(false);
       await refetch();
       alert("บันทึกความคิดเห็นเรียบร้อยแล้ว");
-      // navigate("/");
+      navigate("/");
     } catch (error) {
       console.error("Error saving comment:", error);
       alert("เกิดข้อผิดพลาดในการบันทึกความคิดเห็น");
@@ -441,7 +433,6 @@ const CProduct: React.FC = () => {
                     </span>
                   </div>
                   <div className="flex gap-3 mt-4 flex-wrap justify-end">
-                    {/* ปุ่มอนุมัติ/ปฏิเสธ - แสดงเฉพาะเมื่อ status = 1,2 และไม่ได้อยู่ในโหมดแก้ไข */}
                     {(productDetail?.status?.status === 0 ||
                       productDetail?.status?.status === 1 ||
                       productDetail?.status?.status === 2) && (
@@ -467,7 +458,7 @@ const CProduct: React.FC = () => {
                               onClick={async () => {
                                 try {
                                   setSubmitting(true);
-                                  const result = await fetchExcel(); // ดึง download_url จาก backend
+                                  const result = await fetchExcel(); 
 
                                   if (result?.download_url) {
                                     const fullUrl = `http://178.128.123.212:5000${result.download_url}`;
@@ -477,7 +468,7 @@ const CProduct: React.FC = () => {
                                       window.URL.createObjectURL(blob);
                                     const link = document.createElement("a");
                                     link.href = downloadUrl;
-                                    link.download = `product_${productId}_report.xlsx`; // ตั้งชื่อไฟล์เองได้เลย
+                                    link.download = `product_${productId}_report.xlsx`; 
                                     document.body.appendChild(link);
                                     link.click();
                                     link.remove();
@@ -648,7 +639,7 @@ const CProduct: React.FC = () => {
                           type="button"
                           disabled={submitting}
                           className="primary-button font-semibold shadow px-4 py-2 rounded-full flex gap-1 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-                          onClick={toggleCommentBox} // Toggle comment box visibility
+                          onClick={toggleCommentBox} 
                         >
                           {submitting
                             ? "กำลังดำเนินการ..."
@@ -692,8 +683,8 @@ const CProduct: React.FC = () => {
                         type="file"
                         ref={fileInputRef}
                         onChange={handleFileChange}
-                        accept=".xlsx,.xls" // จำกัดประเภทไฟล์เป็น Excel
-                        style={{ display: "none" }} // ซ่อนอินพุตไฟล์
+                        accept=".xlsx,.xls"
+                        style={{ display: "none" }} 
                       />
 
                       {selectedFile ? (

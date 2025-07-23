@@ -3,7 +3,6 @@ import type {
   ProductType,
   AuditorReportType,
 } from "../../service/api/auditor/type";
-import { ProductService } from "../../service/api/auditor/product";
 import { AuditorService } from "../../service/api/auditor";
 import type { AuditorType } from "../../service/api/auditor/type";
 import { CompanyService } from "../../service/api/company";
@@ -17,7 +16,6 @@ const auditorId = 1;
 const companyId = 1005;
 
 const useViewModel = () => {
-  const productService = new ProductService();
   const auditorService = new AuditorService();
   const companyService = new CompanyService();
   // const auth = useAuth();

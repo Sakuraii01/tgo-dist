@@ -4,12 +4,9 @@ import {
   type CompanyType,
   type ExcelType,
   type ExcelGenType,
-  type AddCommentRequest,
-  type CommentResponseType,
   type NotificationType,
   type LatestExcelType,
   type ListExcelType,
-  type AddExcelType,
 } from "./type";
 
 export class CompanyService extends RemoteA {

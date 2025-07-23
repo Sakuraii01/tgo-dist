@@ -5,14 +5,13 @@ import { Navbar } from "../../../../component/layout";
 import useViewModel from "../viewModel";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { PROTECTED_PATH } from "../../../../constants/path.route";
 
 const Response: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
-  const companyId = 1005; // Assuming companyId is 1 for this example
-  const auditorId = 1; // Assuming auditorId is 1 for this example
+  const companyId = 1005; 
+  const auditorId = 1; 
 
   // สร้าง state สำหรับเก็บสถานะการเปิด/ปิด ของแต่ละความคิดเห็น
   const [expandedComments, setExpandedComments] = useState<{
