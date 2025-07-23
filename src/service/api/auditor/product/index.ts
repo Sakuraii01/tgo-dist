@@ -46,7 +46,7 @@ export class ProductService extends RemoteA {
     newStatus: number
   ): Promise<any> => {
     const response = await this.getAxiosInstance().put(
-      `${PROTECTED_PATH.AUDITOR_PRODUCT}status/${auditorId}/${productId}/${statusId}`,
+      `${PROTECTED_PATH.AUDITOR_PRODUCT}/status/${auditorId}/${productId}/${statusId}`,
       { status: newStatus }
     );
     const { data } = response;

@@ -20,7 +20,8 @@ const AProduct: React.FC = () => {
   console.log("Auditor ID:", auditorId);
   console.log("Product ID from URL:", id);
 
-  const { productData, productDetail, loading, error, refetch, fetchLatestExcel} =
+
+  const { productData, productDetail, loading, error, refetch,fetchGenExcel,excelLink} =
     useViewModel(auditorId, Number(id), companyId);
 
   const [comment, setComment] = useState("");
@@ -32,10 +33,6 @@ const AProduct: React.FC = () => {
     if (!comment.trim() || !productDetail) return;
     try {
       setSubmitting(true);
-
-      // const auditorId = localStorage.getItem(auditorId);
-      // const auditorId = auth?.user?.auditor_id;
-      // เพิ่ม comment ก่อน
       await productService.reqAddComment({
         auditor_id: auditorId,
         company_id: productInfo.company_id,
@@ -65,7 +62,6 @@ const AProduct: React.FC = () => {
     } catch (error) {
       console.error("Error saving comment:", error);
       alert("เกิดข้อผิดพลาดในการบันทึกความคิดเห็น");
-      // navigate("/auditor");
     } finally {
       setSubmitting(false);
     }
@@ -410,34 +406,13 @@ const AProduct: React.FC = () => {
                 <div className="ml-auto mr-4">
                   <button
                     onClick={async () => {
-                      try {
-                        setSubmitting(true);
-                        const result = await fetchLatestExcel(); // ดึง download_url จาก backend
-
-                        if (result?.path_excel) {
-                          const fullUrl = `http://178.128.123.212:5000${result.path_excel}`;
-
-                          const response = await fetch(fullUrl);
-                          const blob = await response.blob();
-
-                          const downloadUrl = window.URL.createObjectURL(blob);
-                          const link = document.createElement("a");
-                          link.href = downloadUrl;
-                          link.download = `product_${productId}_report.xlsx`; // ตั้งชื่อไฟล์เองได้เลย
-                          document.body.appendChild(link);
-                          link.click();
-                          link.remove();
-                          window.URL.revokeObjectURL(downloadUrl);
-                        } else {
-                          alert("ไม่พบลิงก์ดาวน์โหลด Excel");
-                        }
-                      } catch (error) {
-                        console.error("Error generating Excel:", error);
-                        alert("ไม่สามารถสร้างไฟล์ Excel ได้");
-                      } finally {
-                        setSubmitting(false);
-                      }
-                    }}
+                    await fetchGenExcel();
+                    console.log(excelLink);
+                    window.open(
+                      "http://178.128.123.212:5000" + excelLink || "",
+                      "_blank"
+                    );
+                  }}
                     type="button"
                     className="border border-green-500 shadow px-4 py-1 rounded-full flex gap-1 hover:bg-green-50 hover:opacity-90 transition-colors"
                   >

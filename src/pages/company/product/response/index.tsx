@@ -248,7 +248,7 @@ const Response: React.FC = () => {
                                   onClick={() =>
                                     window.open(
                                       `http://178.128.123.212:5000${
-                                        excelList[excelList.length - index - 1]
+                                        excelList[index]
                                           .path_excel
                                       }`,
                                       "_blank"
@@ -259,13 +259,13 @@ const Response: React.FC = () => {
                                   <FileOpen className="mr-2" />
                                   รายงานไฟล์เวอร์ชัน{" "}
                                   {
-                                    excelList[excelList.length - index - 1]
+                                    excelList[index]
                                     .version
                                   }{" "}
                                   -{" "}
                                   {new Date(
                                     excelList[
-                                      excelList.length - index - 1
+                                      index
                                     ].created_at
                                   ).toLocaleDateString("th-TH")}
                                 </button>

@@ -10,10 +10,11 @@ import {
 } from "./type";
 
 import { useToken } from "../../../utils/localStorage";
+
 import type { AxiosResponse } from "axios";
 export class CompanyService extends RemoteA {
   token = useToken();
-  company_id = this.token.company[0].company_id;
+  company_id = this.token?.company[0]?.company_id;
   reqGetCompany = async (company_id: number): Promise<CompanyType> => {
     const response = await this.getAxiosInstance().get(
       PROTECTED_PATH.COMPANY + `/${company_id}`
@@ -45,11 +46,11 @@ export class CompanyService extends RemoteA {
   };
 
   reqGetLatestExcel = async (
-    company_id: number,
+    auditor_id: number,
     product_id: number
   ): Promise<LatestExcelType> => {
     const response = await this.getAxiosInstance().get(
-      PROTECTED_PATH.EXCEL_DOWNLOAD + `/${company_id}/${product_id}`
+      PROTECTED_PATH.EXCEL_DOWNLOAD + `/${auditor_id}/${product_id}`
     );
     const { data } = response;
     return data;
@@ -60,7 +61,7 @@ export class CompanyService extends RemoteA {
     product_id: number
   ): Promise<ListExcelType[]> => {
     const response = await this.getAxiosInstance().get(
-      PROTECTED_PATH.EXCEL_DOWNLOAD_AUDITOR + `/${auditor_id}/${product_id}`
+      PROTECTED_PATH.EXCEL_DOWNLOAD+ `/${auditor_id}/${product_id}`
     );
     const { data } = response;
     return data;

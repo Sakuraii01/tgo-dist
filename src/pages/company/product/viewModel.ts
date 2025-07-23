@@ -19,11 +19,13 @@ const useViewModel = (
   const [productData, setProductData] = useState<ProductType | undefined>(
     undefined
   );
+  const companyService = new CompanyService();
 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [excelList, setExcelList] = useState<ListExcelType[]>([]);
   const productService = new ProductService();
+  const [excelLink, setExcelLink] = useState<string | null>(null);
 
   const fetchProductDetail = async () => {
     if (!productId) {
@@ -83,25 +85,35 @@ const useViewModel = (
     }
   };
 
-   const fetchGenExcel = async () => {
-    if (!productId) {
-      setError("Product ID is required");
-      return null;
-    }
-
-    setLoading(true);
-    setError(null);
+  const fetchGenExcel = async () => {
+   if (!productId) return;
 
     try {
-      const companyService = new CompanyService();
-      const data = await companyService.reqGetGenExcel(companyId, productId);
-      return data;
+      const data = await companyService.reqGetGenExcel(
+        productData?.company_id || 0,
+        productId
+      );
+
+      setExcelLink(data.path_excel);
     } catch (error) {
-      console.error("Error fetching Excel:", error);
-      setError("Failed to fetch Excel file");
-      return null;
-    } finally {
-      setLoading(false);
+      console.error("Error fetching generated Excel:", error);
+      throw error;
+    }
+  };
+
+  const fetchUploadExcel = async () => {
+    if (!productId) return;
+
+    try {
+      const data = await companyService.reqGetGenExcel(
+        productData?.company_id || 0,
+        productId
+      );
+
+      setExcelLink(data.path_excel[0]);
+    } catch (error) {
+      console.error("Error fetching generated Excel:", error);
+      throw error;
     }
   };
 
@@ -180,8 +192,10 @@ const useViewModel = (
     fetchLatestExcel,
     fetchListExcel,
     fetchGenExcel,
-    excelList, 
-    loadingExcel: loading, 
+    fetchUploadExcel,
+    excelList,
+    excelLink,
+    loadingExcel: loading,
     errorExcel: error,
     refetch: fetchProductDetail,
   };

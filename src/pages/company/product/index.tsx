@@ -4,11 +4,10 @@ import useViewModel from "./viewModel";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../../constants/path.route";
+import { PROTECTED_PATH as API_PATH } from "../../../constants/api.route";
 import { CompanyService } from "../../../service/api/company";
 import React, { useRef, useState } from "react";
-import {
-  WarningAmber,
-} from "@mui/icons-material";
+import { WarningAmber } from "@mui/icons-material";
 
 const CProduct: React.FC = () => {
   const navigate = useNavigate();
@@ -20,8 +19,9 @@ const CProduct: React.FC = () => {
   const {
     productData: individualProduct,
     fetchLatestExcel,
-    fetchExcel,
     fetchGenExcel,
+    fetchUploadExcel,
+    excelLink,
     productDetail,
     loading,
     error,
@@ -45,60 +45,29 @@ const CProduct: React.FC = () => {
     }
   };
 
-
   const callExcelApi = async () => {
-  try {
-    // แสดงสถานะกำลังโหลด (ถ้าต้องการ)
-    setUploading(true);
-    
-    // เรียกใช้ API โดยไม่สนใจผลลัพธ์
-    const response = await fetch(
-      `http://178.128.123.212:5000/api/v1/download/excel/auditor/${auditorId}/${productId}`,
-      {
-        method: 'GET', // หรือ POST แล้วแต่ API ของคุณต้องการ
-        headers: {
-          'Content-Type': 'application/json',
-          // เพิ่ม headers อื่นๆ ตามต้องการ
+    try {
+      // แสดงสถานะกำลังโหลด (ถ้าต้องการ)
+      setUploading(true);
+      
+      const response = await fetch(
+        `${API_PATH.EXCEL_DOWNLOAD}/${auditorId}/${productId}`,
+        {
+          method: "GET", // หรือ POST แล้วแต่ API ของคุณต้องการ
+          headers: {
+            "Content-Type": "application/json",
+            // เพิ่ม headers อื่นๆ ตามต้องการ
+          },
         }
-      }
-    );
-    
-    // ตรวจสอบสถานะการตอบกลับ
-    if (response.ok) {
-      console.log("เรียก API สำเร็จ");
-      alert("เรียกใช้งาน API สำเร็จ");
-    } else {
-      console.error("เรียก API ไม่สำเร็จ:", response.status);
-      alert("เรียกใช้งาน API ไม่สำเร็จ");
+      );
+    } catch (error) {
+      console.error("เกิดข้อผิดพลาดในการเรียก API:", error);
+      alert("เกิดข้อผิดพลาดในการเรียก API");
+    } finally {
+      // ปิดสถานะกำลังโหลด
+      setUploading(false);
     }
-  } catch (error) {
-    console.error("เกิดข้อผิดพลาดในการเรียก API:", error);
-    alert("เกิดข้อผิดพลาดในการเรียก API");
-  } finally {
-    // ปิดสถานะกำลังโหลด
-    setUploading(false);
-  }
-};
-
-
-  // const handleExcelDownload = () => {
-  //   try {
-  //     // แสดงสถานะกำลังดำเนินการ (ถ้าต้องการ)
-  //     setUploading(true);
-
-  //     // เรียกใช้ API เพื่อดึงไฟล์ Excel ล่าสุด
-  //     companyService.reqGetGenExcel(auditorId, Number(productId));
-
-  //     // ล้างสถานะหลังจากเริ่มการดาวน์โหลด
-  //     setTimeout(() => {
-  //       setUploading(false);
-  //     }, 1000);
-  //   } catch (error) {
-  //     console.error("Error requesting Excel file:", error);
-  //     alert("เกิดข้อผิดพลาดในการดึงไฟล์ Excel");
-  //     setUploading(false);
-  //   }
-  // };
+  };
 
   const handleSaveComment = async () => {
     if (!comment.trim() || !productDetail) return;
@@ -394,41 +363,19 @@ const CProduct: React.FC = () => {
                   <div className="ml-auto mr-4">
                     <button
                       onClick={async () => {
-                        try {
-                          setSubmitting(true);
-                          const result = await fetchLatestExcel();
-                          if (result?.path_excel) {
-                            const fullUrl = `http://178.128.123.212:5000${result.path_excel}`;
-
-                            const response = await fetch(fullUrl);
-                            const blob = await response.blob();
-
-                            const downloadUrl =
-                              window.URL.createObjectURL(blob);
-                            const link = document.createElement("a");
-                            link.href = downloadUrl;
-                            link.download = `product_${productId}_report.xlsx`;
-                            document.body.appendChild(link);
-                            link.click();
-                            link.remove();
-                            window.URL.revokeObjectURL(downloadUrl);
-                          } else {
-                            alert("ไม่พบลิงก์ดาวน์โหลด Excel");
-                          }
-                        } catch (error) {
-                          console.error("Error generating Excel:", error);
-                          alert("ไม่สามารถสร้างไฟล์ Excel ได้");
-                        } finally {
-                          setSubmitting(false);
-                        }
+                        await fetchUploadExcel();
+                        console.log(excelLink);
+                        window.open(
+                          "http://178.128.123.212:5000" + excelLink || "",
+                          "_blank"
+                        );
                       }}
                       type="button"
                       className="border border-green-500 shadow px-4 py-1 rounded-full flex gap-1 hover:bg-green-50 hover:opacity-90 transition-colors"
                     >
                       <FileOpen fontSize="small" color="success" />
-                      <p>ดาวน์โหลดเอกสาร</p>
+                    <p>ดาวน์โหลดเอกสาร(เวอร์ชันที่ถูกส่งให้กับผู้ทวนสอบ)</p>
                     </button>
-                    
                   </div>
                   <button
                     onClick={() =>
@@ -468,46 +415,21 @@ const CProduct: React.FC = () => {
                             >
                               {submitting ? "กำลังดำเนินการ..." : "แก้ไขฟอร์ม"}
                             </button>
-                            <button
-                              type="button"
-                              disabled={submitting}
-                              className="bg-green-500 text-white font-semibold shadow px-4 py-2 rounded-full hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                              onClick={async () => {
-                                try {
-                                  setSubmitting(true);
-                                  const result = await fetchGenExcel();
 
-                                  if (result?.download_url) {
-                                    const fullUrl = `http://178.128.123.212:5000${result.download_url}`;
-                                    const response = await fetch(fullUrl);
-                                    const blob = await response.blob();
-                                    const downloadUrl =
-                                      window.URL.createObjectURL(blob);
-                                    const link = document.createElement("a");
-                                    link.href = downloadUrl;
-                                    link.download = `product_${productId}_report.xlsx`;
-                                    document.body.appendChild(link);
-                                    link.click();
-                                    link.remove();
-                                    window.URL.revokeObjectURL(downloadUrl);
-                                  } else {
-                                    alert("ไม่พบลิงก์ดาวน์โหลด Excel");
-                                  }
-                                } catch (error) {
-                                  console.error(
-                                    "Error generating Excel:",
-                                    error
-                                  );
-                                  alert("ไม่สามารถสร้างไฟล์ Excel ได้");
-                                } finally {
-                                  setSubmitting(false);
-                                }
-                              }}
-                            >
-                              {submitting
-                                ? "กำลังดำเนินการ..."
-                                : "Generate Excel File"}
-                            </button>
+                        <button
+                          onClick={async () => {
+                            await fetchGenExcel();
+                            console.log(excelLink);
+                            window.open(
+                              "http://178.128.123.212:5000" + excelLink || "",
+                              "_blank"
+                            );
+                          }}
+                          type="button"
+                          className="bg-green-500 text-white font-semibold shadow px-4 py-2 rounded-full hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <p>Generate Excel File</p>
+                        </button>
                           </>
                         )}
                         <button
@@ -550,66 +472,7 @@ const CProduct: React.FC = () => {
           <div className="mt-8">
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200 px-6 py-5 rounded-t-xl flex justify-between items-center">
-                <div className="flex flex-col">
-                  <h3 className="text-lg font-semibold text-gray-800 flex items-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5 mr-2 text-blue-600"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                    การดำเนินการ
-                  </h3>
-                  <p className="text-sm text-gray-600 mt-1 ml-7">
-                    ยังไม่มีความคิดเห็นสำหรับผลิตภัณฑ์นี้
-                  </p>
-                </div>
-                <div className="ml-auto mr-4">
-                  <button
-                    onClick={async () => {
-                      try {
-                        setSubmitting(true);
-                        const result = await fetchLatestExcel(); // ดึง download_url จาก backend
-
-                        if (result?.path_excel) {
-                          const fullUrl = `http://178.128.123.212:5000${result.path_excel}`;
-
-                          const response = await fetch(fullUrl);
-                          const blob = await response.blob();
-
-                          const downloadUrl = window.URL.createObjectURL(blob);
-                          const link = document.createElement("a");
-                          link.href = downloadUrl;
-                          link.download = `product_${productId}_report.xlsx`; // ตั้งชื่อไฟล์เองได้เลย
-                          document.body.appendChild(link);
-                          link.click();
-                          link.remove();
-                          window.URL.revokeObjectURL(downloadUrl);
-                        } else {
-                          alert("ไม่พบลิงก์ดาวน์โหลด Excel");
-                        }
-                      } catch (error) {
-                        console.error("Error generating Excel:", error);
-                        alert("ไม่สามารถสร้างไฟล์ Excel ได้");
-                      } finally {
-                        setSubmitting(false);
-                      }
-                    }}
-                    type="button"
-                    className="border border-green-500 shadow px-4 py-1 rounded-full flex gap-1 hover:bg-green-50 hover:opacity-90 transition-colors"
-                  >
-                    <FileOpen fontSize="small" color="success" />
-                    <p>ดาวน์โหลดเอกสาร(เวอร์ชันล่าสุด)</p>
-                  </button>
-                </div>
+                
               </div>
 
               <div className="p-5">
@@ -631,26 +494,6 @@ const CProduct: React.FC = () => {
                           }
                         >
                           {submitting ? "กำลังดำเนินการ..." : "แก้ไขฟอร์ม"}
-                        </button>
-                        <button
-                          type="button"
-                          disabled={submitting}
-                          className="bg-green-500 text-white font-semibold shadow px-4 py-2 rounded-full hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                          onClick={async () => {
-                            try {
-                              window.open(
-                                `http://178.128.123.212:5000/api/v1/excel/company/${auditorId}/${productId}`,
-                                "_blank"
-                              );
-                            } catch (error) {
-                              console.error("Error generating Excel:", error);
-                              alert("ไม่สามารถสร้างไฟล์ Excel ได้");
-                            }
-                          }}
-                        >
-                          {submitting
-                            ? "กำลังดำเนินการ..."
-                            : "Generate Excel File"}
                         </button>
                         <button
                           type="button"
@@ -730,9 +573,8 @@ const CProduct: React.FC = () => {
                         </div>
 
                         {!isCfpFormConfirmed && (
-                          <div className="ml-7 text-sm text-orange-500 flex items-center">
-                            <WarningAmber fontSize="small" className="mr-1" />
-                            <span>กรุณาแก้ไขฟอร์ม</span>
+                          <div className="flex justify-end text-xs text-orange-500 items-center">
+                            <span>กรุณาแก้ไขกดแนบแบบฟอร์มการแก้ไข</span>
                           </div>
                         )}
                       </div>
