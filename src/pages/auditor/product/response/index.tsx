@@ -149,7 +149,7 @@ const Response: React.FC = () => {
             <div className="space-y-4">
               {sortedComments.map((comment, index) => (
                 <div
-                  key={comment.comment_id || index}
+                  key={index}
                   className="bg-white border border-gray-200 shadow-md rounded-lg overflow-hidden"
                 >
                   <div

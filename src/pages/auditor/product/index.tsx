@@ -10,18 +10,18 @@ import { useState } from "react";
 import { ProductService } from "../../../service/api/auditor/product";
 
 const AProduct: React.FC = () => {
-  const auditorId = 1;
+
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
-  const companyId = 1005; // Assuming companyId is 1 for this example
-  const productId = id;
+  const companyId = 1005;
+  const auditorId = 1;
 
   console.log("Auditor ID:", auditorId);
   console.log("Product ID from URL:", id);
 
 
-  const { productData, productDetail, loading, error, refetch,fetchGenExcel,excelLink} =
+  const { productData, productDetail, loading, error, refetch,excelLink, fetchLatestExcel} =
     useViewModel(auditorId, Number(id), companyId);
 
   const [comment, setComment] = useState("");
@@ -406,7 +406,7 @@ const AProduct: React.FC = () => {
                 <div className="ml-auto mr-4">
                   <button
                     onClick={async () => {
-                    await fetchGenExcel();
+                    await fetchLatestExcel();
                     console.log(excelLink);
                     window.open(
                       "http://178.128.123.212:5000" + excelLink || "",

@@ -81,6 +81,22 @@ const useViewModel = (auditorId: number, productId: number) => {
     }
   };
 
+  const fetchLatestExcel = async () => {
+   if (!productId) return;
+
+    try {
+      const data = await companyService.reqGetLatestExcel(
+        auditorId,
+        productId
+      );
+
+      setExcelLink(data.path_excel);
+    } catch (error) {
+      console.error("Error fetching generated Excel:", error);
+      throw error;
+    }
+  };
+
   const fetchGenExcel = async () => {
    if (!productId) return;
 
@@ -95,6 +111,8 @@ const useViewModel = (auditorId: number, productId: number) => {
       throw error;
     }
   };
+
+ 
 
   const fetchUploadExcel = async () => {
     if (!productId) return;
@@ -111,21 +129,21 @@ const useViewModel = (auditorId: number, productId: number) => {
     }
   };
 
-  const fetchLatestExcel = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const companyService = new CompanyService();
-      const data = await companyService.reqGetLatestExcel(productId);
-      return data;
-    } catch (error) {
-      console.error("Error fetching latest Excel:", error);
-      setError("Failed to fetch latest Excel file");
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const fetchLatestExcel = async () => {
+  //   setLoading(true);
+  //   setError(null);
+  //   try {
+  //     const companyService = new CompanyService();
+  //     const data = await companyService.reqGetLatestExcel(productId);
+  //     return data;
+  //   } catch (error) {
+  //     console.error("Error fetching latest Excel:", error);
+  //     setError("Failed to fetch latest Excel file");
+  //     return null;
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const fetchListExcel = async () => {
     setLoading(true);
@@ -137,7 +155,8 @@ const useViewModel = (auditorId: number, productId: number) => {
         auditorId,
         productId
       );
-      return excelList; // ✅ ไม่ต้อง sort ไม่ต้องกรอง เอาทั้งหมดมาเลย
+      console.log("auditorId:" ,auditorId, "prId:" ,productId, excelList);
+      return excelList; 
     } catch (error) {
       console.error("Error fetching Excel list:", error);
       setError("Failed to fetch Excel file list");

@@ -70,7 +70,7 @@ const useViewModel = (
     setError(null);
 
     try {
-      const data = await companyService.reqGetExcel(companyId, productId);
+      const data = await companyService.reqGetExcel(productId);
       return data;
     } catch (error) {
       console.error("Error fetching Excel:", error);
@@ -85,12 +85,24 @@ const useViewModel = (
     if (!productId) return;
 
     try {
-      const data = await companyService.reqGetGenExcel(
-        productData?.company_id || 0,
-        productId
-      );
-
+      const data = await companyService.reqGetGenExcel(productId);
+      console.log("Generated Excel data:", data);
       setExcelLink(data.path_excel[0]);
+    } catch (error) {
+      console.error("Error fetching generated Excel:", error);
+      throw error;
+    }
+  };
+
+
+
+  const fetchLatestExcel = async () => {
+    if (!productId) return;
+
+    try {
+      const data = await companyService.reqGetLatestExcel(auditorId,productId);
+      console.log("Generated Excel data:", data);
+      setExcelLink(data.path_excel);
     } catch (error) {
       console.error("Error fetching generated Excel:", error);
       throw error;
@@ -111,7 +123,7 @@ const useViewModel = (
         auditorId,
         productId
       );
-      return excelList; 
+      return excelList;
     } catch (error) {
       console.error("Error fetching Excel list:", error);
       setError("Failed to fetch Excel file list");
@@ -135,16 +147,17 @@ const useViewModel = (
   }, [productId]);
 
   return {
-    productData, 
+    productData,
     productDetail,
-    loading, 
+    fetchLatestExcel,
+    loading,
     error,
     fetchExcel,
-    fetchGenExcel, 
-    refetch: fetchProductDetail, 
-    excelList, 
+    fetchGenExcel,
+    refetch: fetchProductDetail,
+    excelList,
     excelLink,
-    loadingExcel: loading, 
+    loadingExcel: loading,
     errorExcel: error,
   };
 };

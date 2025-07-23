@@ -8,6 +8,7 @@ import { PROTECTED_PATH as API_PATH } from "../../../constants/api.route";
 import { CompanyService } from "../../../service/api/company";
 import React, { useRef, useState } from "react";
 
+
 const CProduct: React.FC = () => {
   const navigate = useNavigate();
   const auditorId = 1;
@@ -44,24 +45,22 @@ const CProduct: React.FC = () => {
 
   const callExcelApi = async () => {
     try {
-      // แสดงสถานะกำลังโหลด (ถ้าต้องการ)
       setUploading(true);
       
-      const response = await fetch(
-        `${API_PATH.EXCEL_DOWNLOAD}/${auditorId}/${productId}`,
+      await fetch(
+        `http://178.128.123.212:5000/api/v1${API_PATH.EXCEL_GEN_TO_AUDITOR}/${auditorId}/${productId}`,
         {
-          method: "GET", // หรือ POST แล้วแต่ API ของคุณต้องการ
           headers: {
             "Content-Type": "application/json",
-            // เพิ่ม headers อื่นๆ ตามต้องการ
+          
           },
         }
       );
+
     } catch (error) {
       console.error("เกิดข้อผิดพลาดในการเรียก API:", error);
       alert("เกิดข้อผิดพลาดในการเรียก API");
     } finally {
-      // ปิดสถานะกำลังโหลด
       setUploading(false);
     }
   };

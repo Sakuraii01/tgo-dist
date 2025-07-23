@@ -10,7 +10,6 @@ const Response: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
-  const companyId = 1005; 
   const auditorId = 1; 
 
   // สร้าง state สำหรับเก็บสถานะการเปิด/ปิด ของแต่ละความคิดเห็น
@@ -26,7 +25,7 @@ const Response: React.FC = () => {
     error,
     excelList,
     errorExcel,
-  } = useViewModel(auditorId, Number(id), companyId);
+  } = useViewModel(auditorId, Number(id));
 
   // ฟังก์ชั่นสำหรับสลับการแสดง/ซ่อนความคิดเห็น
   const toggleComment = (index: number) => {
@@ -149,7 +148,7 @@ const Response: React.FC = () => {
             <div className="space-y-4">
               {sortedComments.map((comment, index) => (
                 <div
-                  key={comment.comment_id || index}
+                  key={index}
                   className="bg-white border border-gray-200 shadow-md rounded-lg overflow-hidden"
                 >
                   <div

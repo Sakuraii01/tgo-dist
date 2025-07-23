@@ -39,12 +39,12 @@ export class CompanyService extends RemoteA {
     return data[0] as ExcelGenType;
   };
 
-  reqGetLatestExcel = async (product_id: number): Promise<LatestExcelType> => {
+  reqGetLatestExcel = async (auditor_id:number,product_id: number): Promise<LatestExcelType> => {
     const response = await this.getAxiosInstance().get(
-      PROTECTED_PATH.EXCEL_DOWNLOAD + `/${this.company_id}/${product_id}`
+      PROTECTED_PATH.EXCEL_DOWNLOAD + `/${auditor_id}/${product_id}`
     );
     const { data } = response;
-    return data;
+    return data[0];
   };
 
   reqGetListExcel = async (
@@ -55,7 +55,7 @@ export class CompanyService extends RemoteA {
       PROTECTED_PATH.EXCEL_DOWNLOAD + `/${auditor_id}/${product_id}`
     );
     const { data } = response;
-    return data;
+    return data[0];
   };
 
   reqGetNotification = async (
