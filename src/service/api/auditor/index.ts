@@ -21,4 +21,9 @@ export class AuditorService extends RemoteA {
     const { data } = response;
     return data;
   };
+  reqGetAuditorList = async (): Promise<AuditorType[]> => {
+    const response = await this.getAxiosInstance().get(PROTECTED_PATH.AUDITORS);
+    const { data } = response;
+    return data;
+  };
 }
