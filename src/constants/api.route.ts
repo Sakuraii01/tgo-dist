@@ -51,7 +51,8 @@ export const PROTECTED_PATH = {
 
   EXCEL: "/excel/auditor",
   EXCEL_GENERATE: "/excel/company",
-  EXCEL_DOWNLOAD: "/download/excel/auditor",
+  EXCEL_DOWNLOAD: "/download/excel",
+  EXCEL_DOWNLOAD_AUDITOR: "/download/excel/auditor",
   EXCEL_ADD: "/notifications/company",
   
   

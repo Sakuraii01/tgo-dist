@@ -114,7 +114,7 @@ const useViewModel = (
     setError(null);
     try {
       const companyService = new CompanyService();
-      const data = await companyService.reqGetLatestExcel(companyId);
+      const data = await companyService.reqGetLatestExcel(companyId, productId);
       return data;
     } catch (error) {
       console.error("Error fetching latest Excel:", error);

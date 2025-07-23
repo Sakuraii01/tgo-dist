@@ -40,9 +40,9 @@ export class CompanyService extends RemoteA {
     return data;
   };
 
-  reqGetLatestExcel = async (company_id: number): Promise<LatestExcelType> => {
+  reqGetLatestExcel = async (company_id: number, product_id:number): Promise<LatestExcelType> => {
     const response = await this.getAxiosInstance().get(
-      PROTECTED_PATH.EXCEL + `/${company_id}`
+      PROTECTED_PATH.EXCEL_DOWNLOAD + `/${company_id}/${product_id}`
     );
     const { data } = response;
     return data;
@@ -53,7 +53,7 @@ export class CompanyService extends RemoteA {
     product_id: number
   ): Promise<ListExcelType[]> => {
     const response = await this.getAxiosInstance().get(
-      PROTECTED_PATH.EXCEL_DOWNLOAD + `/${auditor_id}/${product_id}`
+      PROTECTED_PATH.EXCEL_DOWNLOAD_AUDITOR + `/${auditor_id}/${product_id}`
     );
     const { data } = response;
     return data;
@@ -88,14 +88,9 @@ export class CompanyService extends RemoteA {
 };
 
   reqAddFile = async (formData: FormData,auditor_id: number,product_id: number): Promise<ExcelType> => {
-  const response = await this.getAxiosInstance().post(
-    `${PROTECTED_PATH.EXCEL}/${auditor_id}/${product_id}`,
-    formData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data", 
-      },
-    }
+  const response = await this.getAxiosInstance().get(
+    `http://178.128.123.212:5000/api/v1/excel/auditor/${auditor_id}/${product_id}`
+  
   );
   return response.data;
 };

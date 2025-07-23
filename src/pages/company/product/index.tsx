@@ -6,12 +6,14 @@ import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../../constants/path.route";
 import { CompanyService } from "../../../service/api/company";
 import React, { useRef, useState } from "react";
-import { FileUpload, InsertDriveFile, Close } from "@mui/icons-material";
+import {
+  WarningAmber,
+} from "@mui/icons-material";
 
 const CProduct: React.FC = () => {
   const navigate = useNavigate();
   const auditorId = 1;
-  const companyId = 1005; 
+  const companyId = 1005;
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
 
@@ -35,6 +37,7 @@ const CProduct: React.FC = () => {
   const [uploading, setUploading] = useState(false);
   const [uploadError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isCfpFormConfirmed, setIsCfpFormConfirmed] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -42,47 +45,60 @@ const CProduct: React.FC = () => {
     }
   };
 
-  const handleUpload = async () => {
-    if (!selectedFile) {
-      alert("กรุณาเลือกไฟล์");
-      return;
-    }
 
-    const formData = new FormData();
-    formData.append("file", selectedFile);
-
-    try {
-      setUploading(true);
-      const result = await companyService.reqAddFile(
-        formData,
-        auditorId,
-        Number(productId)
-      );
-
-      console.log("Upload result:", result);
-
-      alert(`อัปโหลดไฟล์เรียบร้อยแล้ว: ${result.message}`);
-
-      clearSelectedFile();
-
-      if (refetch) {
-        await refetch();
+  const callExcelApi = async () => {
+  try {
+    // แสดงสถานะกำลังโหลด (ถ้าต้องการ)
+    setUploading(true);
+    
+    // เรียกใช้ API โดยไม่สนใจผลลัพธ์
+    const response = await fetch(
+      `http://178.128.123.212:5000/api/v1/download/excel/auditor/${auditorId}/${productId}`,
+      {
+        method: 'GET', // หรือ POST แล้วแต่ API ของคุณต้องการ
+        headers: {
+          'Content-Type': 'application/json',
+          // เพิ่ม headers อื่นๆ ตามต้องการ
+        }
       }
-    } catch (error) {
-      console.error("Error uploading file:", error);
-      alert("เกิดข้อผิดพลาดในการอัปโหลดไฟล์");
-    } finally {
-      setUploading(false);
+    );
+    
+    // ตรวจสอบสถานะการตอบกลับ
+    if (response.ok) {
+      console.log("เรียก API สำเร็จ");
+      alert("เรียกใช้งาน API สำเร็จ");
+    } else {
+      console.error("เรียก API ไม่สำเร็จ:", response.status);
+      alert("เรียกใช้งาน API ไม่สำเร็จ");
     }
-  };
+  } catch (error) {
+    console.error("เกิดข้อผิดพลาดในการเรียก API:", error);
+    alert("เกิดข้อผิดพลาดในการเรียก API");
+  } finally {
+    // ปิดสถานะกำลังโหลด
+    setUploading(false);
+  }
+};
 
-  const clearSelectedFile = () => {
-    setSelectedFile(null);
-    // รีเซ็ต input element เพื่อให้สามารถเลือกไฟล์เดิมได้อีกครั้ง
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
+
+  // const handleExcelDownload = () => {
+  //   try {
+  //     // แสดงสถานะกำลังดำเนินการ (ถ้าต้องการ)
+  //     setUploading(true);
+
+  //     // เรียกใช้ API เพื่อดึงไฟล์ Excel ล่าสุด
+  //     companyService.reqGetGenExcel(auditorId, Number(productId));
+
+  //     // ล้างสถานะหลังจากเริ่มการดาวน์โหลด
+  //     setTimeout(() => {
+  //       setUploading(false);
+  //     }, 1000);
+  //   } catch (error) {
+  //     console.error("Error requesting Excel file:", error);
+  //     alert("เกิดข้อผิดพลาดในการดึงไฟล์ Excel");
+  //     setUploading(false);
+  //   }
+  // };
 
   const handleSaveComment = async () => {
     if (!comment.trim() || !productDetail) return;
@@ -380,9 +396,9 @@ const CProduct: React.FC = () => {
                       onClick={async () => {
                         try {
                           setSubmitting(true);
-                          const result = await fetchGenExcel();
-                          if (result?.download_url) {
-                            const fullUrl = `http://178.128.123.212:5000${result.download_url}`;
+                          const result = await fetchLatestExcel();
+                          if (result?.path_excel) {
+                            const fullUrl = `http://178.128.123.212:5000${result.path_excel}`;
 
                             const response = await fetch(fullUrl);
                             const blob = await response.blob();
@@ -412,6 +428,7 @@ const CProduct: React.FC = () => {
                       <FileOpen fontSize="small" color="success" />
                       <p>ดาวน์โหลดเอกสาร</p>
                     </button>
+                    
                   </div>
                   <button
                     onClick={() =>
@@ -458,7 +475,7 @@ const CProduct: React.FC = () => {
                               onClick={async () => {
                                 try {
                                   setSubmitting(true);
-                                  const result = await fetchExcel(); 
+                                  const result = await fetchGenExcel();
 
                                   if (result?.download_url) {
                                     const fullUrl = `http://178.128.123.212:5000${result.download_url}`;
@@ -468,7 +485,7 @@ const CProduct: React.FC = () => {
                                       window.URL.createObjectURL(blob);
                                     const link = document.createElement("a");
                                     link.href = downloadUrl;
-                                    link.download = `product_${productId}_report.xlsx`; 
+                                    link.download = `product_${productId}_report.xlsx`;
                                     document.body.appendChild(link);
                                     link.click();
                                     link.remove();
@@ -639,7 +656,7 @@ const CProduct: React.FC = () => {
                           type="button"
                           disabled={submitting}
                           className="primary-button font-semibold shadow px-4 py-2 rounded-full flex gap-1 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-                          onClick={toggleCommentBox} 
+                          onClick={toggleCommentBox}
                         >
                           {submitting
                             ? "กำลังดำเนินการ..."
@@ -684,41 +701,41 @@ const CProduct: React.FC = () => {
                         ref={fileInputRef}
                         onChange={handleFileChange}
                         accept=".xlsx,.xls"
-                        style={{ display: "none" }} 
+                        style={{ display: "none" }}
                       />
 
-                      {selectedFile ? (
-                        // แสดงเมื่อมีไฟล์ที่เลือกแล้ว
-                        <div className="flex items-center justify-between p-2 border border-gray-300 rounded-lg bg-gray-50">
-                          <div className="flex items-center space-x-2">
-                            <InsertDriveFile className="text-green-600" />
-                            <span className="text-sm truncate max-w-xs">
-                              {selectedFile.name}
-                            </span>
+                      {/* checkbox สำหรับยืนยันแบบฟอร์ม CFP */}
+                      <div className="space-y-2">
+                        <div className="flex items-start">
+                          <div className="flex items-center h-5">
+                            <input
+                              id="cfp-form-check"
+                              type="checkbox"
+                              checked={isCfpFormConfirmed}
+                              onChange={(e) =>
+                                setIsCfpFormConfirmed(e.target.checked)
+                              }
+                              disabled={submitting}
+                              className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                            />
                           </div>
-                          <div className="flex items-center space-x-2">
-                            <button
-                              type="button"
-                              onClick={clearSelectedFile}
-                              disabled={uploading || submitting}
-                              className="p-1 text-gray-500 hover:text-red-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          <div className="ml-3 text-sm">
+                            <label
+                              htmlFor="cfp-form-check"
+                              className="font-medium text-gray-700"
                             >
-                              <Close fontSize="small" />
-                            </button>
+                              แนบแบบฟอร์ม CFP (เวอร์ชันที่ได้ทำการแก้ไข)
+                            </label>
                           </div>
                         </div>
-                      ) : (
-                        // แสดงเมื่อยังไม่มีไฟล์ที่เลือก
-                        <button
-                          type="button"
-                          onClick={() => fileInputRef.current?.click()}
-                          disabled={submitting || uploading}
-                          className="flex items-center px-4 py-2 border border-gray-300 rounded-full hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <FileUpload className="mr-2" />
-                          แนบแบบฟอร์ม CFP (เวอร์ชันที่ได้ทำการแก้ไข)
-                        </button>
-                      )}
+
+                        {!isCfpFormConfirmed && (
+                          <div className="ml-7 text-sm text-orange-500 flex items-center">
+                            <WarningAmber fontSize="small" className="mr-1" />
+                            <span>กรุณาแก้ไขฟอร์ม</span>
+                          </div>
+                        )}
+                      </div>
 
                       {/* แสดงข้อผิดพลาดถ้ามี */}
                       {uploadError && (
@@ -754,9 +771,7 @@ const CProduct: React.FC = () => {
                       type="button"
                       onClick={() => {
                         handleSaveComment();
-                        if (selectedFile) {
-                          handleUpload();
-                        }
+                        callExcelApi();
                       }}
                       disabled={!comment.trim() || submitting || uploading}
                       className="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700"
