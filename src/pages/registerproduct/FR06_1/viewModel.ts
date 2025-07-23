@@ -5,10 +5,10 @@ const useViewModel = (id: number) => {
   const [fr06Data, setFr06Data] = useState<FR06Report>();
   const [fr06Sum4142, setFr06Sum4142] = useState<FR06_1Sum4142>();
   const fr06Service = new Fr06Service();
-  const handleSubmit = (entity: FR06Report) => {
-    if (fr06Data?.lc1_based_emission) {
+  const handleSubmit = (report_id: number, entity: FR06Report) => {
+    if (report_id) {
       fr06Service
-        .reqPutFr06_1(entity, fr06Data.report61_sum_id)
+        .reqPutFr06_1({ ...entity, report61_sum_id: report_id }, report_id)
         .then((res) => {
           console.log(res);
         })

@@ -6,29 +6,29 @@ import useViewModel from "./viewModel";
 const FR06_2 = () => {
   const [searchParams] = useSearchParams();
   const id = Number(searchParams.get("id"));
-  const { fr06Data, handleFormSubmit } = useViewModel(id);
+  const { fr06Data, handleFormSubmit, sum4142 } = useViewModel(id);
   return (
     <div>
       <ProcessStepper isActive={6} id={id} />
       <div className="w-fit mx-auto">
         <Formik
           initialValues={{
-            base_emission: fr06Data?.std_emission ?? "",
+            std_emission: fr06Data?.std_emission || 0,
             source: fr06Data?.std_emission_source ?? "",
           }}
           enableReinitialize
           // validationSchema={{}}
           onSubmit={(values) => {
-            handleFormSubmit({
-              report62_sum_id: fr06Data?.report62_sum_id || 0,
+            handleFormSubmit(fr06Data?.report62_sum_id || 0, {
               product_id: id,
-              company_id: 1005,
+              company_id: fr06Data?.company_id || 0,
               document_name_by_TGO: null,
               document_no_by_TGO: null,
-              std_emission: values.base_emission,
-              product_emission: fr06Data?.product_emission || "",
+              std_emission: Number(values.std_emission),
+              product_emission: sum4142 || 0,
               diff_emission:
-                Number(fr06Data?.std_emission) - Number(values.base_emission),
+                Number(fr06Data?.product_emission || sum4142) -
+                Number(values.std_emission),
               std_emission_source: values.source,
             });
           }}
@@ -52,15 +52,18 @@ const FR06_2 = () => {
                   <tr className="border-b border-gray-200/10">
                     <td className="px-5 py-3">
                       <Field
-                        name="base_emission"
+                        name="std_emission"
                         label="คาร์บอนฟุตพริ้นท์ของเกณฑ์เปรียบเทียบ (kgCO2 eq.)"
                         type="number"
                       />
                     </td>
-                    <td className="px-5"> {fr06Data?.product_emission} </td>
+                    <td className="px-5">
+                      {" "}
+                      {fr06Data?.product_emission ?? sum4142}{" "}
+                    </td>
                     <td className="px-5">
                       {Number(fr06Data?.product_emission) -
-                        Number(values.base_emission) || "-"}
+                        Number(values.std_emission) || "-"}
                     </td>
                     <td className="px-5">
                       <Field name="source" label="ที่มาของ เกณฑ์เปรียบเทียบ" />

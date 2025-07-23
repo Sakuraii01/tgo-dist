@@ -42,7 +42,7 @@ const Dashboard = () => {
           <div className="font-medium">
             <h4 className="text-4xl mb-3 mt-10">รายการผลิตภัณฑ์</h4>
             <p className="text-lg">
-              จำนวนผลิตภัณฑ์ทั้งหมด
+              จำนวนผลิตภัณฑ์ทั้งหมด{" "}
               <span className="text-primary-2">{productList.length}</span>{" "}
               รายการ
             </p>
@@ -198,7 +198,9 @@ const Dashboard = () => {
                       <button
                         onClick={() =>
                           navigate(
-                            PROTECTED_PATH.PRODUCT_DETAIL +
+                            (tab === 2 || tab === 3
+                              ? PROTECTED_PATH.PRODUCT_DETAIL_COMPANY
+                              : PROTECTED_PATH.PRODUCT_DETAIL) +
                               `?id=${data.product_id}`
                           )
                         }

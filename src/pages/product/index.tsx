@@ -8,7 +8,8 @@ const Product = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
-  const { productData } = useViewModel(Number(id));
+  const { productData, fetchGenExcel, excelLink, sendExcelToAuditor } =
+    useViewModel(Number(id));
 
   return (
     <div>
@@ -42,12 +43,14 @@ const Product = () => {
                   <p>ดำเนินการต่อ</p>
                 </button>
                 <button
-                  onClick={() =>
+                  onClick={async () => {
+                    await fetchGenExcel();
+                    console.log(excelLink);
                     window.open(
-                      "http://178.128.123.212:5000/api/v1/excel/1005/7",
+                      "http://178.128.123.212:5000" + excelLink || "",
                       "_blank"
-                    )
-                  }
+                    );
+                  }}
                   type="button"
                   className="primary-button font-semibold shadow px-4 py-1 rounded-full flex gap-1 ml-auto hover:opacity-90 mb-4"
                 >
@@ -55,7 +58,9 @@ const Product = () => {
                   <p>ดาวน์โหลดเอกสาร</p>
                 </button>
                 <button
-                  disabled
+                  onClick={async () => {
+                    await sendExcelToAuditor();
+                  }}
                   className="bg-white font-semibold shadow px-4 py-1 rounded-full flex gap-1 ml-auto "
                 >
                   <p>ยืนยันการส่งให้ผู้ทวนสอบ</p>

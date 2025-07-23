@@ -23,78 +23,107 @@ const FR06_1 = () => {
         <Formik
           initialValues={{
             registrationRound: false,
-            ghg_cycle_1: "",
-            ghg_cycle_2: "",
-            ghg_cycle_3: "",
-            ghg_cycle_4: "",
-            ghg_cycle_5: "",
+            ghg_cycle_1: fr06Data?.lc1_based_emission || 0,
+            ghg_cycle_2: fr06Data?.lc2_based_emission || 0,
+            ghg_cycle_3: fr06Data?.lc3_based_emission || 0,
+            ghg_cycle_4: fr06Data?.lc4_based_emission || 0,
+            ghg_cycle_5: fr06Data?.lc5_based_emission || 0,
           }}
           enableReinitialize
           // validationSchema={{}}
           onSubmit={(values) =>
-            handleSubmit({
-              report61_sum_id: fr06Data?.report61_sum_id ?? 0,
-              product_id: fr06Data?.product_id ?? 0,
+            handleSubmit(fr06Data?.report61_sum_id ?? 0, {
+              product_id: id ?? 0,
               company_id: fr06Data?.company_id ?? 0,
               document_name_by_TGO: null,
               document_no_by_TGO: null,
-              lc1_based_emission: values.ghg_cycle_1,
-              lc2_based_emission: values.ghg_cycle_2,
-              lc3_based_emission: values.ghg_cycle_3,
-              lc4_based_emission: values.ghg_cycle_4,
-              lc5_based_emission: values.ghg_cycle_5,
+              lc1_based_emission: values.registrationRound
+                ? baseStatic[0]
+                : Number(values.ghg_cycle_1),
+              lc2_based_emission: values.registrationRound
+                ? baseStatic[1]
+                : Number(values.ghg_cycle_2),
+              lc3_based_emission: values.registrationRound
+                ? baseStatic[2]
+                : Number(values.ghg_cycle_3),
+              lc4_based_emission: values.registrationRound
+                ? baseStatic[3]
+                : Number(values.ghg_cycle_4),
+              lc5_based_emission: values.registrationRound
+                ? baseStatic[4]
+                : Number(values.ghg_cycle_5),
               land_used_based_emission: 0,
-              lc1_diff_emission: calculateDiff(
-                baseStatic[0],
-                Number(values.ghg_cycle_1),
-                false
-              ),
-              lc2_diff_emission: calculateDiff(
-                baseStatic[1],
-                Number(values.ghg_cycle_2),
-                false
-              ),
-              lc3_diff_emission: calculateDiff(
-                baseStatic[2],
-                Number(values.ghg_cycle_3),
-                false
-              ),
-              lc4_diff_emission: calculateDiff(
-                baseStatic[3],
-                Number(values.ghg_cycle_4),
-                false
-              ),
-              lc5_diff_emission: calculateDiff(
-                baseStatic[4],
-                Number(values.ghg_cycle_5),
-                false
-              ),
+              lc1_diff_emission: values.registrationRound
+                ? 0
+                : calculateDiff(
+                    baseStatic[0],
+                    Number(values.ghg_cycle_1),
+                    false
+                  ),
+              lc2_diff_emission: values.registrationRound
+                ? 0
+                : calculateDiff(
+                    baseStatic[1],
+                    Number(values.ghg_cycle_2),
+                    false
+                  ),
+              lc3_diff_emission: values.registrationRound
+                ? 0
+                : calculateDiff(
+                    baseStatic[2],
+                    Number(values.ghg_cycle_3),
+                    false
+                  ),
+              lc4_diff_emission: values.registrationRound
+                ? 0
+                : calculateDiff(
+                    baseStatic[3],
+                    Number(values.ghg_cycle_4),
+                    false
+                  ),
+              lc5_diff_emission: values.registrationRound
+                ? 0
+                : calculateDiff(
+                    baseStatic[4],
+                    Number(values.ghg_cycle_5),
+                    false
+                  ),
               land_used_diff_emission: 0,
-              lc1_diff_emission_percent: calculateDiff(
-                baseStatic[0],
-                Number(values.ghg_cycle_1),
-                true
-              ),
-              lc2_diff_emission_percent: calculateDiff(
-                baseStatic[1],
-                Number(values.ghg_cycle_2),
-                true
-              ),
-              lc3_diff_emission_percent: calculateDiff(
-                baseStatic[2],
-                Number(values.ghg_cycle_3),
-                true
-              ),
-              lc4_diff_emission_percent: calculateDiff(
-                baseStatic[3],
-                Number(values.ghg_cycle_4),
-                true
-              ),
-              lc5_diff_emission_percent: calculateDiff(
-                baseStatic[4],
-                Number(values.ghg_cycle_5),
-                true
-              ),
+              lc1_diff_emission_percent: values.registrationRound
+                ? 0
+                : calculateDiff(
+                    baseStatic[0],
+                    Number(values.ghg_cycle_1),
+                    true
+                  ),
+              lc2_diff_emission_percent: values.registrationRound
+                ? 0
+                : calculateDiff(
+                    baseStatic[1],
+                    Number(values.ghg_cycle_2),
+                    true
+                  ),
+              lc3_diff_emission_percent: values.registrationRound
+                ? 0
+                : calculateDiff(
+                    baseStatic[2],
+                    Number(values.ghg_cycle_3),
+                    true
+                  ),
+              lc4_diff_emission_percent: values.registrationRound
+                ? 0
+                : calculateDiff(
+                    baseStatic[3],
+                    Number(values.ghg_cycle_4),
+                    true
+                  ),
+              lc5_diff_emission_percent: values.registrationRound
+                ? 0
+                : calculateDiff(
+                    baseStatic[4],
+                    Number(values.ghg_cycle_5),
+                    true
+                  ),
               land_used_diff_emission_percent: 0,
               sum_based_emission:
                 Number(values.ghg_cycle_1) +
@@ -179,10 +208,19 @@ const FR06_1 = () => {
                     </td>
                     <td className="px-5">{fr06Sum4142?.sum_lc1_emission}</td>
                     <td className="px-5">
-                      {calculateDiff(21.0, Number(values.ghg_cycle_1), false)}
+                      {calculateDiff(
+                        baseStatic[0],
+                        Number(values.ghg_cycle_1),
+                        false
+                      )}
                     </td>
                     <td className="px-5">
-                      {calculateDiff(21.0, Number(values.ghg_cycle_1), true)}%
+                      {calculateDiff(
+                        baseStatic[0],
+                        Number(values.ghg_cycle_1),
+                        true
+                      )}
+                      %
                     </td>
                   </tr>
 
@@ -201,10 +239,19 @@ const FR06_1 = () => {
                     </td>
                     <td className="px-5">{fr06Sum4142?.sum_lc2_emission}</td>
                     <td className="px-5">
-                      {calculateDiff(3.8, Number(values.ghg_cycle_2), false)}
+                      {calculateDiff(
+                        baseStatic[1],
+                        Number(values.ghg_cycle_2),
+                        false
+                      )}
                     </td>
                     <td className="px-5">
-                      {calculateDiff(3.8, Number(values.ghg_cycle_2), true)}%
+                      {calculateDiff(
+                        baseStatic[1],
+                        Number(values.ghg_cycle_2),
+                        true
+                      )}
+                      %
                     </td>
                   </tr>
                   <tr className="border-b border-gray-200/10">
@@ -222,10 +269,19 @@ const FR06_1 = () => {
                     </td>
                     <td className="px-5">{fr06Sum4142?.sum_lc3_emission}</td>
                     <td className="px-5">
-                      {calculateDiff(0.4, Number(values.ghg_cycle_3), false)}
+                      {calculateDiff(
+                        baseStatic[2],
+                        Number(values.ghg_cycle_3),
+                        false
+                      )}
                     </td>
                     <td className="px-5">
-                      {calculateDiff(0.4, Number(values.ghg_cycle_3), true)}%
+                      {calculateDiff(
+                        baseStatic[2],
+                        Number(values.ghg_cycle_3),
+                        true
+                      )}
+                      %
                     </td>
                   </tr>
                   <tr className="border-b border-gray-200/10">
@@ -243,10 +299,19 @@ const FR06_1 = () => {
                     </td>
                     <td className="px-5">{fr06Sum4142?.sum_lc4_emission}</td>
                     <td className="px-5">
-                      {calculateDiff(10.6, Number(values.ghg_cycle_4), false)}
+                      {calculateDiff(
+                        baseStatic[3],
+                        Number(values.ghg_cycle_4),
+                        false
+                      )}
                     </td>
                     <td className="px-5">
-                      {calculateDiff(10.6, Number(values.ghg_cycle_4), true)}%
+                      {calculateDiff(
+                        baseStatic[3],
+                        Number(values.ghg_cycle_4),
+                        true
+                      )}
+                      %
                     </td>
                   </tr>
                   <tr className="border-b border-gray-200/10">
@@ -264,10 +329,19 @@ const FR06_1 = () => {
                     </td>
                     <td className="px-5">{fr06Sum4142?.sum_lc5_emission}</td>
                     <td className="px-5">
-                      {calculateDiff(5.5, Number(values.ghg_cycle_5), false)}
+                      {calculateDiff(
+                        baseStatic[4],
+                        Number(values.ghg_cycle_5),
+                        false
+                      )}
                     </td>
                     <td className="px-5">
-                      {calculateDiff(5.5, Number(values.ghg_cycle_5), true)}%
+                      {calculateDiff(
+                        baseStatic[4],
+                        Number(values.ghg_cycle_5),
+                        true
+                      )}
+                      %
                     </td>
                   </tr>
                   <tr className="border-b border-gray-200/10">
@@ -368,5 +442,5 @@ const calculateDiff = (
   if (isPercentage) {
     diff = (diff / Math.abs(fieldValue)) * 100;
   }
-  return diff;
+  return diff === Infinity || isNaN(diff) ? Number(0) : Number(diff.toFixed(2));
 };

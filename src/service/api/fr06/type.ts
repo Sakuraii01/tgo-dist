@@ -1,14 +1,14 @@
 export type FR06Report = {
-  report61_sum_id: number;
+  report61_sum_id?: number;
   product_id: number;
   company_id: number;
   document_name_by_TGO: string | null;
   document_no_by_TGO: string | null;
-  lc1_based_emission: string;
-  lc2_based_emission: string;
-  lc3_based_emission: string;
-  lc4_based_emission: string;
-  lc5_based_emission: string;
+  lc1_based_emission: string | number;
+  lc2_based_emission: string | number;
+  lc3_based_emission: string | number;
+  lc4_based_emission: string | number;
+  lc5_based_emission: string | number;
   land_used_based_emission: string | number;
   lc1_diff_emission: string | number;
   lc2_diff_emission: string | number;
@@ -31,13 +31,13 @@ export type FR06Report = {
 };
 
 export type FR06_2Report = {
-  report62_sum_id: number;
+  report62_sum_id?: number;
   product_id: number;
   company_id: number;
   document_name_by_TGO: string | null;
   document_no_by_TGO: string | null;
   std_emission: string;
-  product_emission: string;
+  product_emission: string | number;
   diff_emission: string | number;
   std_emission_source: string | null;
   verified_date?: string;

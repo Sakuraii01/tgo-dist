@@ -55,12 +55,10 @@ export const PROTECTED_PATH = {
   AUDITOR_PRODUCT: "/auditor/product",
   AUDITOR_COMMENT: "/auditor/comment",
 
-  COMPANY_NOTIFICATION: "/notification/company",
+  COMPANY_NOTIFICATION: "/notifications/company",
 
-  EXCEL: "/excel/auditor",
-  EXCEL_GENERATE: "/excel/company",
+  EXCEL: "/download/excel/auditor",
+  EXCEL_GENERATE: "/download/excel/company",
   EXCEL_DOWNLOAD: "/download/excel/auditor",
   EXCEL_ADD: "/notifications/company",
-  
-  
 };
