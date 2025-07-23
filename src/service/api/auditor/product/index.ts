@@ -34,23 +34,6 @@ export class ProductService extends RemoteA {
       return data;
     };
 
-  
-
-//   reqGetProductDetail = async (
-//     auditorId: 1| number,
-//     productId: 7 | number
-// ): Promise<ProductDetailType> => {
-//     try {
-//         const response = await this.getAxiosInstance().get<ProductDetailType>(
-//             `http://178.128.123.212:5000/api/v1/${auditorId}/${productId}`
-//         );
-//         return response.data;  // Returning only the data object
-//     } catch (error) {
-//         console.error("Error fetching product details:", error);
-//         throw error; // Optionally, re-throw or handle the error as needed
-//     }
-// };
-
   // Add comment to a product
   reqAddComment = async (
     commentData: AddCommentRequest

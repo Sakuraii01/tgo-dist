@@ -1,5 +1,4 @@
 // First file: CProduct.tsx
-import React from "react";
 import { BreadcrumbNav, Navbar } from "../../../component/layout";
 import { FileOpen } from "@mui/icons-material";
 import useViewModel from "./viewModel";
@@ -7,55 +6,121 @@ import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH as API_PATH } from "../../../constants/api.route";
 import { PROTECTED_PATH } from "../../../constants/path.route";
-import { useState } from "react";
 import { CompanyService } from "../../../service/api/company";
+import { url } from "inspector";
+import React, { useRef, useState } from "react";
+import { FileUpload, InsertDriveFile, Close } from "@mui/icons-material"; // เพิ่ม import ไอคอนถ้าใช้ MUI
 
 const CProduct: React.FC = () => {
   const navigate = useNavigate();
   const auditorId = 1;
+  const companyId = 1005; // Assuming companyId is 1 for this example
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
 
   // Rename productData to individualProduct to avoid conflicts
   const {
     productData: individualProduct,
+    fetchLatestExcel,
+    fetchExcel,
+    fetchGenExcel,
     productDetail,
     loading,
     error,
     refetch,
-  } = useViewModel(auditorId, Number(id));
+  } = useViewModel(auditorId, Number(id), companyId);
 
-  // Use optional chaining to safely access properties
   const productId = productDetail?.product?.[0]?.product_id;
   const [comment, setComment] = useState("");
   const [showCommentBox, setShowCommentBox] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const companyService = new CompanyService();
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) {
+      alert("กรุณาเลือกไฟล์");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+
+    try {
+      setUploading(true);
+      const result = await companyService.reqAddFile(
+        formData,
+        auditorId,
+        Number(productId)
+      );
+
+      console.log("Upload result:", result);
+
+      // แสดง success message พร้อมข้อความจาก API
+      alert(`อัปโหลดไฟล์เรียบร้อยแล้ว: ${result.message}`);
+
+      // ล้างไฟล์ที่เลือกหลังจากอัพโหลดสำเร็จ
+      clearSelectedFile();
+
+      // รีเฟรชข้อมูลหากจำเป็น
+      if (refetch) {
+        await refetch();
+      }
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      alert("เกิดข้อผิดพลาดในการอัปโหลดไฟล์");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const clearSelectedFile = () => {
+    setSelectedFile(null);
+    // รีเซ็ต input element เพื่อให้สามารถเลือกไฟล์เดิมได้อีกครั้ง
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
   const handleSaveComment = async () => {
     if (!comment.trim() || !productDetail) return;
     try {
       setSubmitting(true);
-      const payload = {
-        auditor_id: auditorId,
-        company_id: productDetail.product[0].company_id,
-        product_id: productDetail.product[0].product_id,
-        comment: comment.trim(),
-      };
-      console.log("Comment payload:", payload);
+      // const latestCommentId = productDetail.comments && productDetail.comments.length > 0
+      //   ? productDetail.comments[productDetail.comments.length - 1].comment_id
+      //   : null;
 
-      await companyService.reqAddComment({
-        auditor_id: auditorId,
-        company_id: productDetail.product[0].company_id,
-        product_id: productDetail.product[0].product_id,
-        comment: comment.trim(),
-      });
+      const latestCommentId = 25;
+
+      if (!latestCommentId) {
+        console.error("ไม่พบ ID ของความคิดเห็นล่าสุด");
+        return;
+      }
+
+      const currentDateTime = new Date().toISOString();
+
+      // เรียกฟังก์ชันโดยส่งพารามิเตอร์ทั้ง 4 ตัว
+      await companyService.reqUpdateCommentCompany(
+        latestCommentId,
+        comment.trim(),
+        currentDateTime,
+        currentDateTime
+      );
 
       setComment("");
       setShowCommentBox(false);
       await refetch();
       alert("บันทึกความคิดเห็นเรียบร้อยแล้ว");
-      navigate("/auditor");
+      // navigate("/");
     } catch (error) {
       console.error("Error saving comment:", error);
       alert("เกิดข้อผิดพลาดในการบันทึกความคิดเห็น");
@@ -64,7 +129,6 @@ const CProduct: React.FC = () => {
     }
   };
 
-  // Helper function to get status display based on API response
   const getStatusDisplay = () => {
     // Check the status object first for detailed status
     if (productDetail?.status?.status === 4) {
@@ -99,7 +163,6 @@ const CProduct: React.FC = () => {
         return { text: "รอการพิจารณา", class: "bg-gray-100 text-gray-800" };
     }
   };
-
   if (loading) {
     return (
       <div>
@@ -113,7 +176,6 @@ const CProduct: React.FC = () => {
       </div>
     );
   }
-
   if (error) {
     return (
       <div>
@@ -127,7 +189,6 @@ const CProduct: React.FC = () => {
       </div>
     );
   }
-
   if (!productDetail) {
     return (
       <div>
@@ -141,13 +202,9 @@ const CProduct: React.FC = () => {
       </div>
     );
   }
-
   const toggleCommentBox = () => {
     setShowCommentBox((prev) => !prev);
   };
-
-  // Rename to avoid conflicts with individualProduct
-  const currentProduct = productDetail.product[0];
   const statusInfo = getStatusDisplay();
 
   return (
@@ -297,13 +354,194 @@ const CProduct: React.FC = () => {
             </div>
           </div>
         </section>
-        {/* Status Update Section - แสดงเสมอ */}
-        <div>
+        {productDetail?.comments?.length > 0 && (
+          <div>
+            <div className="mt-8">
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200 px-6 py-5 rounded-t-xl flex justify-between items-center">
+                  <div className="flex flex-col">
+                    <h3 className="text-lg font-semibold text-gray-800 flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5 mr-2 text-blue-600"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      ความคิดเห็นล่าสุด
+                    </h3>
+                    <span className="text-xs text-gray-500 mt-1 ml-7">
+                      {new Date(
+                        productDetail.comments[0].created_at
+                      ).toLocaleDateString("th-TH")}
+                    </span>
+                  </div>
+                  <div className="ml-auto mr-4">
+                    <button
+                      onClick={async () => {
+                        try {
+                          setSubmitting(true);
+                          const result = await fetchGenExcel();
+                          if (result?.download_url) {
+                            const fullUrl = `http://178.128.123.212:5000${result.download_url}`;
+
+                            const response = await fetch(fullUrl);
+                            const blob = await response.blob();
+
+                            const downloadUrl =
+                              window.URL.createObjectURL(blob);
+                            const link = document.createElement("a");
+                            link.href = downloadUrl;
+                            link.download = `product_${productId}_report.xlsx`;
+                            document.body.appendChild(link);
+                            link.click();
+                            link.remove();
+                            window.URL.revokeObjectURL(downloadUrl);
+                          } else {
+                            alert("ไม่พบลิงก์ดาวน์โหลด Excel");
+                          }
+                        } catch (error) {
+                          console.error("Error generating Excel:", error);
+                          alert("ไม่สามารถสร้างไฟล์ Excel ได้");
+                        } finally {
+                          setSubmitting(false);
+                        }
+                      }}
+                      type="button"
+                      className="border border-green-500 shadow px-4 py-1 rounded-full flex gap-1 hover:bg-green-50 hover:opacity-90 transition-colors"
+                    >
+                      <FileOpen fontSize="small" color="success" />
+                      <p>ดาวน์โหลดเอกสาร</p>
+                    </button>
+                  </div>
+                  <button
+                    onClick={() =>
+                      navigate(
+                        `${PROTECTED_PATH.COMPANY_COMMENT_HISTORY}?id=${id}`
+                      )
+                    }
+                    className="px-2 py-1 border-gray-300 border rounded-full h-fit font-semibold my-auto"
+                  >
+                    ประวัติการรายงาน
+                  </button>
+                </div>
+                <div className="p-5">
+                  <div className="flex items-center gap-4">
+                    <span className="text-gray-700">
+                      <div className="overflow-y-auto whitespace-pre-wrap break-words">
+                        {productDetail.comments[0].comment}
+                      </div>
+                    </span>
+                  </div>
+                  <div className="flex gap-3 mt-4 flex-wrap justify-end">
+                    {/* ปุ่มอนุมัติ/ปฏิเสธ - แสดงเฉพาะเมื่อ status = 1,2 และไม่ได้อยู่ในโหมดแก้ไข */}
+                    {(productDetail?.status?.status === 0 ||
+                      productDetail?.status?.status === 1 ||
+                      productDetail?.status?.status === 2) && (
+                      <>
+                        {!showCommentBox && (
+                          <>
+                            <button
+                              type="button"
+                              disabled={submitting}
+                              className="bg-pink-300 text-white font-semibold shadow px-4 py-2 rounded-full hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              onClick={() =>
+                                navigate(
+                                  `${PROTECTED_PATH.REGISTER_PRODUCT_FR03}?id=${id}`
+                                )
+                              }
+                            >
+                              {submitting ? "กำลังดำเนินการ..." : "แก้ไขฟอร์ม"}
+                            </button>
+                            <button
+                              type="button"
+                              disabled={submitting}
+                              className="bg-green-500 text-white font-semibold shadow px-4 py-2 rounded-full hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              onClick={async () => {
+                                try {
+                                  setSubmitting(true);
+                                  const result = await fetchExcel(); // ดึง download_url จาก backend
+
+                                  if (result?.download_url) {
+                                    const fullUrl = `http://178.128.123.212:5000${result.download_url}`;
+                                    const response = await fetch(fullUrl);
+                                    const blob = await response.blob();
+                                    const downloadUrl =
+                                      window.URL.createObjectURL(blob);
+                                    const link = document.createElement("a");
+                                    link.href = downloadUrl;
+                                    link.download = `product_${productId}_report.xlsx`; // ตั้งชื่อไฟล์เองได้เลย
+                                    document.body.appendChild(link);
+                                    link.click();
+                                    link.remove();
+                                    window.URL.revokeObjectURL(downloadUrl);
+                                  } else {
+                                    alert("ไม่พบลิงก์ดาวน์โหลด Excel");
+                                  }
+                                } catch (error) {
+                                  console.error(
+                                    "Error generating Excel:",
+                                    error
+                                  );
+                                  alert("ไม่สามารถสร้างไฟล์ Excel ได้");
+                                } finally {
+                                  setSubmitting(false);
+                                }
+                              }}
+                            >
+                              {submitting
+                                ? "กำลังดำเนินการ..."
+                                : "Generate Excel File"}
+                            </button>
+                          </>
+                        )}
+                        <button
+                          type="button"
+                          disabled={submitting}
+                          className="primary-button font-semibold shadow px-4 py-2 rounded-full flex gap-1 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed "
+                          onClick={toggleCommentBox}
+                        >
+                          {submitting
+                            ? "กำลังดำเนินการ..."
+                            : showCommentBox
+                            ? "ยกเลิกการตอบกลับ"
+                            : "ตอบกลับความคิดเห็น"}
+                        </button>
+                      </>
+                    )}
+
+                    {/* แสดงข้อความเมื่อไม่สามารถแก้ไขได้ */}
+                    {(productDetail?.status?.status === 3 ||
+                      productDetail?.status?.status === 4) && (
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-2 w-full">
+                        <p className="text-blue-800 text-sm">
+                          <span className="font-semibold">หมายเหตุ:</span>{" "}
+                          ผลิตภัณฑ์นี้อยู่ในสถานะ "{statusInfo.text}"
+                          {productDetail?.status?.status === 3 &&
+                            " - การพิจารณาเสร็จสิ้นแล้ว"}
+                          {productDetail?.status?.status === 4 &&
+                            " - การพิจารณาเสร็จสิ้นแล้ว"}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {!productDetail?.comments?.length && !showCommentBox && (
           <div className="mt-8">
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-              {/* Header with gradient */}
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200 px-6 py-5 rounded-t-xl flex justify-between items-center">
-                {/* Left side title */}
                 <div className="flex flex-col">
                   <h3 className="text-lg font-semibold text-gray-800 flex items-center">
                     <svg
@@ -320,121 +558,104 @@ const CProduct: React.FC = () => {
                         d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                       />
                     </svg>
-                    ความคิดเห็นล่าสุด
+                    การดำเนินการ
                   </h3>
-                  <p className="text-sm text-gray-600">
-                    {productDetail?.comments?.length > 0
-                      ? productDetail.comments[0] && (
-                          <span className="text-xs text-gray-500 mt-1 ml-7">
-                            {new Date(
-                              productDetail.comments[0].created_at
-                            ).toLocaleDateString("th-TH")}
-                          </span>
-                        )
-                      : "ยังไม่มีความคิดเห็น"}
+                  <p className="text-sm text-gray-600 mt-1 ml-7">
+                    ยังไม่มีความคิดเห็นสำหรับผลิตภัณฑ์นี้
                   </p>
                 </div>
                 <div className="ml-auto mr-4">
                   <button
-                    onClick={() => {
+                    onClick={async () => {
                       try {
-                        window.open(
-                          `http://178.128.123.212:5000/api/v1/excel/${individualProduct?.company_id}/${individualProduct?.product_id}`,
-                          "_blank"
-                        );
+                        setSubmitting(true);
+                        const result = await fetchLatestExcel(); // ดึง download_url จาก backend
+
+                        if (result?.path_excel) {
+                          const fullUrl = `http://178.128.123.212:5000${result.path_excel}`;
+
+                          const response = await fetch(fullUrl);
+                          const blob = await response.blob();
+
+                          const downloadUrl = window.URL.createObjectURL(blob);
+                          const link = document.createElement("a");
+                          link.href = downloadUrl;
+                          link.download = `product_${productId}_report.xlsx`; // ตั้งชื่อไฟล์เองได้เลย
+                          document.body.appendChild(link);
+                          link.click();
+                          link.remove();
+                          window.URL.revokeObjectURL(downloadUrl);
+                        } else {
+                          alert("ไม่พบลิงก์ดาวน์โหลด Excel");
+                        }
                       } catch (error) {
-                        console.error(
-                          "Error opening Excel download URL:",
-                          error
-                        );
-                        alert("ไม่สามารถเปิดลิงก์ดาวน์โหลดเอกสาร");
+                        console.error("Error generating Excel:", error);
+                        alert("ไม่สามารถสร้างไฟล์ Excel ได้");
+                      } finally {
+                        setSubmitting(false);
                       }
                     }}
                     type="button"
                     className="border border-green-500 shadow px-4 py-1 rounded-full flex gap-1 hover:bg-green-50 hover:opacity-90 transition-colors"
                   >
                     <FileOpen fontSize="small" color="success" />
-                    <p>ดาวน์โหลดเอกสาร</p>
+                    <p>ดาวน์โหลดเอกสาร(เวอร์ชันล่าสุด)</p>
                   </button>
                 </div>
-                <button
-                  onClick={() =>
-                    navigate(
-                      `${PROTECTED_PATH.COMPANY_COMMENT_HISTORY}?id=${id}`
-                    )
-                  }
-                  className="px-2 py-1 border-gray-300 border rounded-full h-fit font-semibold my-auto"
-                >
-                  ประวัติการรายงาน
-                </button>
               </div>
+
               <div className="p-5">
-                <div className="flex items-center gap-4">
-                  <span className="text-gray-700">
-                    {" "}
-                    {productDetail.comments?.length > 0 && (
-                      <div className="overflow-y-auto whitespace-pre-wrap break-words">
-                        {productDetail.comments[0].comment}
-                      </div>
-                    )}
-                  </span>
-                </div>
-                <div className="flex gap-3 mt-4 flex-wrap justify-end">
-                  {/* ปุ่มอนุมัติ/ปฏิเสธ - แสดงเฉพาะเมื่อ status = 1,2 และไม่ได้อยู่ในโหมดแก้ไข */}
+                <div className="flex justify-end gap-3">
+                  {/* ปุ่มดำเนินการเมื่อไม่มีความคิดเห็น แสดงเฉพาะเมื่อ status = 0,1,2 */}
                   {(productDetail?.status?.status === 0 ||
                     productDetail?.status?.status === 1 ||
-                    productDetail?.status?.status === 2) && (
-                    <>
-                      {!showCommentBox && (
-                        <>
-                          <button
-                            type="button"
-                            disabled={submitting}
-                            className="bg-pink-300 text-white font-semibold shadow px-4 py-2 rounded-full hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            onClick={() =>
-                              navigate(
-                                `${PROTECTED_PATH.REGISTER_PRODUCT_FR03}?id=${id}`
-                              )
+                    productDetail?.status?.status === 2) &&
+                    productDetail?.comments?.length > 0 && (
+                      <>
+                        <button
+                          type="button"
+                          disabled={submitting}
+                          className="bg-pink-300 text-white font-semibold shadow px-4 py-2 rounded-full hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          onClick={() =>
+                            navigate(
+                              `${PROTECTED_PATH.REGISTER_PRODUCT_FR03}?id=${id}`
+                            )
+                          }
+                        >
+                          {submitting ? "กำลังดำเนินการ..." : "แก้ไขฟอร์ม"}
+                        </button>
+                        <button
+                          type="button"
+                          disabled={submitting}
+                          className="bg-green-500 text-white font-semibold shadow px-4 py-2 rounded-full hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          onClick={async () => {
+                            try {
+                              window.open(
+                                `http://178.128.123.212:5000/api/v1/excel/company/${auditorId}/${productId}`,
+                                "_blank"
+                              );
+                            } catch (error) {
+                              console.error("Error generating Excel:", error);
+                              alert("ไม่สามารถสร้างไฟล์ Excel ได้");
                             }
-                          >
-                            {submitting ? "กำลังดำเนินการ..." : "แก้ไขฟอร์ม"}
-                          </button>
-                          <button
-                            type="button"
-                            disabled={submitting}
-                            className="bg-green-500 text-white font-semibold shadow px-4 py-2 rounded-full hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            onClick={async () => {
-                              try {
-                                window.open(
-                                  `http://178.128.123.212:5000/api/v1/excel/auditor/${auditorId}/${productId}`,
-                                  "_blank"
-                                );
-                              } catch (error) {
-                                console.error("Error generating Excel:", error);
-                                alert("ไม่สามารถสร้างไฟล์ Excel ได้");
-                              }
-                            }}
-                          >
-                            {submitting
-                              ? "กำลังดำเนินการ..."
-                              : "Generate Excel File"}
-                          </button>
-                        </>
-                      )}
-                      <button
-                        type="button"
-                        disabled={submitting}
-                        className="primary-button font-semibold shadow px-4 py-2 rounded-full flex gap-1 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed "
-                        onClick={toggleCommentBox} // Toggle comment box visibility
-                      >
-                        {submitting
-                          ? "กำลังดำเนินการ..."
-                          : showCommentBox
-                          ? "ยกเลิกการตอบกลับ"
-                          : "ตอบกลับความคิดเห็น"}
-                      </button>
-                    </>
-                  )}
+                          }}
+                        >
+                          {submitting
+                            ? "กำลังดำเนินการ..."
+                            : "Generate Excel File"}
+                        </button>
+                        <button
+                          type="button"
+                          disabled={submitting}
+                          className="primary-button font-semibold shadow px-4 py-2 rounded-full flex gap-1 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                          onClick={toggleCommentBox} // Toggle comment box visibility
+                        >
+                          {submitting
+                            ? "กำลังดำเนินการ..."
+                            : "เพิ่มความคิดเห็น"}
+                        </button>
+                      </>
+                    )}
                   {/* แสดงข้อความเมื่อไม่สามารถแก้ไขได้ */}
                   {(productDetail?.status?.status === 3 ||
                     productDetail?.status?.status === 4) && (
@@ -453,29 +674,69 @@ const CProduct: React.FC = () => {
               </div>
             </div>
           </div>
-        </div>
-        {/* New Comment Box Section - แสดงเฉพาะเมื่อ status = 1,2*/}
+        )}
+
+        {/* New Comment Box Section - แสดงเฉพาะเมื่อ status = 0,1,2 และกดปุ่มเพิ่มความคิดเห็น */}
         {showCommentBox &&
           (productDetail?.status?.status === 0 ||
             productDetail?.status?.status === 1 ||
-            productDetail?.status?.status === 2 ||
-            productDetail.comments.length != 0) && (
-            <div className="mt-8">
+            productDetail?.status?.status === 2) && (
+            <div className="mt-8 animate-fade-in">
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
                 {/* Header */}
                 <div className="bg-gradient-to-r text-black px-6 py-4 rounded-t-xl">
                   <div className="flex justify-between items-center">
                     <h3 className="text-lg font-semibold">เพิ่มประเด็นใหม่</h3>
-                    <button
-                      type="button"
-                      disabled={submitting}
-                      className="flex px-4 py-2 border border-gray-300 rounded-full hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      แนบแบบฟอร์ม CFP (เวอร์ชันที่ได้ทำการแก้ไข)
-                    </button>
+                    <div className="space-y-2">
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                        accept=".xlsx,.xls" // จำกัดประเภทไฟล์เป็น Excel
+                        style={{ display: "none" }} // ซ่อนอินพุตไฟล์
+                      />
+
+                      {selectedFile ? (
+                        // แสดงเมื่อมีไฟล์ที่เลือกแล้ว
+                        <div className="flex items-center justify-between p-2 border border-gray-300 rounded-lg bg-gray-50">
+                          <div className="flex items-center space-x-2">
+                            <InsertDriveFile className="text-green-600" />
+                            <span className="text-sm truncate max-w-xs">
+                              {selectedFile.name}
+                            </span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <button
+                              type="button"
+                              onClick={clearSelectedFile}
+                              disabled={uploading || submitting}
+                              className="p-1 text-gray-500 hover:text-red-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              <Close fontSize="small" />
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        // แสดงเมื่อยังไม่มีไฟล์ที่เลือก
+                        <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          disabled={submitting || uploading}
+                          className="flex items-center px-4 py-2 border border-gray-300 rounded-full hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <FileUpload className="mr-2" />
+                          แนบแบบฟอร์ม CFP (เวอร์ชันที่ได้ทำการแก้ไข)
+                        </button>
+                      )}
+
+                      {/* แสดงข้อผิดพลาดถ้ามี */}
+                      {uploadError && (
+                        <p className="text-red-500 text-sm">{uploadError}</p>
+                      )}
+                    </div>
                   </div>
-                  <p className="text-sm flex justify-end mt-2 ">อัพเดตเมื่อ</p>
                 </div>
+
                 {/* Content */}
                 <div className="p-5">
                   <textarea
@@ -487,6 +748,7 @@ const CProduct: React.FC = () => {
                     disabled={submitting}
                     style={{ whiteSpace: "pre-wrap" }}
                   />
+
                   {/* Action Buttons */}
                   <div className="flex justify-end gap-3 mt-4">
                     <button
@@ -499,11 +761,16 @@ const CProduct: React.FC = () => {
                     </button>
                     <button
                       type="button"
-                      onClick={handleSaveComment}
-                      disabled={!comment.trim() || submitting}
-                      className="primary-button font-semibold shadow px-4 py-2 rounded-full flex gap-1 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                      onClick={() => {
+                        handleSaveComment();
+                        if (selectedFile) {
+                          handleUpload();
+                        }
+                      }}
+                      disabled={!comment.trim() || submitting || uploading}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700"
                     >
-                      {submitting ? "กำลังบันทึก..." : "บันทึกความคิดเห็น"}
+                      บันทึกและอัปโหลด
                     </button>
                   </div>
                 </div>

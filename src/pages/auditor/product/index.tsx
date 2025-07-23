@@ -8,27 +8,28 @@ import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../../constants/path.route";
 import { useState } from "react";
 import { ProductService } from "../../../service/api/auditor/product";
+import { CompanyService } from "../../../service/api/company";
 
 const AProduct: React.FC = () => {
   const auditorId = 1;
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
+  const companyId = 1005; // Assuming companyId is 1 for this example
+  const productId = id;
 
   console.log("Auditor ID:", auditorId);
   console.log("Product ID from URL:", id);
 
-  const { productData, productDetail, loading, error, refetch } = useViewModel(
-    auditorId,
-    Number(id)
-  );
+  const { productData, productDetail, loading, error, refetch, fetchLatestExcel} =
+    useViewModel(auditorId, Number(id), companyId);
 
   const [comment, setComment] = useState("");
   const [showCommentBox, setShowCommentBox] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const productService = new ProductService();
 
- const handleSaveComment = async () => {
+  const handleSaveComment = async () => {
     if (!comment.trim() || !productDetail) return;
     try {
       setSubmitting(true);
@@ -45,8 +46,8 @@ const AProduct: React.FC = () => {
 
       // อัพเดทสถานะเป็น 2 (ระหว่างพิจารณา) หลังจากเพิ่ม comment
       if (
-         productDetail?.status?.status === 0 ||
-         productDetail?.status?.status === 1
+        productDetail?.status?.status === 0 ||
+        productDetail?.status?.status === 1
       ) {
         await productService.reqUpdateProductStatus(
           auditorId,
@@ -409,18 +410,33 @@ const AProduct: React.FC = () => {
                 {/* Download button */}
                 <div className="ml-auto mr-4">
                   <button
-                    onClick={() => {
+                    onClick={async () => {
                       try {
-                        window.open(
-                          `http://178.128.123.212:5000/api/v1/excel/${productData?.company_id}/${productData?.product_id}`,
-                          "_blank"
-                        );
+                        setSubmitting(true);
+                        const result = await fetchLatestExcel(); // ดึง download_url จาก backend
+
+                        if (result?.path_excel) {
+                          const fullUrl = `http://178.128.123.212:5000${result.path_excel}`;
+
+                          const response = await fetch(fullUrl);
+                          const blob = await response.blob();
+
+                          const downloadUrl = window.URL.createObjectURL(blob);
+                          const link = document.createElement("a");
+                          link.href = downloadUrl;
+                          link.download = `product_${productId}_report.xlsx`; // ตั้งชื่อไฟล์เองได้เลย
+                          document.body.appendChild(link);
+                          link.click();
+                          link.remove();
+                          window.URL.revokeObjectURL(downloadUrl);
+                        } else {
+                          alert("ไม่พบลิงก์ดาวน์โหลด Excel");
+                        }
                       } catch (error) {
-                        console.error(
-                          "Error opening Excel download URL:",
-                          error
-                        );
-                        alert("ไม่สามารถเปิดลิงก์ดาวน์โหลดเอกสาร");
+                        console.error("Error generating Excel:", error);
+                        alert("ไม่สามารถสร้างไฟล์ Excel ได้");
+                      } finally {
+                        setSubmitting(false);
                       }
                     }}
                     type="button"
