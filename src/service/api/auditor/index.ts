@@ -1,9 +1,6 @@
 import { PROTECTED_PATH } from "../../../constants/api.route";
 import { RemoteA } from "../../remote";
-import type {
-  AuditorType,
-  AuditorReportType,
-} from "./type";
+import type { AuditorType, AuditorReportType } from "./type";
 
 export class AuditorService extends RemoteA {
   // Get auditor info by ID
@@ -15,12 +12,18 @@ export class AuditorService extends RemoteA {
     return data;
   };
 
-   reqGetAllProducts = async (
-      auditorId?: number
-    ): Promise<AuditorReportType> => {
-      const response = await this.getAxiosInstance().get(
-        `${PROTECTED_PATH.AUDITOR}/report/${auditorId}`);
-      const { data } = response;
-      return data;
-    };
+  reqGetAllProducts = async (
+    auditorId?: number
+  ): Promise<AuditorReportType> => {
+    const response = await this.getAxiosInstance().get(
+      `${PROTECTED_PATH.AUDITOR}/report/${auditorId}`
+    );
+    const { data } = response;
+    return data;
+  };
+  reqGetAuditorList = async (): Promise<AuditorType[]> => {
+    const response = await this.getAxiosInstance().get(PROTECTED_PATH.AUDITORS);
+    const { data } = response;
+    return data;
+  };
 }

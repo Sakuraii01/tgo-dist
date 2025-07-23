@@ -160,8 +160,8 @@ const useViewModel = (id: number) => {
     setProcessId(newOrder);
     setProcessData(newProcessData);
   };
-  const handelAddProcess = (ordering: number, newProcess: string) => {
-    processService
+  const handelAddProcess = async (ordering: number, newProcess: string) => {
+    await processService
       .reqPostProcess({
         product_id: id,
         ordering: ordering,
@@ -170,8 +170,8 @@ const useViewModel = (id: number) => {
       })
       .then((response) => {
         console.log("New process added:", response);
-        fetchProcess();
       });
+    await fetchProcess();
   };
   const handleUpdateProcess = (processId: number, updatedProcess: string) => {
     processService

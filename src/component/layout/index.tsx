@@ -8,14 +8,16 @@ import {
 import { Badge } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../constants/path.route";
+
+import { clearToken, useToken } from "../../utils/localStorage";
 import { useAuth } from "../../auth/useAuth";
-import { clearToken } from "../../utils/localStorage";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
 export const Navbar = () => {
   const navigate = useNavigate();
   const auth = useAuth();
+  const userData = useToken();
   const auditorId = 1;
   const companyId = 1005;
 
@@ -67,7 +69,7 @@ export const Navbar = () => {
   const handleNotificationClick = () => {
     setShowNotifications(!showNotifications);
     if (!showNotifications) {
-      // markAsRead();
+      markAsRead();
     }
   };
 
@@ -118,11 +120,9 @@ export const Navbar = () => {
         <div className="flex items-center gap-2">
           <div>
             <p className="text-sm font-medium text-primary">
-              {auth?.user?.user?.name}
+              {userData?.user?.name}
             </p>
-            <p className="text-xs text-gray-400">
-              {auth?.user?.user?.email}
-            </p>
+            <p className="text-xs text-gray-400">{auth?.user?.user?.email}</p>
           </div>
           <div
             className="text-error mx-5 cursor-pointer hover:bg-error/10 p-2 rounded-full"
@@ -172,4 +172,3 @@ export const Popup = (props: { children: React.ReactNode }) => {
     </div>
   );
 };
-

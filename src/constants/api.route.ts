@@ -2,6 +2,7 @@ export const PROTECTED_PATH = {
   LOGIN: "/login",
   COMPANY: "/company",
   USER: "/users",
+  AUDITORS: "/auditor",
   PRODUCT: "/product",
   OUTPUT_PROCESS: "/output/process",
   INPUT_PROCESS: "/input/process",
@@ -18,17 +19,24 @@ export const PROTECTED_PATH = {
   FR04_1_REPORT: "/f4-1/reportweb",
   FR04_1_FORM: "/f4-1/form",
   FR04_1_ITEM: "/f4-1/item",
+  FR04_1_SUM: "/f4-1/sum",
 
+  FR04_2: "/f4-2",
   FR04_2_ITEM: "/f4-2/item",
   FR04_2_FORM: "/f4-2/form",
+  FR04_2_SUM: "/f4-2/sum",
 
   FR04_3_REPORT: "/selfcollect/product",
 
   FR06_1: "/f6-1/sum",
+  FR06_1SUM4142: "/f6-1/sumform4142",
   FR06_2: "/f6-2/sum",
 
   SELF_COLLECT: "/selfcollect",
+  SELF_COLLECT_PROCESS: "/selfcollect/process",
   SELF_COLLECT_LIST: "/selfcollect/list",
+  SELF_COLLECT_PROCESS_LIST: "/selfcollect/process/list",
+  SELF_COLLECT_PROCESS_ITEM: "/selfcollect/process/item",
 
   UNITS_DROPDOWN: "/units",
   REGISTER_ROUND_DROPDOWN: "/rounded",
@@ -47,13 +55,10 @@ export const PROTECTED_PATH = {
   AUDITOR_PRODUCT: "/auditor/product",
   AUDITOR_COMMENT: "/auditor/comment",
 
-  COMPANY_NOTIFICATION: "/notification/company",
+  COMPANY_NOTIFICATION: "/notifications/company",
 
-  EXCEL: "/excel/auditor",
-  EXCEL_GENERATE: "/excel/company",
-  EXCEL_DOWNLOAD: "/download/excel",
-  EXCEL_DOWNLOAD_AUDITOR: "/download/excel/auditor",
+  EXCEL: "/download/excel/auditor",
+  EXCEL_GENERATE: "/download/excel/company",
+  EXCEL_DOWNLOAD: "/download/excel/auditor",
   EXCEL_ADD: "/notifications/company",
-  
-  
 };

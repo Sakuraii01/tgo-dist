@@ -1,22 +1,15 @@
+import useViewModel from "./viewModel";
 import { Navbar, BreadcrumbNav } from "../../component/layout";
 import { Delete, Edit } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../constants/path.route";
-import { SelfCollectService } from "../../service/api/selfcollect";
-import { useState, useEffect } from "react";
-import type { SelfCollectType } from "../../service/api/selfcollect/type";
+import { useState } from "react";
+import { Popup } from "../../component/layout";
+import { Formik, Form } from "formik";
+import { Field } from "../../component/input/field";
 const SelfCollect = () => {
   const navigate = useNavigate();
-  const selfCollectService = new SelfCollectService();
-  const [selfcollectList, setSelfCollectList] = useState<SelfCollectType[]>([]);
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await selfCollectService.reqGetSelfCollectList(1005);
-      setSelfCollectList(data);
-      console.log(data);
-    };
-    fetchData();
-  }, []);
+  const { selfcollectList } = useViewModel();
   return (
     <div>
       <Navbar />
@@ -24,12 +17,7 @@ const SelfCollect = () => {
       <div className="max-w-5xl mx-auto">
         <div className="flex justify-between mt-20">
           <h4 className="text-xl font-bold">ข้อมูลค่า EF ที่กำหนดเอง</h4>
-          <button
-            onClick={() => navigate(PROTECTED_PATH.CREATE_SELF_COLLECT)}
-            className="primary-button px-6 py-1"
-          >
-            + เพิ่มข้อมูล Self Collect
-          </button>
+          <CreateSelfCollect />
         </div>
         <table className="w-full my-10 text-left rounded-3xl">
           <thead className="bg-primary text-white font-bold rounded-3xl">
@@ -68,3 +56,61 @@ const SelfCollect = () => {
   );
 };
 export default SelfCollect;
+
+const CreateSelfCollect = () => {
+  const [isAddSelfCollect, setIsAddSelfCollect] = useState<boolean>(false);
+  const { handleOnSubmitSelfCollectProcess } = useViewModel();
+  return (
+    <>
+      <button
+        onClick={() => setIsAddSelfCollect(true)}
+        className="primary-button px-6 py-1"
+      >
+        + เพิ่มข้อมูล Self Collect
+      </button>
+      {isAddSelfCollect && (
+        <Popup>
+          <h3 className="font-bold text-xl my-3">
+            เพิ่มชื่อหน่วยสนับสนุนการผลิตหรือชื่อระบบผลิตภัณฑ์ที่เกี่ยวข้อง
+          </h3>
+          <Formik
+            initialValues={{ selfCollectName: "" }}
+            onSubmit={(values, actions) => {
+              handleOnSubmitSelfCollectProcess({
+                company_id: 1005,
+                self_collect_name: values.selfCollectName,
+                self_collect_ef: "0",
+                ratio: 1,
+              });
+              actions.resetForm();
+              setIsAddSelfCollect(false);
+            }}
+          >
+            {({ handleSubmit }) => (
+              <Form onSubmit={handleSubmit}>
+                <div>
+                  <Field
+                    name="selfCollectName"
+                    label="ชื่อหน่วยสนับสนุนการผลิตหรือชื่อระบบผลิตภัณฑ์ที่เกี่ยวข้อง"
+                  />
+                </div>
+                <div className="my-3 mx-auto w-fit flex gap-3">
+                  <button
+                    className="secondary-button px-6 py-2"
+                    onClick={() => setIsAddSelfCollect(false)}
+                    type="button"
+                  >
+                    ยกเลิก
+                  </button>
+                  <button className="primary-button px-6 py-2" type="submit">
+                    ยืนยัน
+                  </button>
+                </div>
+              </Form>
+            )}
+          </Formik>
+        </Popup>
+      )}
+    </>
+  );
+};

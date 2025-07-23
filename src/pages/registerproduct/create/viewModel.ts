@@ -1,5 +1,5 @@
 import { ProductService } from "../../../service/api/product";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import CreateFormSchema from "./validation";
 import {
   UnitsDropdownService,
@@ -11,6 +11,9 @@ import type {
   RegisterRounedType,
   PCRType,
 } from "../../../service/api/dropdown/type";
+import { AuditorService } from "../../../service/api/auditor";
+import type { AuditorType } from "../../../service/api/auditor/type";
+
 import { type ProductType } from "../../../service/api/product/type";
 import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../../constants/path.route";
@@ -25,9 +28,10 @@ type productProps = {
   functionalProductValue: string | number;
   functionalProduct: string | number;
   technicalInfo: string[] | string;
+  auditor_id: number | string;
   sale_ratio: string;
   pcrReference: string;
-  product_image: File | null;
+  product_image: File | string | null;
   scope: string;
 };
 const useViewModel = (id?: number) => {
@@ -35,10 +39,12 @@ const useViewModel = (id?: number) => {
   const unitService = new UnitsDropdownService();
   const tgoEFDropdownService = new TGOEFDropdownService();
   const registerRoundService = new RegisterRoundDropdownService();
+  const auditorService = new AuditorService();
   const [registerRoundList, setRegisterRoundList] = useState<
     RegisterRounedType[]
   >([]);
   const [unitList, setUnitList] = useState<UnitsDrowpdownType[]>([]);
+  const [savePicture, setSavePicture] = useState<File | null>(null);
   const [initialValues, setInitialValues] = useState<productProps>({
     registrationRound: "",
     startCollectData: "",
@@ -50,24 +56,29 @@ const useViewModel = (id?: number) => {
     functionalProductValue: "",
     functionalProduct: "",
     technicalInfo: [""],
+    auditor_id: 0,
     sale_ratio: "",
     pcrReference: "",
     product_image: null,
     scope: "B2B",
   });
   const [pcrList, setPcrList] = useState<PCRType[]>([]);
+  const [auditorList, setAuditorList] = useState<AuditorType[]>([]);
   const { FR03FomrValidationSchema } = CreateFormSchema();
   const productService = new ProductService();
+
+  const handleChangePicture = useCallback((file: File) => {
+    setSavePicture(file);
+  }, []);
 
   const handleSubmit = async (data: productProps) => {
     let newId = id;
     if (data.scope !== "B2B" && data.scope !== "B2C") {
       return;
     }
-    console.log(data.product_image);
+
     const entity: ProductType = {
-      product_id: 9,
-      company_id: 1005,
+      company_id: 0,
       product_name_th: data.productNameTH,
       product_name_en: data.productNameEN,
       scope: data.scope,
@@ -79,29 +90,35 @@ const useViewModel = (id?: number) => {
       PU_en: Number(data.functionalProduct),
       sale_ratio: Number(data.sale_ratio),
       pcr_reference: data.pcrReference,
-      product_photo: data.product_image || "",
-      auditor_id: null,
+      product_photo: "",
+      auditor_id: Number(data.auditor_id),
       product_techinfo: Array.isArray(data.technicalInfo)
         ? `[${data.technicalInfo
             .map((item) => '"' + item.trim() + '"')
             .join(",")}]`
         : data.technicalInfo.trim(),
-      verify_status: "draft",
-      // what is topic field
+      verify_status: "Draft",
       collect_data_start: data.startCollectData.toString().split("T")[0],
       collect_data_end: data.stopCollectData.toString().split("T")[0],
       submitted_round: data.registrationRound,
       submitted_date: null,
     };
     try {
+      const formData = new FormData();
+      if (savePicture) {
+        formData.append("product_photo", savePicture);
+      }
+
       if (id) {
         entity.product_id = id;
-        productService.reqPutProduct(id, entity);
+        await productService.reqPutProduct(id, entity);
+        await productService.reqPutProductPicture(id, formData);
       } else {
         const res = await productService.reqPostProduct(entity);
         console.log(res);
 
         newId = Number(res?.product_id);
+        await productService.reqPutProductPicture(newId, formData);
       }
       console.log("success");
     } catch (err) {
@@ -117,6 +134,14 @@ const useViewModel = (id?: number) => {
         setUnitList(data || []);
       })
       .catch((err) => console.error(err));
+    auditorService
+      .reqGetAuditorList()
+      .then((data) => {
+        setAuditorList(data || []);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
     tgoEFDropdownService
       .reqGetPCRService()
       .then((data) => {
@@ -150,6 +175,7 @@ const useViewModel = (id?: number) => {
               functionalUnit: Number(data.FU_th),
               functionalProductValue: Number(data.PU_value),
               functionalProduct: Number(data.PU_th),
+              auditor_id: Number(data.auditor_id),
               technicalInfo: data.product_techinfo
                 ? typeof data.product_techinfo === "string"
                   ? JSON.parse(data.product_techinfo)
@@ -157,7 +183,9 @@ const useViewModel = (id?: number) => {
                 : [""],
               sale_ratio: String(data.sale_ratio),
               pcrReference: data.pcr_reference,
-              product_image: null,
+              product_image: data.product_photo
+                ? "http://178.128.123.212:5000" + data.photo_path
+                : null,
               scope: data.scope,
             });
           }
@@ -172,6 +200,9 @@ const useViewModel = (id?: number) => {
     unitList,
     registerRoundList,
     pcrList,
+    savePicture,
+    auditorList,
+    handleChangePicture,
     handleSubmit,
   };
 };

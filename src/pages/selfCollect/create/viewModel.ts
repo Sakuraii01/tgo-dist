@@ -1,127 +1,71 @@
 import { SelfCollectService } from "../../../service/api/selfcollect";
-import type { SelfCollectType } from "../../../service/api/selfcollect/type";
-import {
-  TGOEFDropdownService,
-  UnitsDropdownService,
-  TGOVehiclesService,
-} from "../../../service/api/dropdown";
-import type { SelfCollectItemType } from "../../../service/api/selfcollect/type";
-
 import type {
-  TGOVehiclesWithEFType,
-  TGOEFDropdownType,
-} from "../../../service/api/dropdown/type";
+  SelfCollectItemListType,
+  SelfCollectProcessItemType,
+} from "../../../service/api/selfcollect/type";
+
 import { useState, useEffect } from "react";
-type FormValues = {
-  selfCollectName: string;
-  input: SelfCollectItemType[];
-  output: SelfCollectItemType[];
-};
+
 const useViewModel = (id: number) => {
   const selfCollectService = new SelfCollectService();
-  const tGOVehiclesService = new TGOVehiclesService();
-  const tGOEFDropdownService = new TGOEFDropdownService();
-  const unitsDropdownService = new UnitsDropdownService();
-
-  const initialValues: FormValues = {
-    selfCollectName: "",
-    input: [
-      {
-        item_name: "",
-        item_type: "input",
-        item_unit: "",
-        item_qty: "",
-        item_fu_qty: "",
-        item_source: "",
-        item_ef: "",
-        item_ef_source: "",
-        item_ef_source_ref: "",
-        type2_distance: 0,
-        type2_outbound_load: "",
-        type2_return_load: "",
-        type2_vehicle: "",
-        type2_outbound_load_percent: 0,
-        type2_return_load_percent: 0,
-        type2_outbound_ef: 0,
-        type2_return_ef: 0,
-        type2_ef_source: "",
-        type2_ef_source_ref: "",
-        transport_emission: 0,
-        total_emission: 0,
-        proportion: 0,
-        ratio: 0,
-        cut_off: 0,
-        type1_gas: null,
-        type1_gas_unit: null,
-        type1_gas_qty: null,
-        type1_ef: "",
-        type1_ef_source: 0,
-        item_emission: null,
-        transport_type: "",
-        add_on_detail: "",
-      },
-    ],
-    output: [
-      {
-        item_name: "",
-        item_type: "input",
-        item_unit: "",
-        item_qty: "",
-        item_fu_qty: "",
-        item_source: "",
-        item_ef: "",
-        item_ef_source: "",
-        item_ef_source_ref: "",
-        type2_distance: 0,
-        type2_outbound_load: "",
-        type2_return_load: "",
-        type2_vehicle: "",
-        type2_outbound_load_percent: 0,
-        type2_return_load_percent: 0,
-        type2_outbound_ef: 0,
-        type2_return_ef: 0,
-        type2_ef_source: "",
-        type2_ef_source_ref: "",
-        transport_emission: 0,
-        total_emission: 0,
-        proportion: 0,
-        ratio: 0,
-        cut_off: 0,
-        type1_gas: null,
-        type1_gas_unit: null,
-        type1_gas_qty: null,
-        type1_ef: "",
-        type1_ef_source: 0,
-        item_emission: null,
-        transport_type: "",
-        add_on_detail: "",
-      },
-    ],
+  const [selfcollectProcessItemList, setSelfCollectProcessItemList] =
+    useState<SelfCollectItemListType>();
+  const fetchSelfCollect = async () => {
+    const data = await selfCollectService.reqGetSelfCollectProcessItem(
+      1005,
+      id
+    );
+    setSelfCollectProcessItemList(data);
   };
-  const [tgoEfDropdown, setTgoEfDropdown] = useState<
-    TGOEFDropdownType[] | null
-  >([]);
-  const [tgoVehicles, setTgoVehicles] = useState<TGOVehiclesWithEFType[]>([]);
+  const handleFormSubmit = async (
+    entity: SelfCollectProcessItemType,
+    item_id?: number
+  ) => {
+    if (item_id) {
+      await selfCollectService
+        .reqPutSelfCollectProcessPerItem(item_id, {
+          cfp_report43_selfcollect_efs_id:
+            entity.cfp_report43_selfcollect_efs_id,
+          self_collect_id: entity.self_collect_id,
+          item_name: entity.item_name || "",
+          item_type: entity.item_type || "",
+          item_unit: entity.item_unit || "",
+          item_qty: entity.item_qty || 0,
+          item_fu_qty: entity.item_fu_qty || 0,
+          item_source: entity.item_source,
 
-  const [unitsDropdown, setUnitsDropdown] = useState<string[]>([]);
-  const fetchUnitsDropdown = async () => {
-    const data = await unitsDropdownService.reqGetUnits();
-    setUnitsDropdown(data.map((unit) => unit.product_unit_abbr_eng));
-  };
+          item_ef: entity.item_ef || 0,
+          item_ef_source: entity.item_ef_source || "",
+          item_ef_source_ref: entity.item_ef_source_ref || "",
 
-  const vehicles = new TGOVehiclesService();
-  const [vehiclesDropdown, setVehiclesDropdown] = useState<
-    TGOVehiclesWithEFType[]
-  >([]);
-  const fetchVehiclesDropdown = async () => {
-    const data = await vehicles.reqGetTGOVehiclesWithEF();
-    setVehiclesDropdown(data);
-  };
+          type2_vehicle: entity.type2_vehicle || "",
+          type2_distance: entity.type2_distance || 0,
+          type2_outbound_load: entity.type2_outbound_load || 0,
+          type2_return_load: entity.type2_return_load || 0,
 
-  const handleOnSubmit = (entity: SelfCollectType) => {
-    if (!id) {
-      selfCollectService
-        .reqPostSelfCollect(entity)
+          type2_vehicle_return: entity.type2_vehicle_return || "",
+          type2_outbound_load_percent: entity.type2_outbound_load_percent || 0,
+          type2_return_load_percent: entity.type2_return_load_percent || 0,
+
+          type2_outbound_ef: entity.type2_outbound_ef || 0,
+          type2_return_ef: entity.type2_return_ef || 0,
+          type2_ef_source: entity.type2_ef_source || "",
+          type2_ef_source_ref: entity.type2_ef_source_ref || "",
+
+          transport_emission: 0,
+          total_emission: 0,
+          proportion: null,
+          ratio: 0,
+          cut_off: 0,
+          type1_gas: null,
+          type1_gas_unit: null,
+          type1_gas_qty: null,
+          type1_ef: null,
+          type1_ef_source: null,
+          item_emission: 0,
+          transport_type: "",
+          add_on_detail: "",
+        })
         .then((res) => {
           console.log(res);
         })
@@ -129,43 +73,60 @@ const useViewModel = (id: number) => {
           console.log(error);
         });
     } else {
-      selfCollectService
-        .reqPutSelfCollect(id, entity)
-        .then((res) => {
-          console.log(res);
+      await selfCollectService
+        .reqPostCollectProcessPerItem({
+          cfp_report43_selfcollect_efs_id:
+            entity.cfp_report43_selfcollect_efs_id,
+          self_collect_id: id,
+          item_name: entity.item_name || "",
+          item_type: entity.item_type || "",
+          item_unit: entity.item_unit || "",
+          item_qty: entity.item_qty || 0,
+          item_fu_qty: entity.item_fu_qty || 0,
+          item_source: entity.item_source,
+
+          item_ef: entity.item_ef || 0,
+          item_ef_source: entity.item_ef_source || "",
+          item_ef_source_ref: entity.item_ef_source_ref || "",
+
+          type2_vehicle: entity.type2_vehicle || "",
+          type2_distance: entity.type2_distance || 0,
+          type2_outbound_load: entity.type2_outbound_load || 0,
+          type2_return_load: entity.type2_return_load || 0,
+
+          type2_vehicle_return: entity.type2_vehicle_return || "",
+          type2_outbound_load_percent: entity.type2_outbound_load_percent || 0,
+          type2_return_load_percent: entity.type2_return_load_percent || 0,
+
+          type2_outbound_ef: entity.type2_outbound_ef || 0,
+          type2_return_ef: entity.type2_return_ef || 0,
+          type2_ef_source: entity.type2_ef_source || "",
+          type2_ef_source_ref: entity.type2_ef_source_ref || "",
+
+          transport_emission: 0,
+          total_emission: 0,
+          proportion: null,
+          ratio: 0,
+          cut_off: 0,
+          type1_gas: null,
+          type1_gas_unit: null,
+          type1_gas_qty: null,
+          type1_ef: null,
+          type1_ef_source: null,
+          item_emission: 0,
+          transport_type: "",
+          add_on_detail: "",
         })
         .catch((error) => {
           console.log(error);
         });
     }
   };
+
   useEffect(() => {
-    fetchVehiclesDropdown();
-    fetchUnitsDropdown();
-    tGOVehiclesService
-      .reqGetTGOVehiclesWithEF()
-      .then((res) => {
-        setTgoVehicles(res);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    tGOEFDropdownService
-      .reqGetTGOEF()
-      .then((res) => {
-        setTgoEfDropdown(res);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    fetchSelfCollect();
   }, []);
-  return {
-    handleOnSubmit,
-    initialValues,
-    tgoEfDropdown,
-    tgoVehicles,
-    vehiclesDropdown,
-    unitsDropdown,
-  };
+
+  return { selfcollectProcessItemList, handleFormSubmit };
 };
 export default useViewModel;

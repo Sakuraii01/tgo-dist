@@ -5,6 +5,8 @@ import axios, {
 } from "axios";
 import { clearToken } from "../utils/localStorage";
 import type { UserLoginInfo } from "./api/user/type";
+// import { useNavigate } from "react-router-dom";
+// import { UNPROTECTED_PATH } from "../constants/path.route";
 
 export class BaseAxios {
   private axiosInstance: AxiosInstance;

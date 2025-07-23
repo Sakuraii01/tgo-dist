@@ -15,9 +15,9 @@ export type ProductType = {
   pcr_reference: string;
   collect_data_start: Date | string | null;
   collect_data_end: Date | string | null;
-  product_photo: File | string;
+  product_photo: File | FormData | Blob | string;
   auditor_id: number | null;
-  verify_status: "unverified" | "verified" | "draft";
+  verify_status: "Draft" | "Pending" | "Under" | "Approved" | "Rejected";
   submitted_round: string;
   submitted_date: Date | string | null;
   created_date?: string | null;

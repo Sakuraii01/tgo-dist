@@ -88,13 +88,6 @@ export interface ProductType {
   photo_path?: string;
 }
 
-
-
-
-
-
-
-
 export type ProductListType = {
   auditor_id: string | number;
   auditor: AuditorType;

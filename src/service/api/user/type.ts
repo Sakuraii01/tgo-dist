@@ -8,6 +8,7 @@ export type CompanyInfo = {
 };
 
 export type UserInfo = {
+  company_id: number;
   name: string;
   email: string;
   password: string;
@@ -23,7 +24,9 @@ export type Login = {
 export type UserLoginInfo = {
   message: string;
   token: string;
+  expires_at: string;
   user: {
+    company_id: number;
     user_id: number;
     email: string;
     role_id: number;
@@ -32,4 +35,15 @@ export type UserLoginInfo = {
     created_date: string;
     updated_date: string;
   };
+  company: {
+    company_id: number;
+    user_id: number;
+    name: string;
+    address: string;
+    province_id: number;
+    contact_no: string;
+    industrial_id: number;
+    created_date: string;
+    updated_date: string;
+  }[];
 };

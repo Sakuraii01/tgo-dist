@@ -8,7 +8,8 @@ const Product = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
-  const { productData } = useViewModel(Number(id));
+  const { productData, fetchGenExcel, excelLink, sendExcelToAuditor } =
+    useViewModel(Number(id));
 
   return (
     <div>
@@ -19,15 +20,17 @@ const Product = () => {
         <section>
           <div>
             <div className="flex gap-4">
-              <div className="text-primary">
-                <p className="text-xl text-gradient text-gradient-primary font-bold">
-                  {productData?.product_name_th}
+              <div className="flex gap-4 h-fit my-auto">
+                <div className="text-primary">
+                  <p className="text-xl text-gradient text-gradient-primary font-bold">
+                    {productData?.product_name_th}
+                  </p>
+                  <p>{productData?.product_name_en}</p>
+                </div>
+                <p className="px-2 py-1 border-gray-300 border rounded-full h-fit text-xs font-semibold my-auto">
+                  รายการร่าง
                 </p>
-                <p>{productData?.product_name_en}</p>
               </div>
-              <p className="px-2 py-1 border-gray-300 border rounded-full h-fit text-xs font-semibold my-auto">
-                รายการร่าง
-              </p>
               <div className="ml-auto">
                 <button
                   onClick={() =>
@@ -40,17 +43,27 @@ const Product = () => {
                   <p>ดำเนินการต่อ</p>
                 </button>
                 <button
-                  onClick={() =>
+                  onClick={async () => {
+                    await fetchGenExcel();
+                    console.log(excelLink);
                     window.open(
-                      "http://178.128.123.212:5000/api/v1/excel/1005/7",
+                      "http://178.128.123.212:5000" + excelLink || "",
                       "_blank"
-                    )
-                  }
+                    );
+                  }}
                   type="button"
-                  className="primary-button font-semibold shadow px-4 py-1 rounded-full flex gap-1 hover:opacity-90"
+                  className="primary-button font-semibold shadow px-4 py-1 rounded-full flex gap-1 ml-auto hover:opacity-90 mb-4"
                 >
                   <FileDownloadRounded fontSize="small" />
                   <p>ดาวน์โหลดเอกสาร</p>
+                </button>
+                <button
+                  onClick={async () => {
+                    await sendExcelToAuditor();
+                  }}
+                  className="bg-white font-semibold shadow px-4 py-1 rounded-full flex gap-1 ml-auto "
+                >
+                  <p>ยืนยันการส่งให้ผู้ทวนสอบ</p>
                 </button>
               </div>
             </div>

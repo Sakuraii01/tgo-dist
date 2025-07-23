@@ -10,25 +10,28 @@ export type CompanyType = {
   updated_date: Date | string;
 };
 
-export type ExcelType ={
+export type ExcelType = {
   message: string;
   download_url: string;
 };
 
 export type ExcelGenType = {
-  message: string;
-  download_url: string;
+  id: number;
+  company_id: number;
+  product_id: number;
+  path_excel: string;
+  created_at: string;
+  updated_at: string;
 };
 
-export type AddExcelType ={
+export type AddExcelType = {
   path_excel: File;
 };
 
-export type LatestExcelType ={
+export type LatestExcelType = {
   message: string;
   path_excel: string;
 };
-
 
 export type NotificationType = {
   company_id: number;
@@ -36,7 +39,6 @@ export type NotificationType = {
   created_at: Date | string;
   updated_at: Date | string;
 };
-
 
 export type AddCommentRequest = {
   comment_id: number;
@@ -58,4 +60,3 @@ export type ListExcelType = {
   created_at: Date | string;
   updated_at: Date | string;
 };
-  

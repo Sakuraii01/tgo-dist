@@ -42,7 +42,7 @@ const Dashboard = () => {
           <div className="font-medium">
             <h4 className="text-4xl mb-3 mt-10">รายการผลิตภัณฑ์</h4>
             <p className="text-lg">
-              จำนวนผลิตภัณฑ์ทั้งหมด
+              จำนวนผลิตภัณฑ์ทั้งหมด{" "}
               <span className="text-primary-2">{productList.length}</span>{" "}
               รายการ
             </p>
@@ -83,7 +83,7 @@ const Dashboard = () => {
               <p className="font-medium text-xl">รายการร่าง</p>
               <p className="border rounded-full border-gray-300 text-center px-3 text-gray-300 text-xs h-fit py-1 my-auto">
                 {
-                  productList.filter((data) => data.verify_status === "draft")
+                  productList.filter((data) => data.verify_status === "Draft")
                     .length
                 }{" "}
                 รายการ
@@ -104,9 +104,8 @@ const Dashboard = () => {
               </p>
               <p className="border rounded-full border-warn text-center px-3 text-warn text-xs h-fit py-1 my-auto">
                 {
-                  productList.filter(
-                    (data) => data.verify_status === "unverified"
-                  ).length
+                  productList.filter((data) => data.verify_status === "Pending")
+                    .length
                 }{" "}
                 รายการ
               </p>
@@ -125,7 +124,11 @@ const Dashboard = () => {
                 รอการแก้ไข
               </p>
               <p className="border rounded-full border-error text-center px-3 text-error text-xs h-fit py-1 my-auto">
-                0 รายการ
+                {
+                  productList.filter((data) => data.verify_status === "Under")
+                    .length
+                }{" "}
+                รายการ
               </p>
             </div>
             <div
@@ -144,7 +147,7 @@ const Dashboard = () => {
               <p className="border rounded-full border-success text-center px-3 text-success text-xs h-fit py-1 my-auto">
                 {
                   productList.filter(
-                    (data) => data.verify_status === "verified"
+                    (data) => data.verify_status === "Approved"
                   ).length
                 }{" "}
                 รายการ
@@ -166,8 +169,10 @@ const Dashboard = () => {
             </thead>
             {productList
               .filter((data) => {
-                if (tab === 0) return data.verify_status === "draft";
-                else if (tab === 1) return data.verify_status === "unverified";
+                if (tab === 0) return data.verify_status === "Draft";
+                else if (tab === 1) return data.verify_status === "Pending";
+                else if (tab === 2) return data.verify_status === "Under";
+                else if (tab === 3) return data.verify_status === "Approved";
                 else return;
               })
               ?.map((data, key) => (
@@ -193,7 +198,9 @@ const Dashboard = () => {
                       <button
                         onClick={() =>
                           navigate(
-                            PROTECTED_PATH.PRODUCT_DETAIL +
+                            (tab === 2 || tab === 3
+                              ? PROTECTED_PATH.PRODUCT_DETAIL_COMPANY
+                              : PROTECTED_PATH.PRODUCT_DETAIL) +
                               `?id=${data.product_id}`
                           )
                         }
