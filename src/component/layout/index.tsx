@@ -19,7 +19,7 @@ export const Navbar = () => {
   const auth = useAuth();
   const userData = useToken();
   const auditorId = 1;
-  const companyId = 1005;
+  const companyId = 1008;
 
   const [count, setCount] = useState<number>(0);
   const [showNotifications, setShowNotifications] = useState<boolean>(false);
