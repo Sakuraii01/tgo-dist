@@ -170,7 +170,9 @@ export type FR04_1ItemType = {
   company_id: number;
   product_id: number;
   process_id: number;
+  item_process_id: number;
   life_cycle_phase: number;
+  production_class: "input" | "output" | "waste";
   item_name: string;
   item_unit: string;
   item_quantity: number;
@@ -246,6 +248,7 @@ export type FR04_1ItemInfoType = {
     company_id: number;
     product_id: number;
     process_id: number;
+    item_process_id: number;
     life_cycle_phase: number;
     production_class: string;
     item_name: string;
@@ -263,9 +266,10 @@ export type FR04_1ItemInfoType = {
     description: string;
     created_date: string;
     updated_date: string;
-  };
+  }[];
   processDetails: {
-    output_process_id: number;
+    output_process_id?: number;
+    input_process_id?: number;
     process_id: number;
     output_cat_id: number;
     output_name: string;
@@ -299,7 +303,8 @@ export type FR04_2ItemItemInfo = {
   company_id: number;
   product_id: number;
   process_id: number;
-  production_class: string;
+  item_process_id: number;
+  production_class: "input" | "output" | "waste";
   life_cycle_phase: number;
   item_name: string;
   item_unit: string;
@@ -328,5 +333,4 @@ export type FR04_2ItemItemInfo = {
   add_on_detail: string;
   created_date?: string;
   updated_date?: string;
-  type2_vehicle?: string;
 };

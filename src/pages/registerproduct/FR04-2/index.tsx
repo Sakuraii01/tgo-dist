@@ -373,13 +373,18 @@ const FormTypeB = ({
         initialValues={initialValues}
         onSubmit={(values) =>
           handleSubmit(
-            fr4_2ReportId === 0 ? "POST" : "PUT",
+            fr4_2ReportId === 0 ||
+              fr4_2ReportId === undefined ||
+              fr4_2ReportId === null
+              ? "POST"
+              : "PUT",
             {
               company_id: 1005,
               product_id: id,
               process_id: process_id,
-              production_class: data.item_class,
               life_cycle_phase: lifePhase,
+              production_class: data.item_class,
+              item_process_id: data.item_id,
               item_name: data.item_name,
               item_fu_qty: values.item_fu_qty,
               item_unit: "",

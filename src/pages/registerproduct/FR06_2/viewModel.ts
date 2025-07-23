@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import type { FR06_2Report } from "../../../service/api/fr06/type";
 const useViewModel = (id: number) => {
   const [fr06Data, setFr06Data] = useState<FR06_2Report>();
+
   const fr06Service = new Fr06Service();
   const handleFormSubmit = (entity: FR06_2Report) => {
     if (fr06Data?.std_emission) {

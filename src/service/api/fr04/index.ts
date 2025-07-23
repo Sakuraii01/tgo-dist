@@ -7,6 +7,7 @@ import type {
   FR04_1ItemInfoType,
   FR04_2ItemInfoType,
   FR04_2ItemItemInfo,
+  FR04ReportType,
 } from "./type";
 import { type AxiosResponse } from "axios";
 import { useToken } from "../../../utils/localStorage";
@@ -38,7 +39,7 @@ export class Fr04Service extends RemoteA {
   reqPostFr04_1 = async (entity: FR04_1ItemType): Promise<AxiosResponse> => {
     const response = await this.getAxiosInstance().post(
       PROTECTED_PATH.FR04_1_ITEM,
-      entity
+      { ...entity, company_id: this.company_id }
     );
     const { data } = response;
     return data;
@@ -49,7 +50,14 @@ export class Fr04Service extends RemoteA {
   ): Promise<AxiosResponse> => {
     const response = await this.getAxiosInstance().put(
       PROTECTED_PATH.FR04_1_ITEM + `/${item_id}`,
-      entity
+      { ...entity, company_id: this.company_id }
+    );
+    const { data } = response;
+    return data;
+  };
+  reqGetFr04_1Report = async (product_id: number): Promise<FR04ReportType> => {
+    const response = await this.getAxiosInstance().get(
+      PROTECTED_PATH.FR04_1_REPORT + `/${product_id}`
     );
     const { data } = response;
     return data;
@@ -68,7 +76,7 @@ export class Fr04Service extends RemoteA {
     item_id: number
   ): Promise<FR04_2ItemInfoType> => {
     const response = await this.getAxiosInstance().get(
-      PROTECTED_PATH.FR04_2_ITEM +
+      PROTECTED_PATH.FR04_2 +
         `/${life_cycle_phase}/${this.company_id}/${product_id}/${class_type}/${item_id}`
     );
     const { data } = response;
@@ -79,7 +87,7 @@ export class Fr04Service extends RemoteA {
   ): Promise<AxiosResponse> => {
     const response = await this.getAxiosInstance().post(
       PROTECTED_PATH.FR04_2_ITEM,
-      entity
+      { ...entity, company_id: this.company_id }
     );
     const { data } = response;
     return data;
@@ -91,7 +99,7 @@ export class Fr04Service extends RemoteA {
   ): Promise<AxiosResponse> => {
     const response = await this.getAxiosInstance().put(
       PROTECTED_PATH.FR04_2_ITEM + `/${item_id}`,
-      entity
+      { ...entity, company_id: this.company_id }
     );
     const { data } = response;
     return data;

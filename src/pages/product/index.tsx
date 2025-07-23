@@ -19,15 +19,17 @@ const Product = () => {
         <section>
           <div>
             <div className="flex gap-4">
-              <div className="text-primary">
-                <p className="text-xl text-gradient text-gradient-primary font-bold">
-                  {productData?.product_name_th}
+              <div className="flex gap-4 h-fit my-auto">
+                <div className="text-primary">
+                  <p className="text-xl text-gradient text-gradient-primary font-bold">
+                    {productData?.product_name_th}
+                  </p>
+                  <p>{productData?.product_name_en}</p>
+                </div>
+                <p className="px-2 py-1 border-gray-300 border rounded-full h-fit text-xs font-semibold my-auto">
+                  รายการร่าง
                 </p>
-                <p>{productData?.product_name_en}</p>
               </div>
-              <p className="px-2 py-1 border-gray-300 border rounded-full h-fit text-xs font-semibold my-auto">
-                รายการร่าง
-              </p>
               <div className="ml-auto">
                 <button
                   onClick={() =>
@@ -47,10 +49,16 @@ const Product = () => {
                     )
                   }
                   type="button"
-                  className="primary-button font-semibold shadow px-4 py-1 rounded-full flex gap-1 hover:opacity-90"
+                  className="primary-button font-semibold shadow px-4 py-1 rounded-full flex gap-1 ml-auto hover:opacity-90 mb-4"
                 >
                   <FileDownloadRounded fontSize="small" />
                   <p>ดาวน์โหลดเอกสาร</p>
+                </button>
+                <button
+                  disabled
+                  className="bg-white font-semibold shadow px-4 py-1 rounded-full flex gap-1 ml-auto "
+                >
+                  <p>ยืนยันการส่งให้ผู้ทวนสอบ</p>
                 </button>
               </div>
             </div>

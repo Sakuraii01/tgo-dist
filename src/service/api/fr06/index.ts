@@ -1,6 +1,6 @@
 import { PROTECTED_PATH } from "../../../constants/api.route";
 import { RemoteA } from "../../remote";
-import type { FR06Report, FR06_2Report } from "./type";
+import type { FR06Report, FR06_2Report, FR06_1Sum4142 } from "./type";
 import type { AxiosResponse } from "axios";
 export class Fr06Service extends RemoteA {
   reqGetFr06_1 = async (product_id: number): Promise<FR06Report> => {
@@ -52,6 +52,13 @@ export class Fr06Service extends RemoteA {
     const response = await this.getAxiosInstance().put(
       PROTECTED_PATH.FR06_2 + `/${product_id}`,
       entity
+    );
+    const { data } = response;
+    return data;
+  };
+  reqGetFr06_1Sum4142 = async (product_id: number): Promise<FR06_1Sum4142> => {
+    const response = await this.getAxiosInstance().get(
+      PROTECTED_PATH.FR06_1SUM4142 + `/${product_id}`
     );
     const { data } = response;
     return data;

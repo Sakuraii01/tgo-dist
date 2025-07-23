@@ -97,7 +97,7 @@ const useViewModel = (id?: number) => {
             .map((item) => '"' + item.trim() + '"')
             .join(",")}]`
         : data.technicalInfo.trim(),
-      verify_status: "Pending",
+      verify_status: "Draft",
       collect_data_start: data.startCollectData.toString().split("T")[0],
       collect_data_end: data.stopCollectData.toString().split("T")[0],
       submitted_round: data.registrationRound,

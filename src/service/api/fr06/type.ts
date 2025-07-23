@@ -44,3 +44,10 @@ export type FR06_2Report = {
   created_date?: string;
   updated_date?: string;
 };
+export type FR06_1Sum4142 = {
+  sum_lc1_emission: number;
+  sum_lc2_emission: number;
+  sum_lc3_emission: number;
+  sum_lc4_emission: number;
+  sum_lc5_emission: number;
+};

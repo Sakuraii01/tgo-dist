@@ -35,38 +35,47 @@ const FR06_2 = () => {
         >
           {({ handleSubmit, values }) => (
             <Form onSubmit={handleSubmit}>
-              <table>
+              <table className="table-auto w-full border-collapse border border-gray-200/10">
                 <thead>
-                  <tr>
-                    <th>คาร์บอนฟุตพริ้นท์ของเกณฑ์เปรียบเทียบ (kgCO2 eq.)</th>
-                    <th>คาร์บอนฟุตพริ้นท์ของผลิตภัณฑ์ (kgCO2 eq.)</th>
-                    <th>ผลต่างเทียบกับเกณฑ์ (มากกว่า +)</th>
-                    <th>ที่มาของ เกณฑ์เปรียบเทียบ</th>
+                  <tr className="bg-primary-2/20">
+                    <th className="text-start py-2 ps-4">
+                      คาร์บอนฟุตพริ้นท์ของเกณฑ์เปรียบเทียบ (kgCO2 eq.)
+                    </th>
+                    <th className="px-5">
+                      คาร์บอนฟุตพริ้นท์ของผลิตภัณฑ์ (kgCO2 eq.)
+                    </th>
+                    <th className="px-5">ผลต่างเทียบกับเกณฑ์ (มากกว่า +)</th>
+                    <th className="pe-4">ที่มาของ เกณฑ์เปรียบเทียบ</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>
+                  <tr className="border-b border-gray-200/10">
+                    <td className="px-5 py-3">
                       <Field
                         name="base_emission"
-                        label="การปล่อย GHG ในปีฐาน (kgCO2 eq.)"
+                        label="คาร์บอนฟุตพริ้นท์ของเกณฑ์เปรียบเทียบ (kgCO2 eq.)"
                         type="number"
                       />
                     </td>
-                    <td> {fr06Data?.product_emission} </td>
-                    <td>
+                    <td className="px-5"> {fr06Data?.product_emission} </td>
+                    <td className="px-5">
                       {Number(fr06Data?.product_emission) -
                         Number(values.base_emission) || "-"}
                     </td>
-                    <td>
+                    <td className="px-5">
                       <Field name="source" label="ที่มาของ เกณฑ์เปรียบเทียบ" />
                     </td>
                   </tr>
                 </tbody>
               </table>
-              <button className="primary-button px-5 y-2" type="submit">
-                Submit
-              </button>
+              <div className="flex justify-center mt-10 gap-5">
+                <button className="secondary-button px-24 py-2" type="button">
+                  กลับไป FR06.1
+                </button>
+                <button className="primary-button px-24 py-2" type="submit">
+                  บันทึกและดำเนินการต่อ
+                </button>
+              </div>
             </Form>
           )}
         </Formik>

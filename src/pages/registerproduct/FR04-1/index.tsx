@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { PROTECTED_PATH } from "../../../constants/path.route";
-import { useNavigate, useSearchParams } from "react-router-dom";
+
+import { useSearchParams } from "react-router-dom";
 
 import { Save, Edit } from "@mui/icons-material";
 import { Accordion } from "../common/component/accordion";
@@ -8,16 +8,19 @@ import { ProcessStepper } from "../common/component/stepper";
 import { FR04Layout } from "../common/layout";
 
 import useViewModel from "./viewModel";
-import type { ProcessItemType } from "../../../service/api/fr04/type";
+import type {
+  ProcessItemType,
+  // FR04_1ItemInfoType,
+} from "../../../service/api/fr04/type";
 
 import { Formik, Form } from "formik";
 import { Field, AutoCompleteField } from "../../../component/input/field";
 import { Fr04Service } from "../../../service/api/fr04";
 const FR04_1 = () => {
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const id = Number(searchParams.get("id"));
-  const { fr04Data, tab, handleTabChange } = useViewModel(id);
+  const { fr04Data, tab, handleTabChange, handleNavigateto04_2 } =
+    useViewModel(id);
   return (
     <div>
       <ProcessStepper isActive={2} id={id} />
@@ -53,7 +56,7 @@ const FR04_1 = () => {
       </FR04Layout>
       <div className="w-1/4 mx-auto">
         <button
-          onClick={() => navigate(PROTECTED_PATH.REGISTER_PRODUCT_FR04_2)}
+          onClick={() => handleNavigateto04_2()}
           type="submit"
           className="rounded-full w-full mt-6 px-10 py-2 bg-gradient-to-r from-[#2BCFF2] via-[#19C2E6] via-30% to-[#0190C3]  text-white font-semibold"
         >
@@ -86,6 +89,7 @@ const FR04_1Form = (props: {
     description: "",
   });
   const [fr4_1ReportId, setFr4_1ReportId] = useState<number>(0);
+  // const [fr04Item, setFr04Item] = useState<FR04_1ItemInfoType | null>(null);
   const handleSetInitialValues = async (
     life_cycle_phase: number,
     product_id: number,
@@ -96,16 +100,16 @@ const FR04_1Form = (props: {
       .reqGetFR04Item(life_cycle_phase, product_id, class_type, item_id)
       .then(
         (data) => (
-          console.log("data", data),
           setInitialValues({
-            lci_source_period: data?.itemInfo.lci_source_period ?? "",
-            ef_source: data?.itemInfo.ef_source ?? "",
-            ef_source_ref: data?.itemInfo.ef_source_ref,
-            ef: String(data?.itemInfo.ef) ?? "",
-            ratio: String(data?.itemInfo.ratio) ?? "",
-            description: data.itemInfo.description,
+            lci_source_period: data?.itemInfo[0].lci_source_period ?? "",
+            ef_source: data?.itemInfo[0].ef_source ?? "",
+            ef_source_ref: data?.itemInfo[0].ef_source_ref,
+            ef: String(data?.itemInfo[0].ef) ?? "",
+            ratio: String(data?.itemInfo[0].ratio) ?? "",
+            description: data.itemInfo[0].description,
           }),
-          setFr4_1ReportId(data.itemInfo.report_41_id)
+          setFr4_1ReportId(data.itemInfo[0].report_41_id)
+          // setFr04Item(data)
         )
       )
       .catch((err) => console.log(err));
@@ -126,13 +130,21 @@ const FR04_1Form = (props: {
         enableReinitialize
         // validationSchema={validationSchema}
         onSubmit={(values) => {
+          console.log("values", fr4_1ReportId);
+
           handleSubmit(
-            fr4_1ReportId === 0 ? "POST" : "PUT",
+            fr4_1ReportId === 0 ||
+              fr4_1ReportId === undefined ||
+              fr4_1ReportId === null
+              ? "POST"
+              : "PUT",
             {
-              company_id: 1005,
+              company_id: 0,
               product_id: props.id,
               process_id: props.processId,
+              item_process_id: props.data.item_id,
               life_cycle_phase: props.lifePhase,
+              production_class: props.data.item_class,
               item_name: props.data.item_name,
               item_unit: props.data.item_unit,
               item_quantity: props.data.item_quantity,
@@ -147,7 +159,7 @@ const FR04_1Form = (props: {
                   : Number(values.ef),
               ef_source: values.ef_source,
               ef_source_ref: values.ef_source_ref,
-              ratio: 0,
+              ratio: Number(values.ratio),
               ghg_emission: 0,
               cut_off: 0,
               description: values.description,
@@ -367,11 +379,11 @@ const EF = [
   { label: "Others", value: "Other" },
 ];
 
-import * as Yup from "yup";
+// import * as Yup from "yup";
 
-const validationSchema = Yup.object({
-  LCISource: Yup.string().required("กรุณาระบุที่มาของค่า LCI"),
-  EFSource: Yup.string().required("กรุณาเลือกที่มาของค่า EF"),
-  EFSourceRef: Yup.string().required("กรุณาเลือกที่มาของค่า EF"),
-  ratio: Yup.number().required("กรุณาระบุสัดส่วนการปันส่วน"),
-});
+// const validationSchema = Yup.object({
+//   LCISource: Yup.string().required("กรุณาระบุที่มาของค่า LCI"),
+//   EFSource: Yup.string().required("กรุณาเลือกที่มาของค่า EF"),
+//   EFSourceRef: Yup.string().required("กรุณาเลือกที่มาของค่า EF"),
+//   ratio: Yup.number().required("กรุณาระบุสัดส่วนการปันส่วน"),
+// });

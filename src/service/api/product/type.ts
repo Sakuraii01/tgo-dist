@@ -17,7 +17,7 @@ export type ProductType = {
   collect_data_end: Date | string | null;
   product_photo: File | FormData | Blob | string;
   auditor_id: number | null;
-  verify_status: "Pending" | "Under" | "Approved" | "Rejected";
+  verify_status: "Draft" | "Pending" | "Under" | "Approved" | "Rejected";
   submitted_round: string;
   submitted_date: Date | string | null;
   created_date?: string | null;

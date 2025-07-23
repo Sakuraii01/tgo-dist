@@ -1,8 +1,9 @@
 import { Fr06Service } from "../../../service/api/fr06";
 import { useEffect, useState } from "react";
-import type { FR06Report } from "../../../service/api/fr06/type";
+import type { FR06Report, FR06_1Sum4142 } from "../../../service/api/fr06/type";
 const useViewModel = (id: number) => {
   const [fr06Data, setFr06Data] = useState<FR06Report>();
+  const [fr06Sum4142, setFr06Sum4142] = useState<FR06_1Sum4142>();
   const fr06Service = new Fr06Service();
   const handleSubmit = (entity: FR06Report) => {
     if (fr06Data?.lc1_based_emission) {
@@ -34,7 +35,15 @@ const useViewModel = (id: number) => {
       .catch((error) => {
         console.log(error);
       });
+    fr06Service
+      .reqGetFr06_1Sum4142(id)
+      .then((res) => {
+        setFr06Sum4142(res);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, []);
-  return { fr06Data, handleSubmit };
+  return { fr06Data, handleSubmit, fr06Sum4142 };
 };
 export default useViewModel;
