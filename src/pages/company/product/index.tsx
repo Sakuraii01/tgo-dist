@@ -6,14 +6,11 @@ import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../../constants/path.route";
 import { CompanyService } from "../../../service/api/company";
 import React, { useRef, useState } from "react";
-import {
-  WarningAmber,
-} from "@mui/icons-material";
+import { WarningAmber } from "@mui/icons-material";
 
 const CProduct: React.FC = () => {
   const navigate = useNavigate();
   const auditorId = 1;
-  const companyId = 1005;
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
 
@@ -26,7 +23,7 @@ const CProduct: React.FC = () => {
     loading,
     error,
     refetch,
-  } = useViewModel(auditorId, Number(id), companyId);
+  } = useViewModel(auditorId, Number(id));
 
   const productId = productDetail?.product?.[0]?.product_id;
   const [comment, setComment] = useState("");
@@ -45,41 +42,39 @@ const CProduct: React.FC = () => {
     }
   };
 
-
   const callExcelApi = async () => {
-  try {
-    // แสดงสถานะกำลังโหลด (ถ้าต้องการ)
-    setUploading(true);
-    
-    // เรียกใช้ API โดยไม่สนใจผลลัพธ์
-    const response = await fetch(
-      `http://178.128.123.212:5000/api/v1/download/excel/auditor/${auditorId}/${productId}`,
-      {
-        method: 'GET', // หรือ POST แล้วแต่ API ของคุณต้องการ
-        headers: {
-          'Content-Type': 'application/json',
-          // เพิ่ม headers อื่นๆ ตามต้องการ
-        }
-      }
-    );
-    
-    // ตรวจสอบสถานะการตอบกลับ
-    if (response.ok) {
-      console.log("เรียก API สำเร็จ");
-      alert("เรียกใช้งาน API สำเร็จ");
-    } else {
-      console.error("เรียก API ไม่สำเร็จ:", response.status);
-      alert("เรียกใช้งาน API ไม่สำเร็จ");
-    }
-  } catch (error) {
-    console.error("เกิดข้อผิดพลาดในการเรียก API:", error);
-    alert("เกิดข้อผิดพลาดในการเรียก API");
-  } finally {
-    // ปิดสถานะกำลังโหลด
-    setUploading(false);
-  }
-};
+    try {
+      // แสดงสถานะกำลังโหลด (ถ้าต้องการ)
+      setUploading(true);
 
+      // เรียกใช้ API โดยไม่สนใจผลลัพธ์
+      const response = await fetch(
+        `http://178.128.123.212:5000/api/v1/download/excel/auditor/${auditorId}/${productId}`,
+        {
+          method: "GET", // หรือ POST แล้วแต่ API ของคุณต้องการ
+          headers: {
+            "Content-Type": "application/json",
+            // เพิ่ม headers อื่นๆ ตามต้องการ
+          },
+        }
+      );
+
+      // ตรวจสอบสถานะการตอบกลับ
+      if (response.ok) {
+        console.log("เรียก API สำเร็จ");
+        alert("เรียกใช้งาน API สำเร็จ");
+      } else {
+        console.error("เรียก API ไม่สำเร็จ:", response.status);
+        alert("เรียกใช้งาน API ไม่สำเร็จ");
+      }
+    } catch (error) {
+      console.error("เกิดข้อผิดพลาดในการเรียก API:", error);
+      alert("เกิดข้อผิดพลาดในการเรียก API");
+    } finally {
+      // ปิดสถานะกำลังโหลด
+      setUploading(false);
+    }
+  };
 
   // const handleExcelDownload = () => {
   //   try {
@@ -104,24 +99,10 @@ const CProduct: React.FC = () => {
     if (!comment.trim() || !productDetail) return;
     try {
       setSubmitting(true);
-      // const latestCommentId = productDetail.comments && productDetail.comments.length > 0
-      //   ? productDetail.comments[productDetail.comments.length - 1].comment_id
-      //   : null;
-
-      const latestCommentId = 25;
-
-      if (!latestCommentId) {
-        console.error("ไม่พบ ID ของความคิดเห็นล่าสุด");
-        return;
-      }
-
-      const currentDateTime = new Date().toISOString();
 
       await companyService.reqUpdateCommentCompany(
-        latestCommentId,
-        comment.trim(),
-        currentDateTime,
-        currentDateTime
+        productDetail?.comments[0]?.comments_id || 0,
+        comment.trim()
       );
 
       setComment("");
@@ -428,7 +409,6 @@ const CProduct: React.FC = () => {
                       <FileOpen fontSize="small" color="success" />
                       <p>ดาวน์โหลดเอกสาร</p>
                     </button>
-                    
                   </div>
                   <button
                     onClick={() =>
@@ -477,8 +457,8 @@ const CProduct: React.FC = () => {
                                   setSubmitting(true);
                                   const result = await fetchGenExcel();
 
-                                  if (result?.download_url) {
-                                    const fullUrl = `http://178.128.123.212:5000${result.download_url}`;
+                                  if (result?.path_excel) {
+                                    const fullUrl = `http://178.128.123.212:5000${result.path_excel}`;
                                     const response = await fetch(fullUrl);
                                     const blob = await response.blob();
                                     const downloadUrl =

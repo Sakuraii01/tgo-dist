@@ -20,10 +20,7 @@ const useViewModel = (product_id: number) => {
     if (!product_id) return;
 
     try {
-      const data = await companyService.reqGetGenExcel(
-        productData?.company_id || 0,
-        product_id
-      );
+      const data = await companyService.reqGetGenExcel(product_id);
 
       setExcelLink(data.path_excel);
     } catch (error) {
@@ -35,10 +32,7 @@ const useViewModel = (product_id: number) => {
     if (!product_id) return;
 
     try {
-      await companyService.reqGetExcel(
-        productData?.auditor_id || 0,
-        product_id
-      );
+      await companyService.reqGetExcel(product_id);
       await companyService.reqPostNotification(
         productData?.auditor_id || 0,
         product_id

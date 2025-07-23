@@ -7,11 +7,7 @@ import type {
 } from "../../../service/api/auditor/type";
 import type { ListExcelType } from "../../../service/api/company/type";
 
-const useViewModel = (
-  auditorId: number,
-  productId: number,
-  companyId: number
-) => {
+const useViewModel = (auditorId: number, productId: number) => {
   const [productDetail, setProductDetail] = useState<
     ProductDetailType | undefined
   >(undefined);
@@ -72,7 +68,7 @@ const useViewModel = (
 
     try {
       const companyService = new CompanyService();
-      const data = await companyService.reqGetExcel(companyId, productId);
+      const data = await companyService.reqGetExcel(productId);
       return data;
     } catch (error) {
       console.error("Error fetching Excel:", error);
@@ -83,7 +79,7 @@ const useViewModel = (
     }
   };
 
-   const fetchGenExcel = async () => {
+  const fetchGenExcel = async () => {
     if (!productId) {
       setError("Product ID is required");
       return null;
@@ -94,7 +90,7 @@ const useViewModel = (
 
     try {
       const companyService = new CompanyService();
-      const data = await companyService.reqGetGenExcel(companyId, productId);
+      const data = await companyService.reqGetGenExcel(productId);
       return data;
     } catch (error) {
       console.error("Error fetching Excel:", error);
@@ -106,15 +102,11 @@ const useViewModel = (
   };
 
   const fetchLatestExcel = async () => {
-    if (!companyId) {
-      setError("Company ID is required");
-      return null;
-    }
     setLoading(true);
     setError(null);
     try {
       const companyService = new CompanyService();
-      const data = await companyService.reqGetLatestExcel(companyId, productId);
+      const data = await companyService.reqGetLatestExcel(productId);
       return data;
     } catch (error) {
       console.error("Error fetching latest Excel:", error);
@@ -126,11 +118,6 @@ const useViewModel = (
   };
 
   const fetchListExcel = async () => {
-    if (!companyId) {
-      setError("Company ID is required");
-      return [];
-    }
-
     setLoading(true);
     setError(null);
 
@@ -164,7 +151,7 @@ const useViewModel = (
       setExcelList(list);
     };
     loadExcelList();
-  }, [companyId, productId, auditorId]);
+  }, [productId, auditorId]);
 
   useEffect(() => {
     fetchProductDetail();
@@ -180,8 +167,8 @@ const useViewModel = (
     fetchLatestExcel,
     fetchListExcel,
     fetchGenExcel,
-    excelList, 
-    loadingExcel: loading, 
+    excelList,
+    loadingExcel: loading,
     errorExcel: error,
     refetch: fetchProductDetail,
   };
