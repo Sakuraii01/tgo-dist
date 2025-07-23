@@ -7,14 +7,13 @@ import {
 
 import { Badge } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { PROTECTED_PATH } from "../../constants/path.route";
-
-import { clearToken, useToken } from "../../utils/localStorage";
-import { useAuth } from "../../auth/useAuth";
+import { PROTECTED_PATH } from "../../../constants/path.route";
+import { useAuth } from "../../../auth/useAuth";
+import { clearToken, useToken } from "../../../utils/localStorage";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-export const Navbar = () => {
+export const ANavbar = () => {
   const navigate = useNavigate();
   const auth = useAuth();
   const userData = useToken();
@@ -33,7 +32,7 @@ export const Navbar = () => {
   const fetchNotifications = async () => {
     try {
       const res = await axios.get(
-        `http://178.128.123.212:5000/api/v1/notifications/company/${companyId}`
+        `http://178.128.123.212:5000/api/v1/notifications/auditor/${auditorId}`
       );
       const unread = res.data.filter((n: any) => n.is_read === 0);
       setNotifications(res.data);
@@ -69,7 +68,7 @@ export const Navbar = () => {
   const handleNotificationClick = () => {
     setShowNotifications(!showNotifications);
     if (!showNotifications) {
-      markAsRead();
+      // markAsRead();
     }
   };
 
@@ -85,15 +84,23 @@ export const Navbar = () => {
         onClick={() => navigate(PROTECTED_PATH.DASHBOARD)}
       />
       <div className="flex items-center gap-10">
-        <div className="relative">
+        <div className="relative flex items-center gap-2 " >
           <Badge
             badgeContent={count}
             color="error"
-            className="cursor-pointer"
+            className="cursor-pointer mr-8"
             onClick={handleNotificationClick}
           >
             <NotificationsRounded color="success" />
           </Badge>
+
+          {/* ชื่อและอีเมล (ด้านขวาไอคอนแจ้งเตือน) */}
+          <div className="flex flex-col">
+            <p className="text-sm font-medium text-primary">
+              {userData?.user?.name} 
+            </p>
+            <p className="text-xs text-gray-600">ผู้ทวนสอบ</p>
+          </div>
 
           {showNotifications && (
             <div className="absolute right-0 mt-2 w-80 bg-white shadow-md rounded-md z-50 max-h-80 overflow-y-auto">
@@ -118,12 +125,7 @@ export const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <div>
-            <p className="text-sm font-medium text-primary">
-              {userData?.user?.name}
-            </p>
-            <p className="text-xs text-gray-400">{auth?.user?.user?.email}</p>
-          </div>
+        
           <div
             className="text-error mx-5 cursor-pointer hover:bg-error/10 p-2 rounded-full"
             onClick={navigateToLoginPage}

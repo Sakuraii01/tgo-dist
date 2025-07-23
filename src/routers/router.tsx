@@ -22,6 +22,11 @@ import FR04_3 from "../pages/registerproduct/FR04-3";
 import FR06_1 from "../pages/registerproduct/FR06_1";
 import FR06_2 from "../pages/registerproduct/FR06_2";
 import SelectPage from "../pages/selected";
+import Auditor from "../pages/auditor";
+import AProduct from "../pages/auditor/product";
+import CProduct from "../pages/company/product";
+import AResponse from "../pages/auditor/product/response";
+import CResponse from "../pages/company/product/response";
 
 import { useAuth } from "../auth/useAuth";
 
@@ -46,7 +51,27 @@ const Router = () => {
             path={PROTECTED_PATH.SELECT_CBAM_CFP}
             element={<SelectPage />}
           />
+
           <Route path={PROTECTED_PATH.PRODUCT_DETAIL} element={<Product />} />
+
+          <Route path={PROTECTED_PATH.AUDITOR} element={<Auditor />} />
+          <Route
+            path={PROTECTED_PATH.PRODUCT_DETAIL_AUDITOR}
+            element={<AProduct/>}
+          />
+          <Route
+            path={PROTECTED_PATH.PRODUCT_DETAIL_COMPANY}
+            element={<CProduct/>}
+          />
+          <Route
+            path={PROTECTED_PATH.AUDITOR_COMMENT_HISTORY}
+            element={<AResponse/>}
+          />
+          <Route
+            path={PROTECTED_PATH.COMPANY_COMMENT_HISTORY}
+            element={<CResponse/>}
+          />
+
           <Route element={<Outlet />}>
             <Route
               path={PROTECTED_PATH.REGISTER_PRODUCT}
