@@ -3,6 +3,7 @@ import { Formik, Form } from "formik";
 import { useNavigate } from "react-router-dom";
 import { UNPROTECTED_PATH } from "../../constants/path.route";
 import useViewModel from "./viewModel";
+import type { UserInfo } from "../../service/api/user/type";
 const Register = () => {
   const {
     provinces,
@@ -43,7 +44,7 @@ const Register = () => {
                   password: values.password,
                   role_id: 2,
                   status: "enable",
-                },
+                } as UserInfo,
                 {
                   name: values.companyName,
                   address:

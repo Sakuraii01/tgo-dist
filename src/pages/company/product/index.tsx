@@ -400,7 +400,7 @@ const CProduct: React.FC = () => {
                               type="button"
                               className="bg-green-500 text-white font-semibold shadow px-4 py-2 rounded-full hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                              <p>Generate Excel File</p>
+                              <p>ดาวน์โหลดแบบฟอร์มที่ได้รับการแก้ไขแล้ว</p>
                             </button>
                           </>
                         )}

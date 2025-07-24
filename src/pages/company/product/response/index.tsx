@@ -10,7 +10,7 @@ const Response: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
-  const auditorId = 1; 
+  const auditorId = 1;
 
   // สร้าง state สำหรับเก็บสถานะการเปิด/ปิด ของแต่ละความคิดเห็น
   const [expandedComments, setExpandedComments] = useState<{
@@ -145,14 +145,14 @@ const Response: React.FC = () => {
             </div>
           </div>
           {sortedComments.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-4 ">
               {sortedComments.map((comment, index) => (
                 <div
                   key={index}
                   className="bg-white border border-gray-200 shadow-md rounded-lg overflow-hidden"
                 >
                   <div
-                    className="bg-gray-100 p-3 border-b border-gray-200 flex justify-between items-center cursor-pointer"
+                    className="bg-secondary-100 p-3 border-b border-gray-200 flex justify-between items-center cursor-pointer"
                     onClick={() => toggleComment(index)}
                   >
                     <div className="flex items-center">
@@ -234,6 +234,45 @@ const Response: React.FC = () => {
 
                           <div className="mt-4 border-t border-gray-200 pt-4">
                             <h3 className="font-medium text-gray-700 mb-3">
+                              ไฟล์แนบเวอร์ชั่นก่อนหน้า
+                            </h3>
+
+                            {errorExcel && (
+                              <p className="text-red-500">{errorExcel}</p>
+                            )}
+
+                            <div className="space-y-2">
+                              {index < excelList.length &&
+                              comment.old_excel_path != null ? (
+                                <button
+                                  onClick={() => {
+                                    console.log(index, comment);
+                                    window.open(
+                                      `http://178.128.123.212:5000${comment.old_excel_path}`,
+                                      "_blank"
+                                    );
+                                  }}
+                                  className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full text-left flex items-center"
+                                >
+                                  <FileOpen className="mr-2" />
+                                  {extractCleanFileName(
+                                    comment.old_excel_path
+                                  )}{" "}
+                                  -{" "}
+                                  {new Date(
+                                    comment.created_at
+                                  ).toLocaleDateString("th-TH")}
+                                </button>
+                              ) : (
+                                <p className="text-gray-500 italic">
+                                  ไม่มีรายงานในระบบสำหรับความคิดเห็นนี้
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="mt-4 border-t border-gray-200 pt-4">
+                            <h3 className="font-medium text-gray-700 mb-3">
                               ไฟล์แนบ
                             </h3>
 
@@ -242,30 +281,24 @@ const Response: React.FC = () => {
                             )}
 
                             <div className="space-y-2">
-                              {index < excelList.length ? (
+                              {index < excelList.length &&
+                              comment.new_excel_path != null ? (
                                 <button
                                   onClick={() =>
                                     window.open(
-                                      `http://178.128.123.212:5000${
-                                        excelList[index]
-                                          .path_excel
-                                      }`,
+                                      `http://178.128.123.212:5000${comment.new_excel_path}`,
                                       "_blank"
                                     )
                                   }
                                   className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full text-left flex items-center"
                                 >
                                   <FileOpen className="mr-2" />
-                                  รายงานไฟล์เวอร์ชัน{" "}
-                                  {
-                                    excelList[index]
-                                    .version
-                                  }{" "}
+                                  {extractCleanFileName(
+                                    comment.new_excel_path
+                                  )}{" "}
                                   -{" "}
                                   {new Date(
-                                    excelList[
-                                      index
-                                    ].created_at
+                                    comment.created_at
                                   ).toLocaleDateString("th-TH")}
                                 </button>
                               ) : (
@@ -296,3 +329,10 @@ const Response: React.FC = () => {
 };
 
 export default Response;
+
+function extractCleanFileName(filePath: string) {
+  if (!filePath) return "";
+
+  const fileName = filePath.split("/").pop(); // เอาเฉพาะชื่อไฟล์
+  return fileName?.replace(".xlsx", ""); // ลบ .xlsx ออก
+}

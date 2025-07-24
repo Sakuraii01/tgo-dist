@@ -81,7 +81,7 @@ export const ANavbar = () => {
         onClick={() => navigate(PROTECTED_PATH.DASHBOARD)}
       />
       <div className="flex items-center gap-10">
-        <div className="relative flex items-center gap-2 " >
+        <div className="relative flex items-center gap-2 ">
           <Badge
             badgeContent={count}
             color="error"
@@ -112,23 +112,23 @@ export const ANavbar = () => {
             </div>
           )}
         </div>
-<div className="flex items-center gap-2">
-        <div className="flex flex-col">
+        <div className="flex items-center gap-2">
+          <div className="flex flex-col">
             <p className="text-sm font-medium text-primary">
-              {userData?.user?.name} 
+              {userData?.user?.name}
             </p>
             <p className="text-xs text-gray-600">ผู้ทวนสอบ</p>
           </div>
 
-        <div className="flex items-center gap-2">
-        
-          <div
-            className="text-error mx-5 cursor-pointer hover:bg-error/10 p-2 rounded-full"
-            onClick={navigateToLoginPage}
-          >
-            <LogoutRounded />
+          <div className="flex items-center gap-2">
+            <div
+              className="text-error mx-5 cursor-pointer hover:bg-error/10 p-2 rounded-full"
+              onClick={navigateToLoginPage}
+            >
+              <LogoutRounded />
+            </div>
           </div>
-        </div></div>
+        </div>
       </div>
     </nav>
   );
