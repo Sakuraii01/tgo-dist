@@ -8,7 +8,6 @@ import {
 import { Badge } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../constants/path.route";
-
 import { clearToken, useToken } from "../../utils/localStorage";
 import { useAuth } from "../../auth/useAuth";
 import { useState, useEffect } from "react";

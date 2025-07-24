@@ -8,17 +8,14 @@ import {
 import { Badge } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../../constants/path.route";
-import { useAuth } from "../../../auth/useAuth";
 import { clearToken, useToken } from "../../../utils/localStorage";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
 export const ANavbar = () => {
   const navigate = useNavigate();
-  const auth = useAuth();
   const userData = useToken();
   const auditorId = 1;
-  const companyId = 1005;
 
   const [count, setCount] = useState<number>(0);
   const [showNotifications, setShowNotifications] = useState<boolean>(false);
@@ -94,16 +91,8 @@ export const ANavbar = () => {
             <NotificationsRounded color="success" />
           </Badge>
 
-          {/* ชื่อและอีเมล (ด้านขวาไอคอนแจ้งเตือน) */}
-          <div className="flex flex-col">
-            <p className="text-sm font-medium text-primary">
-              {userData?.user?.name} 
-            </p>
-            <p className="text-xs text-gray-600">ผู้ทวนสอบ</p>
-          </div>
-
           {showNotifications && (
-            <div className="absolute right-0 mt-2 w-80 bg-white shadow-md rounded-md z-50 max-h-80 overflow-y-auto">
+            <div className="absolute right-0 top-6 mt-2 w-80 bg-white shadow-md rounded-md z-50 max-h-80 overflow-y-auto">
               {notifications.length === 0 ? (
                 <p className="p-4 text-sm text-gray-400 text-center">
                   ไม่มีการแจ้งเตือน
@@ -123,6 +112,13 @@ export const ANavbar = () => {
             </div>
           )}
         </div>
+<div className="flex items-center gap-2">
+        <div className="flex flex-col">
+            <p className="text-sm font-medium text-primary">
+              {userData?.user?.name} 
+            </p>
+            <p className="text-xs text-gray-600">ผู้ทวนสอบ</p>
+          </div>
 
         <div className="flex items-center gap-2">
         
@@ -132,7 +128,7 @@ export const ANavbar = () => {
           >
             <LogoutRounded />
           </div>
-        </div>
+        </div></div>
       </div>
     </nav>
   );

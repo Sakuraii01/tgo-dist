@@ -6,14 +6,15 @@ import { useAuth } from "../../auth/useAuth";
 
 const Auditor = () => {
   const {
+    tab,
+    error,
+    loading,
+    companyData,
     auditorData,
     productList,
-    tab,
-    companyData,
     handleTabChange,
-    loading,
-    error,
   } = useViewModel();
+  
   const navigate = useNavigate();
   const auth = useAuth();
 
@@ -87,8 +88,10 @@ const Auditor = () => {
               </p>
               <p className="border rounded-full border-warn text-center px-3 text-warn text-xs h-fit py-1 my-auto">
                 {
-                  productList.filter((data) => (data.products_status === 1 || data.products_status === 0))
-                    .length
+                  productList.filter(
+                    (data) =>
+                      data.products_status === 1 || data.products_status === 0
+                  ).length
                 }{" "}
                 รายการ
               </p>
@@ -132,8 +135,7 @@ const Auditor = () => {
                 {
                   productList.filter(
                     (data) =>
-                      data.products_status === 3 ||
-                      data.products_status === 4
+                      data.products_status === 3 || data.products_status === 4
                   ).length
                 }{" "}
                 รายการ
@@ -159,13 +161,13 @@ const Auditor = () => {
                 {productList
                   .filter((data) => {
                     if (tab === 0)
-                      return (data.products_status === 1 || data.products_status === 0); 
-                    else if (tab === 1)
-                      return data.products_status === 2; 
+                      return (
+                        data.products_status === 1 || data.products_status === 0
+                      );
+                    else if (tab === 1) return data.products_status === 2;
                     else if (tab === 2)
                       return (
-                        data.products_status === 3 ||
-                        data.products_status === 4
+                        data.products_status === 3 || data.products_status === 4
                       );
                     else return true;
                   })
@@ -227,12 +229,14 @@ const Auditor = () => {
                     </tr>
                   ))}
                 {productList.filter((data) => {
-                  if (tab === 0) return (data.products_status === 1 || data.products_status === 0);
+                  if (tab === 0)
+                    return (
+                      data.products_status === 1 || data.products_status === 0
+                    );
                   else if (tab === 1) return data.products_status === 2;
                   else if (tab === 2)
                     return (
-                      data.products_status === 3 ||
-                      data.products_status === 4
+                      data.products_status === 3 || data.products_status === 4
                     );
                   else return true;
                 }).length === 0 && (

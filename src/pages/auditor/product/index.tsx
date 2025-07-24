@@ -16,10 +16,6 @@ const AProduct: React.FC = () => {
   const id = searchParams.get("id");
   const auditorId = 1;
 
-  console.log("Auditor ID:", auditorId);
-  console.log("Product ID from URL:", id);
-
-
   const { productData, productDetail, loading, error, refetch,excelLink, fetchLatestExcel} =
     useViewModel(auditorId, Number(id));
 
@@ -66,9 +62,7 @@ const AProduct: React.FC = () => {
     }
   };
 
-  // Helper function to get status display based on API response
   const getStatusDisplay = () => {
-    // First check the detailed status from productDetail
     if (productDetail?.status?.status === 4) {
       return { text: "ปฏิเสธ", class: "bg-red-100 text-red-800" };
     } else if (productDetail?.status?.status === 3) {
@@ -85,7 +79,6 @@ const AProduct: React.FC = () => {
       return { text: "รอการพิจารณา", class: "bg-gray-100 text-gray-800" };
     }
 
-    // Fall back to verify_status from product
     switch (productData?.verify_status) {
       case "Rejected":
         return { text: "ปฏิเสธ", class: "bg-red-100 text-red-800" };
@@ -107,7 +100,6 @@ const AProduct: React.FC = () => {
     try {
       setSubmitting(true);
 
-      // Use the product ID from productDetail
       await productService.reqUpdateProductStatus(
         auditorId,
         productDetail.product[0].product_id,
@@ -115,7 +107,6 @@ const AProduct: React.FC = () => {
         newStatus
       );
 
-      // Refetch data to get updated status
       await refetch();
 
       const statusText = newStatus === 3 ? "อนุมัติ" : "ปฏิเสธ";

@@ -10,14 +10,12 @@ const Response: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
-  const auditorId = 1; // Assuming auditorId is 1 for this example
+  const auditorId = 1; 
 
-  // สร้าง state สำหรับเก็บสถานะการเปิด/ปิด ของแต่ละความคิดเห็น
   const [expandedComments, setExpandedComments] = useState<{
     [key: number]: boolean;
   }>({ 0: true });
 
-  // Rename productData to individualProduct to avoid conflicts
   const {
     productData: individualProduct,
     productDetail,
@@ -27,7 +25,6 @@ const Response: React.FC = () => {
     errorExcel,
   } = useViewModel(auditorId, Number(id));
 
-  // ฟังก์ชั่นสำหรับสลับการแสดง/ซ่อนความคิดเห็น
   const toggleComment = (index: number) => {
     setExpandedComments((prev) => ({
       ...prev,
@@ -77,7 +74,6 @@ const Response: React.FC = () => {
     );
   }
 
-  // Sort comments from newest to oldest if they exist
   const sortedComments =
     productDetail.comments && productDetail.comments.length > 0
       ? [...productDetail.comments].sort(
@@ -95,7 +91,6 @@ const Response: React.FC = () => {
           รายละเอียดผลิตภัณฑ์และการตรวจสอบ
         </h1>
 
-        {/* ข้อมูลพื้นฐานของผลิตภัณฑ์ */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
           <div className="grid grid-cols-2 gap-4">
             <div>

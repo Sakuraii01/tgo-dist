@@ -7,15 +7,12 @@ import type {
 } from "../../../service/api/auditor/type";
 import type { ListExcelType } from "../../../service/api/company/type";
 
-const useViewModel = (
-  auditorId: number,
-  productId: number,
-) => {
+const useViewModel = (auditorId: number, productId: number) => {
   const [productDetail, setProductDetail] = useState<
     ProductDetailType | undefined
   >(undefined);
-//  const token = JSON.parse(localStorage.getItem("token") || "{}");
-const companyService = new CompanyService();
+
+  const companyService = new CompanyService();
 
   const [productData, setProductData] = useState<ProductType | undefined>(
     undefined
@@ -50,6 +47,7 @@ const companyService = new CompanyService();
     }
   };
 
+  //Get Status
   const fetchProductData = async () => {
     if (!productId) return;
 
@@ -95,13 +93,11 @@ const companyService = new CompanyService();
     }
   };
 
-
-
   const fetchLatestExcel = async () => {
     if (!productId) return;
 
     try {
-      const data = await companyService.reqGetLatestExcel(auditorId,productId);
+      const data = await companyService.reqGetLatestExcel(auditorId, productId);
       console.log("Generated Excel data:", data);
       setExcelLink(data.path_excel);
     } catch (error) {
@@ -110,18 +106,17 @@ const companyService = new CompanyService();
     }
   };
 
-   const fetchListExcel = async () => {
+  const fetchListExcel = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      // const companyService = new CompanyService();
       const excelList: ListExcelType[] = await companyService.reqGetListExcel(
         auditorId,
         productId
       );
-      console.log("auditorId:" ,auditorId, "prId:" ,productId, excelList);
-      return excelList; 
+      console.log("auditorId:", auditorId, "prId:", productId, excelList);
+      return excelList;
     } catch (error) {
       console.error("Error fetching Excel list:", error);
       setError("Failed to fetch Excel file list");
