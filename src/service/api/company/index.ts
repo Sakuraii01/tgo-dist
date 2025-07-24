@@ -11,10 +11,21 @@ import {
 
 import { useToken } from "../../../utils/localStorage";
 
+
 import type { AxiosResponse } from "axios";
 export class CompanyService extends RemoteA {
-  token = useToken();
+  // company_id?: number;
+  // token: any;
+
+  // constructor(token: any) {
+  //   super();
+  //   this.token = token;
+  //   this.company_id = token?.company?.[0]?.company_id;
+  // }
+
+   token = useToken();
   company_id = this.token?.company[0]?.company_id;
+
   reqGetCompany = async (company_id: number): Promise<CompanyType> => {
     const response = await this.getAxiosInstance().get(
       PROTECTED_PATH.COMPANY + `/${company_id}`
@@ -32,14 +43,19 @@ export class CompanyService extends RemoteA {
   };
 
   reqGetGenExcel = async (product_id: number): Promise<ExcelGenType> => {
+    console.log("Generating Excel for product ID:", product_id , this.company_id  );
     const response = await this.getAxiosInstance().get(
       `${PROTECTED_PATH.EXCEL_GENERATE}/${this.company_id}/${product_id}`
     );
     const { data } = response;
-    return data[0] as ExcelGenType;
+    console.log("Generated Excel data:", data);
+    return data[0];
   };
 
-  reqGetLatestExcel = async (auditor_id:number,product_id: number): Promise<LatestExcelType> => {
+  reqGetLatestExcel = async (
+    auditor_id: number,
+    product_id: number
+  ): Promise<LatestExcelType> => {
     const response = await this.getAxiosInstance().get(
       PROTECTED_PATH.EXCEL_DOWNLOAD + `/${auditor_id}/${product_id}`
     );
@@ -55,7 +71,7 @@ export class CompanyService extends RemoteA {
       PROTECTED_PATH.EXCEL_DOWNLOAD + `/${auditor_id}/${product_id}`
     );
     const { data } = response;
-    return data[0];
+    return data;
   };
 
   reqGetNotification = async (

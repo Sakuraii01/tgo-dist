@@ -14,7 +14,6 @@ const AProduct: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
-  const companyId = 1005;
   const auditorId = 1;
 
   console.log("Auditor ID:", auditorId);
@@ -22,7 +21,7 @@ const AProduct: React.FC = () => {
 
 
   const { productData, productDetail, loading, error, refetch,excelLink, fetchLatestExcel} =
-    useViewModel(auditorId, Number(id), companyId);
+    useViewModel(auditorId, Number(id));
 
   const [comment, setComment] = useState("");
   const [showCommentBox, setShowCommentBox] = useState(false);
@@ -409,7 +408,7 @@ const AProduct: React.FC = () => {
                     await fetchLatestExcel();
                     console.log(excelLink);
                     window.open(
-                      "http://178.128.123.212:5000" + excelLink || "",
+                      "http://178.128.123.212:5000" + excelLink,
                       "_blank"
                     );
                   }}

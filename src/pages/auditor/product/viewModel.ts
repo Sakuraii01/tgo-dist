@@ -10,12 +10,13 @@ import type { ListExcelType } from "../../../service/api/company/type";
 const useViewModel = (
   auditorId: number,
   productId: number,
-  companyId: number
 ) => {
   const [productDetail, setProductDetail] = useState<
     ProductDetailType | undefined
   >(undefined);
-  const companyService = new CompanyService();
+//  const token = JSON.parse(localStorage.getItem("token") || "{}");
+const companyService = new CompanyService();
+
   const [productData, setProductData] = useState<ProductType | undefined>(
     undefined
   );
@@ -87,7 +88,7 @@ const useViewModel = (
     try {
       const data = await companyService.reqGetGenExcel(productId);
       console.log("Generated Excel data:", data);
-      setExcelLink(data.path_excel[0]);
+      setExcelLink(data.path_excel);
     } catch (error) {
       console.error("Error fetching generated Excel:", error);
       throw error;
@@ -109,21 +110,18 @@ const useViewModel = (
     }
   };
 
-  const fetchListExcel = async () => {
-    if (!companyId) {
-      setError("Company ID is required");
-      return [];
-    }
-
+   const fetchListExcel = async () => {
     setLoading(true);
     setError(null);
 
     try {
+      // const companyService = new CompanyService();
       const excelList: ListExcelType[] = await companyService.reqGetListExcel(
         auditorId,
         productId
       );
-      return excelList;
+      console.log("auditorId:" ,auditorId, "prId:" ,productId, excelList);
+      return excelList; 
     } catch (error) {
       console.error("Error fetching Excel list:", error);
       setError("Failed to fetch Excel file list");

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FileOpen, ExpandMore, ExpandLess } from "@mui/icons-material";
 import { BreadcrumbNav } from "../../../../component/layout";
-import { Navbar } from "../../../../component/layout";
+import { ANavbar } from "../../../auditor/layout/index";
 import useViewModel from "../viewModel";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +10,6 @@ const Response: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
-  const companyId = 1005; // Assuming companyId is 1 for this example
   const auditorId = 1; // Assuming auditorId is 1 for this example
 
   // สร้าง state สำหรับเก็บสถานะการเปิด/ปิด ของแต่ละความคิดเห็น
@@ -26,7 +25,7 @@ const Response: React.FC = () => {
     error,
     excelList,
     errorExcel,
-  } = useViewModel(auditorId, Number(id), companyId);
+  } = useViewModel(auditorId, Number(id));
 
   // ฟังก์ชั่นสำหรับสลับการแสดง/ซ่อนความคิดเห็น
   const toggleComment = (index: number) => {
@@ -39,7 +38,7 @@ const Response: React.FC = () => {
   if (loading) {
     return (
       <div>
-        <Navbar />
+        <ANavbar />
         <BreadcrumbNav step="View Product" />
         <div className="max-w-7xl mx-auto my-15">
           <div className="flex justify-center items-center h-64">
@@ -53,7 +52,7 @@ const Response: React.FC = () => {
   if (error) {
     return (
       <div>
-        <Navbar />
+        <ANavbar />
         <BreadcrumbNav step="View Product" />
         <div className="max-w-7xl mx-auto my-15">
           <div className="flex justify-center items-center h-64">
@@ -67,7 +66,7 @@ const Response: React.FC = () => {
   if (!productDetail || !individualProduct) {
     return (
       <div>
-        <Navbar />
+        <ANavbar />
         <BreadcrumbNav step="View Product" />
         <div className="max-w-7xl mx-auto my-15">
           <div className="flex justify-center items-center h-64">
@@ -89,7 +88,7 @@ const Response: React.FC = () => {
 
   return (
     <div>
-      <Navbar />
+      <ANavbar />
       <BreadcrumbNav step="View Product" />
       <div className="max-w-7xl mx-auto my-15">
         <h1 className="text-3xl font-medium mb-5 mt-10">

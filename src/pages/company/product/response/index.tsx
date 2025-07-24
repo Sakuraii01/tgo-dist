@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FileOpen, ExpandMore, ExpandLess } from "@mui/icons-material";
 import { BreadcrumbNav } from "../../../../component/layout";
 import { Navbar } from "../../../../component/layout";
-import useViewModel from "../viewModel";
+import useViewModel from "../../../auditor/product/viewModel";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 

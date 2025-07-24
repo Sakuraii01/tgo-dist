@@ -17,7 +17,8 @@ const companyId = 1005;
 
 const useViewModel = () => {
   const auditorService = new AuditorService();
-  const companyService = new CompanyService();
+  // const token = JSON.parse(localStorage.getItem("token") || "{}");
+const companyService = new CompanyService();
   // const auth = useAuth();
 
   const [auditorData, setAuditorData] = useState<AuditorType>();

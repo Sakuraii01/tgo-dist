@@ -68,7 +68,7 @@ export const ANavbar = () => {
   const handleNotificationClick = () => {
     setShowNotifications(!showNotifications);
     if (!showNotifications) {
-      // markAsRead();
+      markAsRead();
     }
   };
 

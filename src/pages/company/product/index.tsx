@@ -6,8 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../../constants/path.route";
 import { PROTECTED_PATH as API_PATH } from "../../../constants/api.route";
 import { CompanyService } from "../../../service/api/company";
-import React, { useRef, useState } from "react";
-
+import React, { useState } from "react";
 
 const CProduct: React.FC = () => {
   const navigate = useNavigate();
@@ -30,33 +29,24 @@ const CProduct: React.FC = () => {
   const [comment, setComment] = useState("");
   const [showCommentBox, setShowCommentBox] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  // const token = JSON.parse(localStorage.getItem("token") || "{}");
   const companyService = new CompanyService();
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isCfpFormConfirmed, setIsCfpFormConfirmed] = useState(false);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setSelectedFile(e.target.files[0]);
-    }
-  };
 
   const callExcelApi = async () => {
     try {
       setUploading(true);
-      
+
       await fetch(
         `http://178.128.123.212:5000/api/v1${API_PATH.EXCEL_GEN_TO_AUDITOR}/${auditorId}/${productId}`,
         {
           headers: {
             "Content-Type": "application/json",
-          
           },
         }
       );
-
     } catch (error) {
       console.error("เกิดข้อผิดพลาดในการเรียก API:", error);
       alert("เกิดข้อผิดพลาดในการเรียก API");
@@ -79,7 +69,7 @@ const CProduct: React.FC = () => {
       setShowCommentBox(false);
       await refetch();
       alert("บันทึกความคิดเห็นเรียบร้อยแล้ว");
-      navigate("/");
+      navigate(`${PROTECTED_PATH.DASHBOARD}`);
     } catch (error) {
       console.error("Error saving comment:", error);
       alert("เกิดข้อผิดพลาดในการบันทึกความคิดเห็น");
@@ -348,7 +338,7 @@ const CProduct: React.FC = () => {
                         await fetchUploadExcel();
                         console.log(excelLink);
                         window.open(
-                          "http://178.128.123.212:5000" + excelLink || "",
+                          "http://178.128.123.212:5000" + excelLink,
                           "_blank"
                         );
                       }}
@@ -356,7 +346,7 @@ const CProduct: React.FC = () => {
                       className="border border-green-500 shadow px-4 py-1 rounded-full flex gap-1 hover:bg-green-50 hover:opacity-90 transition-colors"
                     >
                       <FileOpen fontSize="small" color="success" />
-                    <p>ดาวน์โหลดเอกสาร(เวอร์ชันที่ถูกส่งให้กับผู้ทวนสอบ)</p>
+                      <p>ดาวน์โหลดเอกสาร(เวอร์ชันที่ถูกส่งให้กับผู้ทวนสอบ)</p>
                     </button>
                   </div>
                   <button
@@ -398,20 +388,20 @@ const CProduct: React.FC = () => {
                               {submitting ? "กำลังดำเนินการ..." : "แก้ไขฟอร์ม"}
                             </button>
 
-                        <button
-                          onClick={async () => {
-                            await fetchGenExcel();
-                            console.log(excelLink);
-                            window.open(
-                              "http://178.128.123.212:5000" + excelLink || "",
-                              "_blank"
-                            );
-                          }}
-                          type="button"
-                          className="bg-green-500 text-white font-semibold shadow px-4 py-2 rounded-full hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <p>Generate Excel File</p>
-                        </button>
+                            <button
+                              onClick={async () => {
+                                await fetchGenExcel();
+                                console.log(excelLink);
+                                window.open(
+                                  "http://178.128.123.212:5000" + excelLink,
+                                  "_blank"
+                                );
+                              }}
+                              type="button"
+                              className="bg-green-500 text-white font-semibold shadow px-4 py-2 rounded-full hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              <p>Generate Excel File</p>
+                            </button>
                           </>
                         )}
                         <button
@@ -453,9 +443,7 @@ const CProduct: React.FC = () => {
         {!productDetail?.comments?.length && !showCommentBox && (
           <div className="mt-8">
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200 px-6 py-5 rounded-t-xl flex justify-between items-center">
-                
-              </div>
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200 px-6 py-5 rounded-t-xl flex justify-between items-center"></div>
 
               <div className="p-5">
                 <div className="flex justify-end gap-3">
@@ -521,14 +509,6 @@ const CProduct: React.FC = () => {
                   <div className="flex justify-between items-center">
                     <h3 className="text-lg font-semibold">เพิ่มประเด็นใหม่</h3>
                     <div className="space-y-2">
-                      <input
-                        type="file"
-                        ref={fileInputRef}
-                        onChange={handleFileChange}
-                        accept=".xlsx,.xls"
-                        style={{ display: "none" }}
-                      />
-
                       {/* checkbox สำหรับยืนยันแบบฟอร์ม CFP */}
                       <div className="space-y-2">
                         <div className="flex items-start">

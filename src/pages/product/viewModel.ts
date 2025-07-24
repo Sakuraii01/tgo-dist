@@ -9,6 +9,7 @@ const useViewModel = (product_id: number) => {
   const [productData, setProductData] = useState<ProductType>();
   const [excelLink, setExcelLink] = useState<string | null>(null);
   const productService = new ProductService();
+  // const token = JSON.parse(localStorage.getItem("token") || "{}");
   const companyService = new CompanyService();
 
   const fetchProductData = async () => {
@@ -28,6 +29,7 @@ const useViewModel = (product_id: number) => {
       throw error;
     }
   };
+
   const sendExcelToAuditor = async () => {
     if (!product_id) return;
 
