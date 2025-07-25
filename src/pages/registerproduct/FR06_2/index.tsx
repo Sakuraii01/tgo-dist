@@ -24,7 +24,7 @@ const FR06_2 = () => {
               company_id: fr06Data?.company_id || 0,
               document_name_by_TGO: null,
               document_no_by_TGO: null,
-              std_emission: Number(values.std_emission),
+              std_emission: values.std_emission,
               product_emission: sum4142 || 0,
               diff_emission:
                 Number(fr06Data?.product_emission || sum4142) -

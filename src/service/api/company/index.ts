@@ -11,19 +11,9 @@ import {
 
 import { useToken } from "../../../utils/localStorage";
 
-
 import type { AxiosResponse } from "axios";
 export class CompanyService extends RemoteA {
-  // company_id?: number;
-  // token: any;
-
-  // constructor(token: any) {
-  //   super();
-  //   this.token = token;
-  //   this.company_id = token?.company?.[0]?.company_id;
-  // }
-
-   token = useToken();
+  token = useToken();
   company_id = this.token?.company[0]?.company_id;
 
   reqGetCompany = async (company_id: number): Promise<CompanyType> => {
@@ -36,14 +26,18 @@ export class CompanyService extends RemoteA {
 
   reqGetExcel = async (product_id: number): Promise<ExcelType> => {
     const response = await this.getAxiosInstance().get(
-      PROTECTED_PATH.EXCEL + `/${this.company_id}/${product_id}`
+      PROTECTED_PATH.EXCEL_GEN_TO_AUDITOR + `/${this.company_id}/${product_id}`
     );
     const { data } = response;
     return data;
   };
 
   reqGetGenExcel = async (product_id: number): Promise<ExcelGenType> => {
-    console.log("Generating Excel for product ID:", product_id , this.company_id  );
+    console.log(
+      "Generating Excel for product ID:",
+      product_id,
+      this.company_id
+    );
     const response = await this.getAxiosInstance().get(
       `${PROTECTED_PATH.EXCEL_GENERATE}/${this.company_id}/${product_id}`
     );
