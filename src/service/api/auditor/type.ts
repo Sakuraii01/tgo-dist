@@ -52,10 +52,15 @@ export interface ProductDetailType {
     company_id?: number;
     product_id?: number;
     comment: string;
-    comment_company: string;
     created_at: string;
-    created_at_company: string;
     updated_at?: string;
+    comment_company: string;
+    update_at_company?: string;
+    created_at_company: string;
+    excel_old_id: string;
+    old_excel_path: string;
+    excel_new_id: string;
+    new_excel_path: string;
   }[];
 }
 
