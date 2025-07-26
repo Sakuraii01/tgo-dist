@@ -74,6 +74,7 @@ const FR04_1Form = (props: {
   processName: string;
   processId: number;
   lifePhase: number;
+  fu?: number;
 }) => {
   const { tgoEfDropdown, fetchTGOEFDropdown, handleSubmit } = useViewModel(
     props.id
@@ -195,7 +196,7 @@ const FR04_1Form = (props: {
                     </div>
                     <div>
                       <p className="text-sm text-gray-300">ปริมาณ/FU</p>
-                      <p>{"-"}</p>
+                      <p>{props.data.item_quantity}</p>
                     </div>
                     <div className="mt-auto w-64">
                       {isEdit ? (
@@ -219,37 +220,48 @@ const FR04_1Form = (props: {
                 <div>
                   <p>EF</p>
                   {isEdit ? (
-                    <div className="flex flex-wrap gap-x-4 gap-y-2">
-                      <div className="w-40">
-                        <AutoCompleteField
-                          name="ef_source"
-                          label="ที่มาของค่า EF"
-                          placeholder="ที่มาของค่า EF"
-                          items={EF.map((item) => ({
-                            label: item.label,
-                            value: item.value,
-                          }))}
-                        />
-                      </div>
-
-                      <div className="w-80">
-                        {tgoEfDropdown && values.ef_source === "TGO EF" ? (
+                    <div>
+                      <div className="flex gap-x-4 gap-y-2">
+                        <div className="w-40">
                           <AutoCompleteField
-                            name="ef_source_ref"
-                            label="แหล่งอ้างอิง EF"
-                            placeholder="แหล่งอ้างอิง EF"
-                            items={tgoEfDropdown.map((item) => ({
-                              label: item.item_detail,
-                              value: item.ef_id,
+                            name="ef_source"
+                            label="ที่มาของค่า EF"
+                            placeholder="ที่มาของค่า EF"
+                            items={EF.map((item) => ({
+                              label: item.label,
+                              value: item.value,
                             }))}
                           />
-                        ) : (
-                          <Field
-                            name="ef_source_ref"
-                            label="แหล่งอ้างอิง EF"
-                            placeholder="แหล่งอ้างอิง EF"
-                          />
-                        )}
+                        </div>
+
+                        <div className="w-full">
+                          {tgoEfDropdown && values.ef_source === "TGO EF" ? (
+                            <AutoCompleteField
+                              name="ef_source_ref"
+                              label="แหล่งอ้างอิง EF"
+                              placeholder="แหล่งอ้างอิง EF"
+                              items={tgoEfDropdown.map((item) => ({
+                                label:
+                                  item.item +
+                                  item.item_detail +
+                                  " (EF = " +
+                                  item.ef +
+                                  ")",
+                                // " (" +
+                                // item.tgo_updated +
+                                // ")" +
+                                // item.ef,
+                                value: item.ef_id,
+                              }))}
+                            />
+                          ) : (
+                            <Field
+                              name="ef_source_ref"
+                              label="แหล่งอ้างอิง EF"
+                              placeholder="แหล่งอ้างอิง EF"
+                            />
+                          )}
+                        </div>
                       </div>
                       <div>
                         {values.ef_source === "TGO EF" ? (

@@ -18,7 +18,7 @@ const useViewModel = () => {
   };
   useEffect(() => {
     fetchProductList();
-    companyService.reqGetCompany(1005).then((data) => {
+    companyService.reqGetCompany().then((data) => {
       setCompanyData(data);
     });
   }, []);

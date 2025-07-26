@@ -7,6 +7,7 @@ const Dashboard = () => {
   const { productList, tab, companyData, handleTabChange } = useViewModel();
   const navigate = useNavigate();
   const auth = useAuth();
+
   return (
     <div>
       <Navbar />
@@ -18,23 +19,34 @@ const Dashboard = () => {
               {auth?.user?.user?.name}
             </span>
           </h1>
-          <div className="flex gap-5">
-            <div className="w-[700px] p-5 rounded-3xl bg-stroke">
+          <div className="flex justify-between">
+            <div className="w-[300px] p-5 rounded-3xl bg-stroke">
               <p>{companyData?.address}</p>
             </div>
-            <div className="bg-gradient-to-b from-[#F4F8F3] to-[#F2F7F1] p-5 rounded-3xl text-center w-1/4">
+            <div className="w-[450px] bg-gradient-to-b from-[#F4F8F3] to-[#F2F7F1] p-5 rounded-3xl text-center">
               <p className="text-[#193F4F]">สถานประกอบการ</p>
-              <p className="text-linear text-secondary-linear text-xl font-bold">
-                {companyData?.industrial_id}
+
+              <p className="text-linear text-secondary-linear text-xl font-bold my-3">
+                {companyData?.industrial_name}
               </p>
             </div>
-            <div className="bg-gradient-to-b from-[#F4F8F3] to-[#F2F7F1] p-5 rounded-3xl text-center w-1/4">
-              <p className="text-[#193F4F]">ผู้ทวนสอบ</p>
-              <p className="text-[#5BAD46] text-xl font-bold">-</p>
-            </div>
-            <div className="bg-gradient-to-b from-[#F4F8F3] to-[#F2F7F1] p-5 rounded-3xl text-center w-1/4">
-              <p className="text-[#193F4F]">ที่ปรึกษา</p>
-              <p className="text-[#5BAD46] text-xl font-bold">-</p>
+            <div className="flex gap-5">
+              <div className="px-10 bg-gradient-to-b from-[#F1FCFF] to-[#E2F7FB] rounded-3xl w-fit pb-2 pt-7 text-center">
+                <p className="text-sm">รอบขึ้นทะเบียนปัจจุบัน</p>
+                <p className="font-bold text-primary text-3xl">1 / 2568</p>
+                <p className="bg-white rounded-full font-bold text-xs w-fit px-2 mx-auto my-2">
+                  01/01/2568 - 31/03/2568
+                </p>
+              </div>
+              <div className="bg-gradient-to-b from-[#F1FCFF] to-[#E2F7FB] rounded-3xl w-fit px-10 text-center py-9">
+                <p className="text-sm mb-3">ค่า EF แบบกำหนดเอง</p>
+                <button
+                  onClick={() => navigate(PROTECTED_PATH.SELF_COLLECT)}
+                  className="text-primary w-fit bg-white rounded-full py-2 px-8 shadow-md font-bold"
+                >
+                  <p>ดูข้อมูลค่า EF</p>
+                </button>
+              </div>
             </div>
           </div>
         </section>
@@ -47,29 +59,13 @@ const Dashboard = () => {
               รายการ
             </p>
           </div>
-          <div className="flex gap-5">
-            <div className="bg-gradient-to-b from-[#F1FCFF] to-[#E2F7FB] rounded-3xl w-fit px-10 text-center py-9">
-              <p className="text-sm mb-3">ค่า EF แบบกำหนดเอง</p>
-              <button
-                onClick={() => navigate(PROTECTED_PATH.SELF_COLLECT)}
-                className="text-primary w-fit bg-white rounded-full py-2 px-8 shadow-md font-bold"
-              >
-                <p>ดูข้อมูลค่า EF</p>
-              </button>
-            </div>
-            <div className="bg-gradient-to-b from-[#F1FCFF] to-[#E2F7FB] rounded-3xl w-fit px-2 pb-2 pt-4 text-center">
-              <p className="text-sm">รอบขึ้นทะเบียนปัจจุบัน</p>
-              <p className="font-bold text-primary text-3xl">1 / 2568</p>
-              <p className="bg-white rounded-full font-bold text-xs w-fit px-2 mx-auto my-2">
-                01/01/2568 - 31/03/2568
-              </p>
-              <button
-                onClick={() => navigate(PROTECTED_PATH.REGISTER_PRODUCT_CREATE)}
-                className="text-white bg-gradient-to-r from-[#5EDCF5] via-20% via-[#5EDCF5] to-[#008FC3] w-fit bg-white rounded-full py-2 px-8 shadow-md font-bold"
-              >
-                <p>เพิ่มการขึ้นทะเบียนผลิตภัณฑ์</p>
-              </button>
-            </div>
+          <div className="h-fit mt-auto">
+            <button
+              onClick={() => navigate(PROTECTED_PATH.REGISTER_PRODUCT_CREATE)}
+              className="h-fit text-white bg-gradient-to-r from-[#5EDCF5] via-20% via-[#5EDCF5] to-[#008FC3] w-fit bg-white rounded-full py-2 px-8 shadow-md font-bold"
+            >
+              <p>เพิ่มการขึ้นทะเบียนผลิตภัณฑ์</p>
+            </button>
           </div>
         </section>
         <section>
@@ -158,7 +154,7 @@ const Dashboard = () => {
           <table className="table-auto w-full rounded-t-xl">
             <thead>
               <tr className="text-white font-bold bg-gray-300 rounded-t-xl">
-                <th className="w-20 py-4 rounded-tl-xl">รหัส</th>
+                <th className="w-20 py-4 rounded-tl-xl">ลำดับที่</th>
                 <th className="text-start">ชื่อผลิตภัณฑ์ (TH)</th>
                 <th className="text-start">ชื่อผลิตภัณฑ์ (EN)</th>
                 <th className="text-start">ขอบเขตการประเมิน</th>
@@ -188,7 +184,9 @@ const Dashboard = () => {
                     <td>{data.scope}</td>
                     <td>
                       {typeof data?.submitted_date === "string"
-                        ? new Date(data?.submitted_date)?.toISOString()
+                        ? new Date(data?.submitted_date)
+                            ?.toISOString()
+                            .slice(0, 10)
                         : data?.submitted_date
                         ? data.submitted_date.toString()
                         : "-"}

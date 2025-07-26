@@ -13,13 +13,41 @@ type stepperProps = {
 export const ProcessStepper = (props: stepperProps) => {
   const navigate = useNavigate();
   const steps = [
-    { stepName: "FR01", navigate: PROTECTED_PATH.REGISTER_PRODUCT_CREATE },
-    { stepName: "FR03", navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR03 },
-    { stepName: "FR04.1", navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR04_1 },
-    { stepName: "FR04.2", navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR04_2 },
-    { stepName: "FR04.3", navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR04_3 },
-    { stepName: "FR06.1", navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR06_1 },
-    { stepName: "FR06.2", navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR06_2 },
+    {
+      stepName: "ข้อมูลผลิตภัณฑ์",
+      subStepName: "",
+      navigate: PROTECTED_PATH.REGISTER_PRODUCT_CREATE,
+    },
+    {
+      stepName: "กระบวนการผลิต",
+      subStepName: "",
+      navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR03,
+    },
+    {
+      stepName: "การประเมิน GHG",
+      subStepName: "วัตถุดิบ",
+      navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR04_1,
+    },
+    {
+      stepName: "การประเมิน GHG",
+      subStepName: "การขนส่ง",
+      navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR04_2,
+    },
+    {
+      stepName: "การประเมิน GHG",
+      subStepName: "การกำหนดเอง",
+      navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR04_3,
+    },
+    {
+      stepName: "การเปรียบเทียบ",
+      subStepName: "จากค่าปีฐาน",
+      navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR06_1,
+    },
+    {
+      stepName: "การเปรียบเทียบ",
+      subStepName: "สมถนะผลิตภัณฑ์",
+      navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR06_2,
+    },
   ];
   const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
     [`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -62,24 +90,7 @@ export const ProcessStepper = (props: stepperProps) => {
     ...(ownerState.active || ownerState.completed
       ? {
           color: "#0190C3",
-          border: "none",
-          "&::before": {
-            content: '""',
-            position: "absolute",
-            width: 50,
-            height: 50,
-            top: 0,
-            left: 8,
-            right: 0,
-            bottom: 0,
-            padding: "2px",
-            borderRadius: "50%",
-            background: "linear-gradient(136deg, #20B3D2, #008FC3)",
-            WebkitMask:
-              "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-            WebkitMaskComposite: "xor",
-            maskComposite: "exclude",
-          },
+          border: "3px solid #008FC3",
         }
       : {}),
   }));
@@ -102,8 +113,12 @@ export const ProcessStepper = (props: stepperProps) => {
     );
   }
   return (
-    <div className="mx-auto max-w-6xl mb-10 cursor-pointer">
-      <Stepper activeStep={props.isActive} connector={<ColorlibConnector />}>
+    <div className="mx-auto max-w-7xl mb-10 cursor-pointer">
+      <Stepper
+        activeStep={props.isActive}
+        connector={<ColorlibConnector />}
+        alternativeLabel
+      >
         {steps.map((label) => (
           <Step
             key={label.stepName}
@@ -111,7 +126,8 @@ export const ProcessStepper = (props: stepperProps) => {
             sx={{ position: "relative" }}
           >
             <StepLabel StepIconComponent={ColorlibStepIcon}>
-              {label.stepName}
+              <p className="text-primary">{label.stepName}</p>
+              <p className="text-sm text-gray-200">{label.subStepName}</p>
             </StepLabel>
           </Step>
         ))}

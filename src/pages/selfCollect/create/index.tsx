@@ -23,7 +23,9 @@ const CreateSelfCollect = () => {
       <Navbar />
       <BreadcrumbNav step="create self collect" />
       <div className="max-w-4xl mx-auto mt-10">
-        <h3 className="font-bold text-2xl mb-5">SELF COLLECT</h3>
+        <h3 className="font-bold text-2xl mb-5">
+          เพิ่มข้อมูลค่า EF ที่กำหนดเอง
+        </h3>
 
         <SelfCollectTopic
           initialValue={{

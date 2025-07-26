@@ -16,9 +16,9 @@ export class CompanyService extends RemoteA {
   token = useToken();
   company_id = this.token?.company[0]?.company_id;
 
-  reqGetCompany = async (company_id: number): Promise<CompanyType> => {
+  reqGetCompany = async (): Promise<CompanyType> => {
     const response = await this.getAxiosInstance().get(
-      PROTECTED_PATH.COMPANY + `/${company_id}`
+      PROTECTED_PATH.COMPANY + `/${this.company_id}`
     );
     const { data } = response;
     return data;

@@ -16,7 +16,9 @@ const SelfCollect = () => {
       <BreadcrumbNav step={"Self Collect"} />
       <div className="max-w-5xl mx-auto">
         <div className="flex justify-between mt-20">
-          <h4 className="text-xl font-bold">ข้อมูลค่า EF ที่กำหนดเอง</h4>
+          <h4 className="text-xl font-bold">
+            ข้อมูลค่า EF ที่กำหนดเอง (FR04.3)
+          </h4>
           <CreateSelfCollect />
         </div>
         <table className="w-full my-10 text-left rounded-3xl">
@@ -66,7 +68,7 @@ const CreateSelfCollect = () => {
         onClick={() => setIsAddSelfCollect(true)}
         className="primary-button px-6 py-1"
       >
-        + เพิ่มข้อมูล Self Collect
+        + เพิ่มข้อมูลค่า EF ที่กำหนดเอง
       </button>
       {isAddSelfCollect && (
         <Popup>

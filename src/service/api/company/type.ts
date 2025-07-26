@@ -6,6 +6,7 @@ export type CompanyType = {
   province_id: number;
   contact_no: string;
   industrial_id: string;
+  industrial_name: string;
   created_date: Date | string;
   updated_date: Date | string;
 };
