@@ -5,6 +5,13 @@ const RegisterSchema = () => {
     companyName: yup.string().required("กรุณาระบุชื่อบริษัท"),
     industrial: yup.string().required("กรุณาเลือกอุตสาหกรรม"),
     province: yup.string().required("กรุณาเลือกจังหวัด"),
+    district: yup.string().required("กรุณาเลือกอำเภอ"),
+    subdistrict: yup.string().required("กรุณาเลือกตำบล"),
+    zipCode: yup
+      .string()
+      .required("กรุณาระบุรหัสไปรษณีย์")
+      .matches(/^\d{5}$/, "รหัสไปรษณีย์ต้องมี 5 หลัก"),
+    address: yup.string().required("กรุณาระบุที่อยู่"),
     phoneNum: yup.number().required("กรุณาระบุเบอร์โทรศัพท์"),
     email: yup
       .string()

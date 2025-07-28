@@ -3,10 +3,14 @@ import { useSearchParams } from "react-router-dom";
 import { Formik, Form } from "formik";
 import { Field } from "../../../component/input/field";
 import useViewModel from "./viewModel";
+import { useNavigate } from "react-router-dom";
+import { PROTECTED_PATH } from "../../../constants/path.route";
+
 const FR06_2 = () => {
   const [searchParams] = useSearchParams();
   const id = Number(searchParams.get("id"));
   const { fr06Data, handleFormSubmit, sum4142 } = useViewModel(id);
+  const navigate = useNavigate();
   return (
     <div>
       <ProcessStepper isActive={6} id={id} />
@@ -71,11 +75,22 @@ const FR06_2 = () => {
                   </tr>
                 </tbody>
               </table>
-              <div className="flex justify-center mt-10 gap-5">
-                <button className="secondary-button px-24 py-2" type="button">
+              <div className="w-1/2 mx-auto flex gap-4">
+                <button
+                  onClick={() =>
+                    navigate(
+                      PROTECTED_PATH.REGISTER_PRODUCT_FR06_1 + `?id=${id}`
+                    )
+                  }
+                  type="button"
+                  className="transition-colors rounded-full w-full mt-6 px-10 py-2 bg-gray-400 hover:bg-gray-300 text-white font-semibold"
+                >
                   กลับไป FR06.1
                 </button>
-                <button className="primary-button px-24 py-2" type="submit">
+                <button
+                  type="submit"
+                  className="rounded-full w-full mt-6 px-10 py-2 bg-gradient-to-r from-[#2BCFF2] via-[#19C2E6] via-30% to-[#0190C3]  text-white font-semibold transition hover:opacity-80"
+                >
                   บันทึกและดำเนินการต่อ
                 </button>
               </div>

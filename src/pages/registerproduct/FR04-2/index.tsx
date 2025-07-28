@@ -11,10 +11,13 @@ import { useSearchParams } from "react-router-dom";
 import { Formik, Form } from "formik";
 import type { TGOVehiclesWithEFType } from "../../../service/api/dropdown/type";
 import { Fr04Service } from "../../../service/api/fr04";
+import { useNavigate } from "react-router-dom";
+import { PROTECTED_PATH } from "../../../constants/path.route";
 const FR04_2 = () => {
   const [searchParams] = useSearchParams();
   const id = Number(searchParams.get("id"));
   const { fr04Data, tab, handleTabChange } = useViewModel(id);
+  const navigate = useNavigate();
   return (
     <div>
       <ProcessStepper isActive={3} id={id} />
@@ -52,6 +55,26 @@ const FR04_2 = () => {
           ))}
         </div>
       </FR04Layout>
+      <div className="w-1/3 mx-auto flex gap-4">
+        <button
+          onClick={() =>
+            navigate(PROTECTED_PATH.REGISTER_PRODUCT_FR04_1 + `?id=${id}`)
+          }
+          type="button"
+          className="transition-colors rounded-full w-full mt-6 px-10 py-2 bg-gray-400 hover:bg-gray-300 text-white font-semibold"
+        >
+          กลับ FR 04.2
+        </button>
+        <button
+          onClick={() =>
+            navigate(PROTECTED_PATH.REGISTER_PRODUCT_FR04_3 + `?id=${id}`)
+          }
+          type="submit"
+          className="rounded-full w-full mt-6 px-10 py-2 bg-gradient-to-r from-[#2BCFF2] via-[#19C2E6] via-30% to-[#0190C3]  text-white font-semibold transition hover:opacity-80"
+        >
+          บันทึกและไป FR 04.3
+        </button>
+      </div>
     </div>
   );
 };

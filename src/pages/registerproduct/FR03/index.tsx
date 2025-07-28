@@ -79,16 +79,24 @@ const FR03 = () => {
         </div>
       )}
 
-      <div className="w-1/4 mx-auto flex gap-4">
-        <button className="transition-colors rounded-full w-full mt-6 px-10 py-2 bg-gray-400 hover:bg-gray-300 text-white font-semibold">
+      <div className="w-1/3 mx-auto flex gap-4">
+        <button
+          onClick={() =>
+            navigate(PROTECTED_PATH.REGISTER_PRODUCT_CREATE + `?id=${id}`)
+          }
+          type="button"
+          className="transition-colors rounded-full w-full mt-6 px-10 py-2 bg-gray-400 hover:bg-gray-300 text-white font-semibold"
+        >
           กลับ FR 01
         </button>
         <button
-          onClick={() => navigate(PROTECTED_PATH.REGISTER_PRODUCT_FR04_1)}
+          onClick={() =>
+            navigate(PROTECTED_PATH.REGISTER_PRODUCT_FR04_1 + `?id=${id}`)
+          }
           type="submit"
           className="rounded-full w-full mt-6 px-10 py-2 bg-gradient-to-r from-[#2BCFF2] via-[#19C2E6] via-30% to-[#0190C3]  text-white font-semibold transition hover:opacity-80"
         >
-          ไป FR 04.1
+          บันทึกและไป FR 04.1
         </button>
       </div>
     </div>

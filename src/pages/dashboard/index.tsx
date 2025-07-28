@@ -24,7 +24,7 @@ const Dashboard = () => {
               <p>{companyData?.address}</p>
             </div>
             <div className="w-[450px] bg-gradient-to-b from-[#F4F8F3] to-[#F2F7F1] p-5 rounded-3xl text-center">
-              <p className="text-[#193F4F]">สถานประกอบการ</p>
+              <p className="text-[#193F4F]"> ประเภทอุตสาหกรรม</p>
 
               <p className="text-linear text-secondary-linear text-xl font-bold my-3">
                 {companyData?.industrial_name}
@@ -64,7 +64,7 @@ const Dashboard = () => {
               onClick={() => navigate(PROTECTED_PATH.REGISTER_PRODUCT_CREATE)}
               className="h-fit text-white bg-gradient-to-r from-[#5EDCF5] via-20% via-[#5EDCF5] to-[#008FC3] w-fit bg-white rounded-full py-2 px-8 shadow-md font-bold"
             >
-              <p>เพิ่มการขึ้นทะเบียนผลิตภัณฑ์</p>
+              <p>ขึ้นทะเบียนผลิตภัณฑ์</p>
             </button>
           </div>
         </section>

@@ -81,6 +81,19 @@ const useViewModel = (id: number) => {
     navigate(PROTECTED_PATH.REGISTER_PRODUCT_FR04_2 + `?id=${id}`);
   };
 
+  const handleNavigateto03 = async () => {
+    const report_sum_id = await fr04Service
+      .reqGetFr04_1Report(id)
+      .then((data) => {
+        return data?.report41Sum?.[0]?.report41_sum_id;
+      });
+    if (!report_sum_id) {
+      await fr04Service.reqPostSumFR04_1(id);
+    } else {
+      await fr04Service.reqPutSumFR04_1(report_sum_id, id);
+    }
+    navigate(PROTECTED_PATH.REGISTER_PRODUCT_FR03 + `?id=${id}`);
+  };
   useEffect(() => {
     fetchfr04Data();
   }, []);
@@ -96,6 +109,7 @@ const useViewModel = (id: number) => {
     fetchTGOEFDropdown,
     handleTabChange,
     handleSubmit,
+    handleNavigateto03,
   };
 };
 export default useViewModel;

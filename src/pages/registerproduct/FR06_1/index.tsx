@@ -5,10 +5,13 @@ import { Field } from "../../../component/input/field";
 import { FormControlLabel, Checkbox } from "@mui/material";
 
 import useViewModel from "./viewModel";
+import { useNavigate } from "react-router-dom";
+import { PROTECTED_PATH } from "../../../constants/path.route";
 const FR06_1 = () => {
   const [searchParams] = useSearchParams();
   const id = Number(searchParams.get("id"));
   const { fr06Data, handleSubmit, fr06Sum4142 } = useViewModel(id);
+  const navigate = useNavigate();
   const baseStatic = [
     fr06Sum4142?.sum_lc1_emission || 0,
     fr06Sum4142?.sum_lc2_emission || 0,
@@ -416,11 +419,22 @@ const FR06_1 = () => {
                   </tr>
                 </tbody>
               </table>
-              <div className="flex justify-center mt-10 gap-5">
-                <button className="secondary-button px-24 py-2" type="button">
+              <div className="w-1/2 mx-auto flex gap-4">
+                <button
+                  type="button"
+                  onClick={() =>
+                    navigate(
+                      PROTECTED_PATH.REGISTER_PRODUCT_FR04_3 + `?id=${id}`
+                    )
+                  }
+                  className="transition-colors rounded-full w-full mt-6 px-10 py-2 bg-gray-400 hover:bg-gray-300 text-white font-semibold"
+                >
                   กลับไป FR04.3
                 </button>
-                <button className="primary-button px-24 py-2" type="submit">
+                <button
+                  type="submit"
+                  className="rounded-full w-full mt-6 px-10 py-2 bg-gradient-to-r from-[#2BCFF2] via-[#19C2E6] via-30% to-[#0190C3]  text-white font-semibold transition hover:opacity-80"
+                >
                   บันทึกและไป FR06.2
                 </button>
               </div>

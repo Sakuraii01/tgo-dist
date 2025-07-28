@@ -80,7 +80,7 @@ export const Navbar = () => {
       <img
         src={`/cfp/icon.png`}
         alt="Logo"
-        className="w-5 cursor-pointer"
+        className="w-7 cursor-pointer"
         onClick={() => navigate(PROTECTED_PATH.DASHBOARD)}
       />
       <div className="flex items-center gap-10">

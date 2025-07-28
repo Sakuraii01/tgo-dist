@@ -5,7 +5,7 @@ import type { AxiosResponse } from "axios";
 import { useToken } from "../../../utils/localStorage";
 export class Fr06Service extends RemoteA {
   token = useToken();
-  company_id = this.token.company[0].company_id;
+  company_id = this.token?.company[0]?.company_id;
   reqGetFr06_1 = async (product_id: number): Promise<FR06Report> => {
     const response = await this.getAxiosInstance().get(
       PROTECTED_PATH.FR06_1 + `/${product_id}`

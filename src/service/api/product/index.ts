@@ -6,7 +6,7 @@ import { useToken } from "../../../utils/localStorage";
 
 export class ProductService extends RemoteA {
   token = useToken();
-  company_id = this.token.company[0].company_id;
+  company_id = this.token?.company[0]?.company_id;
   reqGetAllProducts = async (): Promise<ProductType[]> => {
     const response = await this.getAxiosInstance().get(
       PROTECTED_PATH.COMPANT_PRODUCT + `/${this.company_id}`

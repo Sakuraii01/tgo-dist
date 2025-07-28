@@ -5,13 +5,13 @@ import StepConnector, {
   stepConnectorClasses,
 } from "@mui/material/StepConnector";
 import { PROTECTED_PATH } from "../../../../constants/path.route";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 type stepperProps = {
   isActive: number;
   id: number;
 };
 export const ProcessStepper = (props: stepperProps) => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const steps = [
     {
       stepName: "ข้อมูลผลิตภัณฑ์",
@@ -113,7 +113,7 @@ export const ProcessStepper = (props: stepperProps) => {
     );
   }
   return (
-    <div className="mx-auto max-w-7xl mb-10 cursor-pointer">
+    <div className="mx-auto max-w-7xl mb-10">
       <Stepper
         activeStep={props.isActive}
         connector={<ColorlibConnector />}
@@ -122,7 +122,7 @@ export const ProcessStepper = (props: stepperProps) => {
         {steps.map((label) => (
           <Step
             key={label.stepName}
-            onClick={() => navigate(label.navigate + `?id=${props.id}`)}
+            // onClick={() => navigate(label.navigate + `?id=${props.id}`)}
             sx={{ position: "relative" }}
           >
             <StepLabel StepIconComponent={ColorlibStepIcon}>

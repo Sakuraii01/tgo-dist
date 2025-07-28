@@ -1,13 +1,16 @@
 import { Fr06Service } from "../../../service/api/fr06";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { PROTECTED_PATH } from "../../../constants/path.route";
 import type { FR06_2Report } from "../../../service/api/fr06/type";
 const useViewModel = (id: number) => {
   const [fr06Data, setFr06Data] = useState<FR06_2Report>();
   const [sum4142, setSum4142] = useState<number>();
+  const navigate = useNavigate();
   const fr06Service = new Fr06Service();
-  const handleFormSubmit = (report_id: number, entity: FR06_2Report) => {
+  const handleFormSubmit = async (report_id: number, entity: FR06_2Report) => {
     if (report_id) {
-      fr06Service
+      await fr06Service
         .reqPutFr06_2({ ...entity, report62_sum_id: report_id }, report_id)
         .then((res) => {
           console.log(res);
@@ -16,7 +19,7 @@ const useViewModel = (id: number) => {
           console.log(error);
         });
     } else {
-      fr06Service
+      await fr06Service
         .reqPostFr06_2(entity)
         .then((res) => {
           console.log(res);
@@ -25,6 +28,7 @@ const useViewModel = (id: number) => {
           console.log(error);
         });
     }
+    navigate(PROTECTED_PATH.PRODUCT_DETAIL + `?id=${entity.product_id}`);
   };
   useEffect(() => {
     fr06Service

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { UNPROTECTED_PATH } from "../../constants/path.route";
 import useViewModel from "./viewModel";
 import type { UserInfo } from "../../service/api/user/type";
+import { useEffect } from "react";
 const Register = () => {
   const {
     provinces,
@@ -11,6 +12,10 @@ const Register = () => {
     initialValues,
     RegisterFormValidationSchema,
     handleOnSubmit,
+    fetchDistrict,
+    fetchSubdistrict,
+    district,
+    subdistrict,
   } = useViewModel();
   const navigate = useNavigate();
   return (
@@ -47,99 +52,160 @@ const Register = () => {
                 } as UserInfo,
                 {
                   name: values.companyName,
-                  address:
+                  address: values.address,
+                  zipcode: Number(values.zipCode),
+                  province_id:
                     provinces.find(
-                      (data) => data.province_id === Number(values.province)
-                    )?.province_name ?? "",
-                  province_id: Number(values.province),
+                      (data) => data.province_name === values.province
+                    )?.province_id ?? 0,
+                  district_id:
+                    district.find(
+                      (data) => data.district_name === values.district
+                    )?.district_id ?? 0,
+                  subdistrict_id:
+                    subdistrict.find(
+                      (data) => data.subdistrict_name === values.subdistrict
+                    )?.subdistrict_id ?? 0,
                   contact_no: values.phoneNum,
                   industrial_id: Number(values.industrial),
                 }
               )
             }
           >
-            {({ handleSubmit }) => (
-              <Form onSubmit={handleSubmit}>
-                <div className="mb-10 w-72 mx-auto">
-                  <div className="my-3">
-                    <Field
-                      name="companyName"
-                      label="ชื่อสถานประกอบการ"
-                      placeholder="ชื่อสถานประกอบการ"
-                    />
-                  </div>
-                  <div className="my-3">
-                    <AutoCompleteField
-                      name="province"
-                      label="จังหวัด"
-                      placeholder="จังหวัด"
-                      items={provinces.map((data) => {
-                        return {
-                          value: data.province_id,
-                          label: data.province_name,
-                        };
-                      })}
-                    />
-                  </div>
-                  <div className="my-3">
-                    <AutoCompleteField
-                      name="industrial"
-                      label="ประเภทอุตสหกรรม"
-                      placeholder="ประเภทอุตสหกรรม"
-                      items={industries.map((data) => {
-                        return {
-                          value: data.industrial_id,
-                          label: data.industrial_name,
-                        };
-                      })}
-                    />
-                  </div>
-                  <div className="my-3">
-                    <Field
-                      name="phoneNum"
-                      label="เบอร์โทรศัพท์"
-                      placeholder="เบอร์โทรศัพท์"
-                      type="number"
-                    />
-                  </div>
-                  <div className="my-3">
-                    <Field name="email" label="อีเมล์" placeholder="อีเมล์" />
-                  </div>
+            {({ handleSubmit, values }) => {
+              useEffect(() => {
+                if (values.province) {
+                  fetchDistrict(values.province);
+                }
+                if (values.district) {
+                  fetchSubdistrict(values.province, values.district);
+                }
+              }, [values.province, values.district]);
 
-                  <div className="my-3">
-                    <Field
-                      name="password"
-                      label="รหัสผ่าน"
-                      placeholder="รหัสผ่าน"
-                      type="password"
-                    />
+              return (
+                <Form onSubmit={handleSubmit}>
+                  <div className="mb-10 mx-10">
+                    <div className="flex gap-3 my-3">
+                      <Field
+                        name="companyName"
+                        label="ชื่อสถานประกอบการ"
+                        placeholder="ชื่อสถานประกอบการ"
+                      />
+                      <AutoCompleteField
+                        name="industrial"
+                        label="ประเภทอุตสหกรรม"
+                        placeholder="ประเภทอุตสหกรรม"
+                        items={industries.map((data) => {
+                          return {
+                            value: data.industrial_id,
+                            label: data.industrial_name,
+                          };
+                        })}
+                      />
+                    </div>
+                    <div className="flex gap-3 my-3">
+                      <AutoCompleteField
+                        name="province"
+                        label="จังหวัด"
+                        placeholder="จังหวัด"
+                        items={provinces.map((data) => {
+                          return {
+                            value: data.province_name,
+                            label: data.province_name,
+                          };
+                        })}
+                      />
+
+                      <AutoCompleteField
+                        name="district"
+                        label="อำเภอ"
+                        placeholder="อำเภอ"
+                        items={district.map((data) => {
+                          return {
+                            value: data.district_name,
+                            label: data.district_name,
+                          };
+                        })}
+                      />
+
+                      <AutoCompleteField
+                        name="subdistrict"
+                        label="ตำบล"
+                        placeholder="ตำบล"
+                        items={subdistrict.map((data) => {
+                          return {
+                            value: data.subdistrict_name,
+                            label: data.subdistrict_name,
+                          };
+                        })}
+                      />
+                    </div>
+                    <div className="flex gap-3 ">
+                      <div className="w-40">
+                        <Field
+                          name="zipCode"
+                          label="รหัสไปรษณีย์"
+                          placeholder="รหัสไปรษณีย์"
+                          type="number"
+                        />
+                      </div>
+                      <Field
+                        name="address"
+                        label="ที่อยู่"
+                        placeholder="ที่อยู่"
+                        type="text"
+                      />
+                    </div>
+
+                    <div className="flex gap-3 my-3">
+                      <Field
+                        name="phoneNum"
+                        label="เบอร์โทรศัพท์"
+                        placeholder="0912345678"
+                        type="number"
+                      />
+
+                      <Field
+                        name="email"
+                        label="อีเมล์"
+                        placeholder="example@gmail.com"
+                      />
+                    </div>
+                    <div className="my-3">
+                      <Field
+                        name="password"
+                        label="รหัสผ่าน"
+                        placeholder="รหัสผ่าน"
+                        type="password"
+                      />
+                    </div>
+                    <div>
+                      <Field
+                        name="passwordcomfirm"
+                        label="ยืนยันรหัสผ่าน"
+                        placeholder="ยืนยันรหัสผ่าน"
+                        type="password"
+                      />
+                    </div>
+                    <p
+                      className="font-light text-end text-xs"
+                      onClick={() => navigate(UNPROTECTED_PATH.LOGIN)}
+                    >
+                      Have an account?{" "}
+                      <span className="cursor-pointer text-primary hover:text-primary-2">
+                        Sign in
+                      </span>
+                    </p>
+                    <button
+                      type="submit"
+                      className="text-primary-linear text-white font-semibold py-2 w-full my-5 rounded-full"
+                    >
+                      Register
+                    </button>
                   </div>
-                  <div>
-                    <Field
-                      name="passwordcomfirm"
-                      label="รหัสผ่าน"
-                      placeholder="รหัสผ่าน"
-                      type="password"
-                    />
-                  </div>
-                  <p
-                    className="font-light text-end text-xs"
-                    onClick={() => navigate(UNPROTECTED_PATH.LOGIN)}
-                  >
-                    Have an account?{" "}
-                    <span className="cursor-pointer text-primary hover:text-primary-2">
-                      Sign in
-                    </span>
-                  </p>
-                  <button
-                    type="submit"
-                    className="text-primary-linear text-white font-semibold py-2 w-full my-5 rounded-full"
-                  >
-                    Register
-                  </button>
-                </div>
-              </Form>
-            )}
+                </Form>
+              );
+            }}
           </Formik>
         </div>
       </div>

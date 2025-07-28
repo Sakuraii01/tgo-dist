@@ -3,23 +3,21 @@ import { PROTECTED_PATH } from "../../../constants/api.route";
 import type { CompanyInfo, UserInfo, Login } from "./type";
 
 export class UserService extends RemoteA {
-  reqPostCompanyUser = async (entity: {
-    user: UserInfo;
-    company: CompanyInfo;
-  }) => {
-    const user_response = await this.getAxiosInstance().post(
+  reqPostUser = async (entity: UserInfo) => {
+    const response = await this.getAxiosInstance().post(
       PROTECTED_PATH.USER,
-      entity.user
+      entity
     );
-    const company_response = await this.getAxiosInstance().post(
+    const { data } = response;
+    return data;
+  };
+  reqPostCompany = async (entity: CompanyInfo) => {
+    const response = await this.getAxiosInstance().post(
       PROTECTED_PATH.COMPANY,
-      entity.company
+      entity
     );
-
-    return {
-      user_response,
-      company_response,
-    };
+    const { data } = response;
+    return data;
   };
   reqPostLogin = async (entity: Login) => {
     const response = await this.getAxiosInstance().post(

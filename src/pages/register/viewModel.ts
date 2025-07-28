@@ -3,6 +3,8 @@ import { IndustryService, AddressService } from "../../service/api/dropdown";
 import type {
   IndustryType,
   ProvinceType,
+  DistrincType,
+  SubDistricType,
 } from "../../service/api/dropdown/type";
 import RegisterSchema from "./validation";
 import { UserService } from "../../service/api/user";
@@ -19,26 +21,53 @@ const useViewModel = () => {
 
   const [industries, setIndustries] = useState<IndustryType[]>([]);
   const [provinces, setProvinces] = useState<ProvinceType[]>([]);
-
+  const [district, setDistrict] = useState<DistrincType[]>([]);
+  const [subdistrict, setSubdistrict] = useState<SubDistricType[]>([]);
+  const fetchDistrict = async (province: string) => {
+    await addressService.reqGetDistrict({ province: province }).then((data) => {
+      setDistrict(data);
+    });
+  };
+  const fetchSubdistrict = async (province: string, district: string) => {
+    await addressService
+      .reqGetSubDistrict({ provice: province, district: district })
+      .then((data) => {
+        setSubdistrict(data);
+      });
+  };
   const initialValues = {
     companyName: "",
     industrial: "",
     province: "",
+    district: "",
+    subdistrict: "",
+    address: "",
+    zipCode: "",
     phoneNum: "",
     email: "",
     password: "",
     passwordcomfirm: "",
   };
   const handleOnSubmit = async (user: UserInfo, company: CompanyInfo) => {
-    await userService
-      .reqPostCompanyUser({ user, company })
+    const userid = await userService
+      .reqPostUser(user)
       .then((data) => {
-        console.log(data);
-        navigate(UNPROTECTED_PATH.LOGIN);
+        return data.userID;
       })
       .catch((error) => {
         console.log(error);
       });
+    if (!userid) {
+      console.error("User creation failed");
+      return;
+    }
+    await userService
+      .reqPostCompany({ ...company, user_id: userid })
+      .then((data) => {
+        console.log(data);
+      });
+    navigate(UNPROTECTED_PATH.LOGIN);
+    // return userData;
   };
   useEffect(() => {
     const fetchData = async () => {
@@ -57,6 +86,10 @@ const useViewModel = () => {
     initialValues,
     RegisterFormValidationSchema,
     handleOnSubmit,
+    fetchDistrict,
+    fetchSubdistrict,
+    district,
+    subdistrict,
   };
 };
 export default useViewModel;

@@ -3,10 +3,23 @@ export type CompanyInfo = {
   name: string;
   address: string;
   province_id: number;
+  district_id: number;
+  subdistrict_id: number;
+  zipcode: number;
   contact_no: string;
   industrial_id: number;
 };
-
+export type UserResponse = {
+  message: "User created successfully";
+  userID: number;
+  user: {
+    name: string;
+    email: string;
+    password: string;
+    role_id: number;
+    status: string;
+  };
+};
 export type UserInfo = {
   company_id: number;
   name: string;

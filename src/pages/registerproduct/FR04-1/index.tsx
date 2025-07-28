@@ -19,8 +19,13 @@ import { Fr04Service } from "../../../service/api/fr04";
 const FR04_1 = () => {
   const [searchParams] = useSearchParams();
   const id = Number(searchParams.get("id"));
-  const { fr04Data, tab, handleTabChange, handleNavigateto04_2 } =
-    useViewModel(id);
+  const {
+    fr04Data,
+    tab,
+    handleTabChange,
+    handleNavigateto04_2,
+    handleNavigateto03,
+  } = useViewModel(id);
   return (
     <div>
       <ProcessStepper isActive={2} id={id} />
@@ -54,13 +59,20 @@ const FR04_1 = () => {
           ))}
         </div>
       </FR04Layout>
-      <div className="w-1/4 mx-auto">
+      <div className="w-1/3 mx-auto flex gap-4">
+        <button
+          onClick={() => handleNavigateto03()}
+          type="button"
+          className="transition-colors rounded-full w-full mt-6 px-10 py-2 bg-gray-400 hover:bg-gray-300 text-white font-semibold"
+        >
+          กลับ FR 03
+        </button>
         <button
           onClick={() => handleNavigateto04_2()}
-          type="submit"
-          className="rounded-full w-full mt-6 px-10 py-2 bg-gradient-to-r from-[#2BCFF2] via-[#19C2E6] via-30% to-[#0190C3]  text-white font-semibold"
+          type="button"
+          className="rounded-full w-full mt-6 px-10 py-2 bg-gradient-to-r from-[#2BCFF2] via-[#19C2E6] via-30% to-[#0190C3]  text-white font-semibold transition hover:opacity-80"
         >
-          ถัดไป
+          บันทึกและไป FR 04.2
         </button>
       </div>
     </div>
