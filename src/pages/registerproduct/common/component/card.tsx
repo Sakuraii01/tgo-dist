@@ -4,6 +4,7 @@ export type MaterialCardProps = {
   amount: number;
   type?: string;
   button: React.ReactNode;
+  isLastProduct?: boolean;
 };
 export type InfoProps = {
   title: string;

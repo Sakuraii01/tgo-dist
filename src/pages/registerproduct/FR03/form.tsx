@@ -68,7 +68,7 @@ export const FR03Form = (props: FR03FormType) => {
                         color: "#FAB431",
                       },
                       {
-                        label: "ของเสีย/สารขาออก",
+                        label: "ของเสีย/ผลิตภัณฑ์ร่วม",
                         value: "waste",
                         color: "#EE5F5F",
                       },
@@ -121,15 +121,15 @@ export const FR03Form = (props: FR03FormType) => {
                         <div className="mt-3">
                           <CheckboxField
                             name="isLastProduct"
-                            label="เป็นผลิตภัณฑ์สุดท้ายหรือไม่"
+                            label="เป็นผลิตภัณฑ์สุดท้าย (สำหรับคำนวณค่า FU)"
                           />
                         </div>
-                        <div>
+                        {/* <div>
                           <CheckboxField
                             name="sumPackage"
-                            label="ผลิตภภัณฑ์สุดท้ายรวมบรรจุภัณฑ์หรือไม่"
+                            label="ผลิตภภัณฑ์สุดท้ายรวมบรรจุภัณฑ์"
                           />
-                        </div>
+                        </div> */}
                       </div>
                     )}
                   </div>

@@ -146,15 +146,17 @@ const CreateProduct = () => {
 
               <section className="my-2">
                 <h3 className="font-bold">หน่วย</h3>
-                <div className="flex gap-2 w-1/2">
-                  <Field
-                    name="functionalValue"
-                    placeholder="ค่าหน่วยการทำงาน"
-                    label="ค่าหน่วยการทำงาน"
-                    require
-                    type="number"
-                  />
-                  <div className="w-64">
+                <div className="flex gap-2">
+                  <div className="w-1/3">
+                    <Field
+                      name="functionalValue"
+                      placeholder="ค่าหน่วยการทำงาน"
+                      label="ค่าหน่วยการทำงาน"
+                      require
+                      type="number"
+                    />
+                  </div>
+                  <div className="w-full">
                     <AutoCompleteField
                       name={`functionalUnit`}
                       label="หน่วยการทำงาน"
@@ -165,15 +167,17 @@ const CreateProduct = () => {
                     />
                   </div>
                 </div>
-                <div className="flex gap-2 w-1/2">
-                  <Field
-                    name="functionalProductValue"
-                    placeholder="ค่าหน่วยผลิตภัณฑ์"
-                    label="ค่าหน่วยผลิตภัณฑ์"
-                    type="number"
-                    require
-                  />
-                  <div className="w-64">
+                <div className="flex gap-2">
+                  <div className="w-1/3">
+                    <Field
+                      name="functionalProductValue"
+                      placeholder="ค่าหน่วยผลิตภัณฑ์"
+                      label="ค่าหน่วยผลิตภัณฑ์"
+                      type="number"
+                      require
+                    />
+                  </div>
+                  <div className="w-full">
                     <AutoCompleteField
                       name={`functionalProduct`}
                       label="หน่วยผลิตภัณฑ์"

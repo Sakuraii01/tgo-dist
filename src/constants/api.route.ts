@@ -4,6 +4,7 @@ export const PROTECTED_PATH = {
   USER: "/users",
   AUDITORS: "/auditor",
   PRODUCT: "/product",
+  COMPANT_PRODUCT: "/company/product",
   OUTPUT_PROCESS: "/output/process",
   INPUT_PROCESS: "/input/process",
   WASTE_PROCESS: "/waste/process",

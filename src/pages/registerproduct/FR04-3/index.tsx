@@ -15,9 +15,7 @@ const FR04_3 = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (id) {
-        await fr04Service
-          .reqGetFr04_3(1005, id)
-          .then((data) => setfr04data(data));
+        await fr04Service.reqGetFr04_3(id).then((data) => setfr04data(data));
       }
     };
     fetchData();

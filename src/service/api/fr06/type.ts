@@ -36,7 +36,7 @@ export type FR06_2Report = {
   company_id: number;
   document_name_by_TGO: string | null;
   document_no_by_TGO: string | null;
-  std_emission: string;
+  std_emission: string | number;
   product_emission: string | number;
   diff_emission: string | number;
   std_emission_source: string | null;
