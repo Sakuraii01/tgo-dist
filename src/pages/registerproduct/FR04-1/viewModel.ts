@@ -11,12 +11,19 @@ import type {
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../../constants/path.route";
+import { SelfCollectService } from "../../../service/api/selfcollect";
+import type { SelfCollectListType } from "../../../service/api/selfcollect/type";
 const useViewModel = (id: number) => {
   const fr04Service = new Fr04Service();
   const tgoEfService = new TGOEFDropdownService();
+  const selfCollectService = new SelfCollectService();
+
   const navigate = useNavigate();
   const [tgoEfDropdown, setTgoEfDropdown] = useState<
     TGOEFDropdownType[] | null
+  >([]);
+  const [selfCollectDropdown, setSelfCollectDropdown] = useState<
+    SelfCollectListType[]
   >([]);
   const [tgoEfSubcategoryDropdown, setTgoEfSubcategoryDropdown] = useState<
     TGOEFCategoryType[] | null
@@ -28,6 +35,10 @@ const useViewModel = (id: number) => {
   const fetchTGOEFDropdown = async () => {
     const data = await tgoEfService.reqGetTGOEF();
     setTgoEfDropdown(data);
+  };
+  const fetchSelfCollectDropdown = async () => {
+    const data = await selfCollectService.reqGetSelfCollectList();
+    setSelfCollectDropdown(data);
   };
   const fetchTGOEFSubcategory = async (categoryId: number) => {
     const data = await tgoEfService.reqGetTGOEFSubcategory(categoryId);
@@ -66,6 +77,7 @@ const useViewModel = (id: number) => {
     setFr04Data(data);
 
     await fetchTGOEFDropdown();
+    await fetchSelfCollectDropdown();
   };
   const handleNavigateto04_2 = async () => {
     const report_sum_id = await fr04Service
@@ -103,6 +115,7 @@ const useViewModel = (id: number) => {
     tgoEfDropdown,
     tgoEfSubcategoryDropdown,
     tgoEfSourceRef,
+    selfCollectDropdown,
     handleNavigateto04_2,
     fetchTGOEFBySubcategory,
     fetchTGOEFSubcategory,

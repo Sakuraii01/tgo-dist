@@ -14,10 +14,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   function setCredential(user: UserLoginInfo) {
     setUser(user);
     localStorage.setItem("user_account", JSON.stringify(user));
-    const storedToken = localStorage.getItem("user_account");
-    console.log(storedToken);
+    // const storedToken = localStorage.getItem("user_account");
   }
-  console.log(localStorage.getItem("user_account"));
 
   return (
     <AuthContext.Provider value={{ user, setCredential }}>

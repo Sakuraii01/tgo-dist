@@ -37,7 +37,6 @@ export const Navbar = () => {
       const unread = res.data.filter((n: any) => n.is_read === 0);
       setNotifications(res.data);
       setCount(unread.length);
-      console.log("Fetched notifications:", unread.length);
     } catch (err) {
       console.error("Error fetching notifications:", err);
     }

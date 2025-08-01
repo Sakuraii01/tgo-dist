@@ -23,7 +23,6 @@ type FR03FormType = {
 };
 export const FR03Form = (props: FR03FormType) => {
   const { FR03FomrValidationSchema } = FR03FormSchema();
-  console.log(props.initialValues);
 
   const initialValues = {
     type: "input",
@@ -68,7 +67,7 @@ export const FR03Form = (props: FR03FormType) => {
                         color: "#FAB431",
                       },
                       {
-                        label: "ของเสีย/ผลิตภัณฑ์ร่วม",
+                        label: "ผลิตภัณฑ์ร่วม/ของเสีย",
                         value: "waste",
                         color: "#EE5F5F",
                       },
@@ -124,12 +123,6 @@ export const FR03Form = (props: FR03FormType) => {
                             label="เป็นผลิตภัณฑ์สุดท้าย (สำหรับคำนวณค่า FU)"
                           />
                         </div>
-                        {/* <div>
-                          <CheckboxField
-                            name="sumPackage"
-                            label="ผลิตภภัณฑ์สุดท้ายรวมบรรจุภัณฑ์"
-                          />
-                        </div> */}
                       </div>
                     )}
                   </div>
@@ -227,13 +220,19 @@ const FR03Function = () => {
     []
   );
   const fetchCategoryDropdown = async () => {
+    const desiredOrder = [7, 9, 8];
     const input_cat_dropdown = await inputProcessService
       .reqGetInputCatergory()
       .then((data) =>
-        data.map((item) => ({
-          value: item.input_cat_id,
-          label: item.category_names,
-        }))
+        data
+          .map((item) => ({
+            value: item.input_cat_id,
+            label: item.category_names,
+          }))
+          .sort(
+            (a, b) =>
+              desiredOrder.indexOf(a.value) - desiredOrder.indexOf(b.value)
+          )
       );
     const waste_cat_dropdown = await wasteProcessService
       .reqGetWasteCategory()

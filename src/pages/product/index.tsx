@@ -4,12 +4,14 @@ import useViewModel from "./viewModel";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../constants/path.route";
+import Swal from "sweetalert2";
 const Product = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
-  const { productData, fetchGenExcel, excelLink, sendExcelToAuditor } =
-    useViewModel(Number(id));
+  const { productData, fetchGenExcel, sendExcelToAuditor } = useViewModel(
+    Number(id)
+  );
 
   return (
     <div>
@@ -44,12 +46,26 @@ const Product = () => {
                 </button>
                 <button
                   onClick={async () => {
-                    await fetchGenExcel();
-                    console.log(excelLink);
-                    window.open(
-                      "http://178.128.123.212:5000" + excelLink || "",
-                      "_blank"
-                    );
+                    const data = await fetchGenExcel();
+
+                    if (data === null) {
+                      Swal.fire({
+                        title: "ไม่สามารถดาวน์โหลดเอกสารได้",
+                        text: "กรุณากรอกข้อมูลให้ครบถ้วน",
+                        icon: "warning",
+                        confirmButtonText: "ปิด",
+                        confirmButtonColor: "#0190c3",
+                        customClass: {
+                          title: "swal-title-custom",
+                          htmlContainer: "swal-text-custom",
+                        },
+                      });
+                    } else {
+                      window.open(
+                        "http://178.128.123.212:5000" + data || "",
+                        "_blank"
+                      );
+                    }
                   }}
                   type="button"
                   className="primary-button font-semibold shadow px-4 py-1 rounded-full flex gap-1 ml-auto hover:opacity-90 mb-4"

@@ -26,11 +26,11 @@ const FR06_1 = () => {
         <Formik
           initialValues={{
             registrationRound: false,
-            ghg_cycle_1: fr06Data?.lc1_based_emission || 0,
-            ghg_cycle_2: fr06Data?.lc2_based_emission || 0,
-            ghg_cycle_3: fr06Data?.lc3_based_emission || 0,
-            ghg_cycle_4: fr06Data?.lc4_based_emission || 0,
-            ghg_cycle_5: fr06Data?.lc5_based_emission || 0,
+            ghg_cycle_1: Number(fr06Data?.lc1_based_emission).toFixed(4) || 0,
+            ghg_cycle_2: Number(fr06Data?.lc2_based_emission).toFixed(4) || 0,
+            ghg_cycle_3: Number(fr06Data?.lc3_based_emission).toFixed(4) || 0,
+            ghg_cycle_4: Number(fr06Data?.lc4_based_emission).toFixed(4) || 0,
+            ghg_cycle_5: Number(fr06Data?.lc5_based_emission).toFixed(4) || 0,
           }}
           enableReinitialize
           // validationSchema={{}}
@@ -180,16 +180,18 @@ const FR06_1 = () => {
                   }
                   label="ระบุปีฐานเป็นปีแรก"
                 />
+                <p className="italic text-primary text-sm font-medium">
+                  หากไม่ได้ระบุเป็นปีแรก โปรดกรอกข้อมูลในช่องการปล่อย GHG
+                  ในปีฐาน (kgCO2 eq.)
+                </p>
               </div>
               <table className="table-auto w-full border-collapse border border-gray-200/10">
                 <thead>
                   <tr className="bg-primary-2/20">
                     <th className="text-start py-2 ps-4">ช่วงวัฎจักรชีวิต</th>
+                    <th className="px-5">การปล่อย GHG ในปีฐาน (kgCO2 eq.)</th>
                     <th className="px-5">
-                      การปล่อย GHG ในปีฐาน (kgCO2 eq.) ปี
-                    </th>
-                    <th className="px-5">
-                      การปล่อย GHG ในปีปัจจุบัน (kgCO2 eq.) ปี
+                      การปล่อย GHG ในปีปัจจุบัน (kgCO2 eq.)
                     </th>
                     <th className="px-5">ผลต่าง (เพิ่มขึ้น +)</th>
                     <th className="pe-4">ร้อยละ (เพิ่มขึ้น +)</th>
@@ -200,7 +202,7 @@ const FR06_1 = () => {
                     <td className="px-5 py-3">การได้มาของวัตถุดิบ </td>
                     <td className="px-5">
                       {values.registrationRound ? (
-                        fr06Sum4142?.sum_lc1_emission
+                        fr06Sum4142?.sum_lc1_emission.toFixed(4)
                       ) : (
                         <Field
                           name="ghg_cycle_1"
@@ -209,20 +211,26 @@ const FR06_1 = () => {
                         />
                       )}
                     </td>
-                    <td className="px-5">{fr06Sum4142?.sum_lc1_emission}</td>
                     <td className="px-5">
-                      {calculateDiff(
-                        baseStatic[0],
-                        Number(values.ghg_cycle_1),
-                        false
-                      )}
+                      {fr06Sum4142?.sum_lc1_emission.toFixed(4)}
                     </td>
                     <td className="px-5">
-                      {calculateDiff(
-                        baseStatic[0],
-                        Number(values.ghg_cycle_1),
-                        true
-                      )}
+                      {values.registrationRound
+                        ? 0
+                        : calculateDiff(
+                            baseStatic[0],
+                            Number(values.ghg_cycle_1),
+                            false
+                          )}
+                    </td>
+                    <td className="px-5">
+                      {values.registrationRound
+                        ? 0
+                        : calculateDiff(
+                            baseStatic[0],
+                            Number(values.ghg_cycle_1),
+                            true
+                          )}
                       %
                     </td>
                   </tr>
@@ -231,7 +239,7 @@ const FR06_1 = () => {
                     <td className="px-5 py-3">การกระจายสินค้า </td>
                     <td className="px-5">
                       {values.registrationRound ? (
-                        fr06Sum4142?.sum_lc2_emission
+                        fr06Sum4142?.sum_lc2_emission.toFixed(4)
                       ) : (
                         <Field
                           name="ghg_cycle_2"
@@ -240,20 +248,26 @@ const FR06_1 = () => {
                         />
                       )}
                     </td>
-                    <td className="px-5">{fr06Sum4142?.sum_lc2_emission}</td>
                     <td className="px-5">
-                      {calculateDiff(
-                        baseStatic[1],
-                        Number(values.ghg_cycle_2),
-                        false
-                      )}
+                      {fr06Sum4142?.sum_lc2_emission?.toFixed(4)}
                     </td>
                     <td className="px-5">
-                      {calculateDiff(
-                        baseStatic[1],
-                        Number(values.ghg_cycle_2),
-                        true
-                      )}
+                      {values.registrationRound
+                        ? 0
+                        : calculateDiff(
+                            baseStatic[1],
+                            Number(values.ghg_cycle_2),
+                            false
+                          )}
+                    </td>
+                    <td className="px-5">
+                      {values.registrationRound
+                        ? 0
+                        : calculateDiff(
+                            baseStatic[1],
+                            Number(values.ghg_cycle_2),
+                            true
+                          )}
                       %
                     </td>
                   </tr>
@@ -261,7 +275,7 @@ const FR06_1 = () => {
                     <td className="px-5 py-3">การใช้งาน </td>
                     <td className="px-5">
                       {values.registrationRound ? (
-                        fr06Sum4142?.sum_lc3_emission
+                        fr06Sum4142?.sum_lc3_emission.toFixed(4)
                       ) : (
                         <Field
                           name="ghg_cycle_3"
@@ -270,20 +284,26 @@ const FR06_1 = () => {
                         />
                       )}
                     </td>
-                    <td className="px-5">{fr06Sum4142?.sum_lc3_emission}</td>
                     <td className="px-5">
-                      {calculateDiff(
-                        baseStatic[2],
-                        Number(values.ghg_cycle_3),
-                        false
-                      )}
+                      {fr06Sum4142?.sum_lc3_emission.toFixed(4)}
                     </td>
                     <td className="px-5">
-                      {calculateDiff(
-                        baseStatic[2],
-                        Number(values.ghg_cycle_3),
-                        true
-                      )}
+                      {values.registrationRound
+                        ? 0
+                        : calculateDiff(
+                            baseStatic[2],
+                            Number(values.ghg_cycle_3),
+                            false
+                          )}
+                    </td>
+                    <td className="px-5">
+                      {values.registrationRound
+                        ? 0
+                        : calculateDiff(
+                            baseStatic[2],
+                            Number(values.ghg_cycle_3),
+                            true
+                          )}
                       %
                     </td>
                   </tr>
@@ -291,7 +311,7 @@ const FR06_1 = () => {
                     <td className="px-5 py-3">การจัดการซาก </td>
                     <td className="px-5">
                       {values.registrationRound ? (
-                        fr06Sum4142?.sum_lc4_emission
+                        fr06Sum4142?.sum_lc4_emission.toFixed(4)
                       ) : (
                         <Field
                           name="ghg_cycle_4"
@@ -300,20 +320,26 @@ const FR06_1 = () => {
                         />
                       )}
                     </td>
-                    <td className="px-5">{fr06Sum4142?.sum_lc4_emission}</td>
                     <td className="px-5">
-                      {calculateDiff(
-                        baseStatic[3],
-                        Number(values.ghg_cycle_4),
-                        false
-                      )}
+                      {fr06Sum4142?.sum_lc4_emission.toFixed(4)}
                     </td>
                     <td className="px-5">
-                      {calculateDiff(
-                        baseStatic[3],
-                        Number(values.ghg_cycle_4),
-                        true
-                      )}
+                      {values.registrationRound
+                        ? 0
+                        : calculateDiff(
+                            baseStatic[3],
+                            Number(values.ghg_cycle_4),
+                            false
+                          )}
+                    </td>
+                    <td className="px-5">
+                      {values.registrationRound
+                        ? 0
+                        : calculateDiff(
+                            baseStatic[3],
+                            Number(values.ghg_cycle_4),
+                            true
+                          )}
                       %
                     </td>
                   </tr>
@@ -321,7 +347,7 @@ const FR06_1 = () => {
                     <td className="px-5 py-3">การผลิต</td>
                     <td className="px-5">
                       {values.registrationRound ? (
-                        fr06Sum4142?.sum_lc5_emission
+                        fr06Sum4142?.sum_lc5_emission.toFixed(4)
                       ) : (
                         <Field
                           name="ghg_cycle_5"
@@ -330,91 +356,113 @@ const FR06_1 = () => {
                         />
                       )}
                     </td>
-                    <td className="px-5">{fr06Sum4142?.sum_lc5_emission}</td>
                     <td className="px-5">
-                      {calculateDiff(
-                        baseStatic[4],
-                        Number(values.ghg_cycle_5),
-                        false
-                      )}
+                      {fr06Sum4142?.sum_lc5_emission.toFixed(4)}
                     </td>
                     <td className="px-5">
-                      {calculateDiff(
-                        baseStatic[4],
-                        Number(values.ghg_cycle_5),
-                        true
-                      )}
+                      {values.registrationRound
+                        ? 0
+                        : calculateDiff(
+                            baseStatic[4],
+                            Number(values.ghg_cycle_5),
+                            false
+                          )}
+                    </td>
+                    <td className="px-5">
+                      {values.registrationRound
+                        ? 0
+                        : calculateDiff(
+                            baseStatic[4],
+                            Number(values.ghg_cycle_5),
+                            true
+                          )}
                       %
                     </td>
                   </tr>
                   <tr className="border-b border-gray-200/10">
                     <td className="px-5 py-3">รวม </td>
                     <td className="px-5">
-                      {fr06Data?.sum_based_emission ??
-                        Number(values.ghg_cycle_1) +
-                          Number(values.ghg_cycle_2) +
-                          Number(values.ghg_cycle_3) +
-                          Number(values.ghg_cycle_4) +
-                          Number(values.ghg_cycle_5)}
+                      {values.registrationRound
+                        ? baseStatic
+                            .slice(0, 5)
+                            .reduce((sum, val) => sum + val, 0)
+                            .toFixed(4)
+                        : Number(fr06Data?.sum_based_emission).toFixed(4) ??
+                          (
+                            Number(values.ghg_cycle_1) +
+                            Number(values.ghg_cycle_2) +
+                            Number(values.ghg_cycle_3) +
+                            Number(values.ghg_cycle_4) +
+                            Number(values.ghg_cycle_5)
+                          ).toFixed(4)}
                     </td>
                     <td className="px-5">
                       {baseStatic
                         .slice(0, 5)
-                        .reduce((sum, val) => sum + val, 0)}
+                        .reduce((sum, val) => sum + val, 0)
+                        .toFixed(4)}
                     </td>
                     <td className="px-5">
-                      {calculateDiff(
-                        baseStatic[0],
-                        Number(values.ghg_cycle_1),
-                        false
-                      ) +
-                        calculateDiff(
-                          baseStatic[1],
-                          Number(values.ghg_cycle_2),
-                          false
-                        ) +
-                        calculateDiff(
-                          baseStatic[2],
-                          Number(values.ghg_cycle_3),
-                          false
-                        ) +
-                        calculateDiff(
-                          baseStatic[3],
-                          Number(values.ghg_cycle_4),
-                          false
-                        ) +
-                        calculateDiff(
-                          baseStatic[4],
-                          Number(values.ghg_cycle_5),
-                          false
-                        )}
+                      {values.registrationRound
+                        ? 0
+                        : (
+                            calculateDiff(
+                              baseStatic[0],
+                              Number(values.ghg_cycle_1),
+                              false
+                            ) +
+                            calculateDiff(
+                              baseStatic[1],
+                              Number(values.ghg_cycle_2),
+                              false
+                            ) +
+                            calculateDiff(
+                              baseStatic[2],
+                              Number(values.ghg_cycle_3),
+                              false
+                            ) +
+                            calculateDiff(
+                              baseStatic[3],
+                              Number(values.ghg_cycle_4),
+                              false
+                            ) +
+                            calculateDiff(
+                              baseStatic[4],
+                              Number(values.ghg_cycle_5),
+                              false
+                            )
+                          ).toFixed(4)}
                     </td>
                     <td className="px-5">
-                      {calculateDiff(
-                        baseStatic[0],
-                        Number(values.ghg_cycle_1),
-                        true
-                      ) +
-                        calculateDiff(
-                          baseStatic[1],
-                          Number(values.ghg_cycle_2),
-                          true
-                        ) +
-                        calculateDiff(
-                          baseStatic[2],
-                          Number(values.ghg_cycle_3),
-                          true
-                        ) +
-                        calculateDiff(
-                          baseStatic[3],
-                          Number(values.ghg_cycle_4),
-                          true
-                        ) +
-                        calculateDiff(
-                          baseStatic[4],
-                          Number(values.ghg_cycle_5),
-                          true
-                        )}
+                      {values.registrationRound
+                        ? 0
+                        : (
+                            calculateDiff(
+                              baseStatic[0],
+                              Number(values.ghg_cycle_1),
+                              true
+                            ) +
+                            calculateDiff(
+                              baseStatic[1],
+                              Number(values.ghg_cycle_2),
+                              true
+                            ) +
+                            calculateDiff(
+                              baseStatic[2],
+                              Number(values.ghg_cycle_3),
+                              true
+                            ) +
+                            calculateDiff(
+                              baseStatic[3],
+                              Number(values.ghg_cycle_4),
+                              true
+                            ) +
+                            calculateDiff(
+                              baseStatic[4],
+                              Number(values.ghg_cycle_5),
+                              true
+                            )
+                          ).toFixed(4)}
                     </td>
                   </tr>
                 </tbody>
@@ -454,6 +502,7 @@ const calculateDiff = (
 ) => {
   let diff = fieldValue - base_value;
   if (isPercentage) {
+    if (fieldValue === 0) return 0;
     diff = (diff / Math.abs(fieldValue)) * 100;
   }
   return diff === Infinity || isNaN(diff) ? Number(0) : Number(diff.toFixed(2));

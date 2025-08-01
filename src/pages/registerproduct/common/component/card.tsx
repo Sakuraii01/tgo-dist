@@ -28,6 +28,11 @@ export const MaterialCardItem = (props: MaterialCardProps) => {
       <div className="flex gap-6">
         <Info title="หน่วย" amount={props.unit} />
         <Info title="ปริมาณ" amount={props.amount} />
+        {props.isLastProduct && (
+          <p className="mt-auto font-medium text-sm ml-auto text-primary">
+            เป็นผลิตภัณฑ์สุดท้าย
+          </p>
+        )}
         {props.type && <Info title="ประเภท" amount={props.type} />}
       </div>
     </div>

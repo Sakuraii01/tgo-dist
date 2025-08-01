@@ -61,6 +61,7 @@ export type ItemTransportType = {
 };
 
 export type ReportSum = {
+  report42_sum_id: number;
   report41_sum_id: number;
   product_id: number;
   sum_lc1_FU_qty: number;
@@ -122,6 +123,7 @@ export type FR04ReportType = {
     }
   ];
   report41Sum: ReportSum[];
+  report42Sum: ReportSum[];
 };
 export type FR04_reportType = {
   form41: {

@@ -11,7 +11,7 @@ const SelectPage = () => {
           className="bg-primary/20 rounded-3xl px-8 hover:bg-primary/30 transition w-fit mx-auto flex gap-3 my-10 cursor-pointer"
           onClick={() => navigate(PROTECTED_PATH.DASHBOARD)}
         >
-          <img src="./World-bro" className="w-60" />
+          <img src="./Climate change-rafiki.svg" className="w-60" />
           <div className="mt-auto mb-9">
             <p className="text-2xl font-bold mt-5 mb-3 text-primary">
               เข้าสู่หน้าหลัก CFP

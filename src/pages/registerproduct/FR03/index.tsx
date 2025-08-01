@@ -9,9 +9,11 @@ import {
   Check,
   CreateRounded,
 } from "@mui/icons-material";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 import { MaterialCardItem } from "../common/component/card";
 import { ProcessStepper } from "../common/component/stepper";
-import { FR03Summary } from "./summary";
+// import { FR03Summary } from "./summary";
 import { FR03Form } from "./form";
 import { Field } from "../../../component/input/field";
 import { Formik } from "formik";
@@ -35,48 +37,60 @@ import FR03FormSchema from "./validation";
 const FR03 = () => {
   const [searchParams] = useSearchParams();
   const id = Number(searchParams.get("id"));
-  const { tab, handleTabChange, handelAddProcess } = useViewModel(id);
+  const {
+    //  tab, handleTabChange,
+    handelAddProcess,
+    loading,
+  } = useViewModel(id);
   const { processData } = useViewModel(id);
   const navigate = useNavigate();
 
   return (
     <div>
       <ProcessStepper isActive={1} id={id} />
-
-      <div className="flex w-fit mx-auto text-xl font-medium text-gray-300">
-        <p
-          onClick={() => handleTabChange(1)}
-          className={`${
-            tab === 1
-              ? "font-bold text-primary border-b-2 border-primary"
-              : "border-b border-gray-300"
-          } px-6 py-2`}
-        >
-          กรอกข้อมูล
-        </p>
-        <p
-          onClick={() => handleTabChange(0)}
-          className={`${
-            tab === 0
-              ? "font-bold text-primary border-b-2 border-primary"
-              : "border-b border-gray-300"
-          } px-6 py-2`}
-        >
-          สรุปผล
-        </p>
-      </div>
-      {tab === 0 ? (
+      {!loading ? (
         <div>
-          <FR03Summary />
+          {/* <div className="flex w-fit mx-auto text-xl font-medium text-gray-300">
+            <p
+              onClick={() => handleTabChange(1)}
+              className={`${
+                tab === 1
+                  ? "font-bold text-primary border-b-2 border-primary"
+                  : "border-b border-gray-300"
+              } px-6 py-2`}
+            >
+              กรอกข้อมูล
+            </p>
+            <p
+              onClick={() => handleTabChange(0)}
+              className={`${
+                tab === 0
+                  ? "font-bold text-primary border-b-2 border-primary"
+                  : "border-b border-gray-300"
+              } px-6 py-2`}
+            >
+              สรุปผล
+            </p>
+          </div> */}
+          {/* {tab === 0 ? (
+            <div>
+              <FR03Summary />
+            </div>
+          ) : ( */}
+          <div>
+            <DraggableList />
+            <AddProcess
+              processId={processData?.length ?? 0}
+              handleAddProcess={handelAddProcess}
+            />
+          </div>
+          {/* )} */}
         </div>
       ) : (
-        <div>
-          <DraggableList />
-          <AddProcess
-            processId={processData?.length ?? 0}
-            handleAddProcess={handelAddProcess}
-          />
-        </div>
+        <Backdrop open>
+          {" "}
+          <CircularProgress color="inherit" />
+        </Backdrop>
       )}
 
       <div className="w-1/3 mx-auto flex gap-4">
@@ -221,6 +235,7 @@ const FR03Item = (props: FR03ItemProps) => {
           <MoreVert />
         </div>
       </div>
+
       <div className="border border-gray-400 rounded-r-md pt-3 w-full">
         <Formik
           initialValues={{ process_name: props.data.process_name ?? "" }}
@@ -345,7 +360,6 @@ const FR03Item = (props: FR03ItemProps) => {
                       props?.data?.input
                         ?.filter((data) => data.input_cat_id === 7)
                         ?.map((data, index) => {
-                          console.log(data);
                           return (
                             <>
                               <FR03Form
@@ -367,6 +381,7 @@ const FR03Item = (props: FR03ItemProps) => {
                                   );
 
                                   setShowform(false);
+                                  setEditIsOpen("close");
                                 }}
                                 showForm={
                                   editIsOpen ===
@@ -426,6 +441,7 @@ const FR03Item = (props: FR03ItemProps) => {
                                   true
                                 );
                                 setShowform(false);
+                                setEditIsOpen("close");
                               }}
                               showForm={
                                 editIsOpen ===
@@ -484,6 +500,7 @@ const FR03Item = (props: FR03ItemProps) => {
                                   true
                                 );
                                 setShowform(false);
+                                setEditIsOpen("close");
                               }}
                               showForm={
                                 editIsOpen ===
@@ -545,6 +562,7 @@ const FR03Item = (props: FR03ItemProps) => {
                               true
                             );
                             setShowform(false);
+                            setEditIsOpen("close");
                           }}
                           showForm={
                             editIsOpen ===
@@ -565,6 +583,7 @@ const FR03Item = (props: FR03ItemProps) => {
                             data?.output_process_id || 0,
                             "intermediate"
                           )}
+                          isLastProduct={data?.finish_output ? true : false}
                         />
                       </>
                     ))
@@ -589,6 +608,34 @@ const FR03Item = (props: FR03ItemProps) => {
                         .filter((data) => data.waste_cat_id === 1)
                         .map((data, index) => (
                           <div>
+                            <FR03Form
+                              initialValues={{
+                                type: "waste",
+                                itemName: data.waste_name,
+                                materialType: data.waste_cat_id,
+                                unit: data.waste_unit,
+                                amount: Number(data.waste_qty),
+                              }}
+                              handleOnClose={() => setEditIsOpen("close")}
+                              handleOnSubmit={(formData, type) => {
+                                handleOnSubmitFR03Item(
+                                  formData,
+                                  type,
+                                  props.data.process_id,
+                                  data.waste_process_id,
+                                  true
+                                );
+                                setShowform(false);
+                                setEditIsOpen("close");
+                              }}
+                              showForm={
+                                editIsOpen ===
+                                `open-waste-${data.process_id}-${
+                                  data?.waste_process_id || 0
+                                }`
+                              }
+                              isUpdate
+                            />
                             <MaterialCardItem
                               key={index}
                               title={data.waste_name}
@@ -615,6 +662,34 @@ const FR03Item = (props: FR03ItemProps) => {
                         .filter((data) => data.waste_cat_id === 2)
                         .map((data, index) => (
                           <div>
+                            <FR03Form
+                              initialValues={{
+                                type: "waste",
+                                itemName: data.waste_name,
+                                materialType: data.waste_cat_id,
+                                unit: data.waste_unit,
+                                amount: Number(data.waste_qty),
+                              }}
+                              handleOnClose={() => setEditIsOpen("close")}
+                              handleOnSubmit={(formData, type) => {
+                                handleOnSubmitFR03Item(
+                                  formData,
+                                  type,
+                                  props.data.process_id,
+                                  data.waste_process_id,
+                                  true
+                                );
+                                setShowform(false);
+                                setEditIsOpen("close");
+                              }}
+                              showForm={
+                                editIsOpen ===
+                                `open-waste-${data.process_id}-${
+                                  data?.waste_process_id || 0
+                                }`
+                              }
+                              isUpdate
+                            />
                             <MaterialCardItem
                               key={index}
                               title={data.waste_name}

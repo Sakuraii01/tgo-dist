@@ -9,10 +9,12 @@ const useViewModel = () => {
   const [selfcollectList, setSelfCollectList] = useState<SelfCollectListType[]>(
     []
   );
+  const [loading, setLoading] = useState(false);
 
   const handleOnSubmitSelfCollectProcess = async (
     entity: SelfCollectProcessEntityType
   ) => {
+    setLoading(true);
     if (entity.company_id === undefined) {
     } else {
       await selfCollectService
@@ -22,14 +24,20 @@ const useViewModel = () => {
         })
         .catch((error) => {
           console.log(error);
+        })
+        .finally(() => {
+          window.location.reload();
         });
     }
-    fetchSelfCollectListData();
+    setLoading(false);
   };
   const fetchSelfCollectListData = async () => {
-    const data = await selfCollectService.reqGetSelfCollectList(1005);
+    setLoading(true);
+    const data = await selfCollectService.reqGetSelfCollectList();
     setSelfCollectList(data);
-    console.log(data);
+
+    new Promise((resolve) => setTimeout(resolve, 1000));
+    setLoading(false);
   };
   useEffect(() => {
     fetchSelfCollectListData();
@@ -38,6 +46,7 @@ const useViewModel = () => {
   return {
     selfcollectList,
     handleOnSubmitSelfCollectProcess,
+    loading,
   };
 };
 export default useViewModel;

@@ -17,24 +17,26 @@ const useViewModel = (id: number) => {
   const [processData, setProcessData] = useState<ProcessType[]>([]);
   const [processId, setProcessId] = useState<string[]>([]);
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const processService = new ProcessService();
   const inputProcessService = new InputProcessService();
   const outputProcessService = new OutputProcessService();
   const wasteProcessService = new WasteProcessService();
 
-  const handleOnSubmitFR03Item = (
+  const handleOnSubmitFR03Item = async (
     entity: any,
     type: "input" | "intermediate" | "waste",
     processId: number,
     dataId?: number,
     isUpdate?: boolean
   ) => {
+    setLoading(true);
     if (isUpdate) {
       if (type === "input") {
         console.log(processId);
 
-        inputProcessService
+        await inputProcessService
           .reqPutInputProcessByID(dataId || 0, {
             process_id: processId,
             input_cat_id: entity.materialType,
@@ -53,10 +55,15 @@ const useViewModel = (id: number) => {
           } as InputProcessType)
           .then((response) => {
             console.log("Input process updated:", response);
-            fetchProcess();
+          })
+          .catch((error) => {
+            console.log(error);
+          })
+          .finally(() => {
+            window.location.reload();
           });
       } else if (type === "intermediate") {
-        outputProcessService
+        await outputProcessService
           .reqPutOutputProcessByID(dataId || 0, {
             process_id: processId,
             output_cat_id: 2,
@@ -68,21 +75,31 @@ const useViewModel = (id: number) => {
           } as OutputProcessType)
           .then((response) => {
             console.log("Output process updated:", response);
-            fetchProcess();
+          })
+          .catch((error) => {
+            console.log(error);
+          })
+          .finally(() => {
+            window.location.reload();
           });
       } else if (type === "waste") {
-        wasteProcessService
+        await wasteProcessService
           .reqPutWasteProcessByID(dataId || 0, entity as WasteProcessType)
           .then((response) => {
             console.log("Waste process updated:", response);
-            fetchProcess();
+          })
+          .catch((error) => {
+            console.log(error);
+          })
+          .finally(() => {
+            window.location.reload();
           });
       } else {
         console.error("Invalid type");
       }
     } else {
       if (type === "input") {
-        inputProcessService
+        await inputProcessService
           .reqPostInputProcess({
             process_id: processId,
             input_cat_id: entity.materialType,
@@ -101,10 +118,12 @@ const useViewModel = (id: number) => {
           } as InputProcessType)
           .then((response) => {
             console.log("New input process added:", response);
-            fetchProcess();
+          })
+          .finally(() => {
+            window.location.reload();
           });
       } else if (type === "intermediate") {
-        outputProcessService
+        await outputProcessService
           .reqPostOutputProcess({
             process_id: processId,
             output_cat_id: 2,
@@ -116,12 +135,17 @@ const useViewModel = (id: number) => {
           })
           .then((response) => {
             console.log("New output process added:", response);
-            fetchProcess();
+          })
+          .catch((error) => {
+            console.error("Error adding output process:", error);
+          })
+          .finally(() => {
+            window.location.reload();
           });
       } else if (type === "waste") {
         console.log(entity);
 
-        wasteProcessService
+        await wasteProcessService
           .reqPostWasteProcess({
             process_id: processId,
             waste_cat_id: entity.materialType,
@@ -132,7 +156,12 @@ const useViewModel = (id: number) => {
           })
           .then((response) => {
             console.log("New waste process added:", response);
-            fetchProcess();
+          })
+          .catch((error) => {
+            console.error("Error adding waste process:", error);
+          })
+          .finally(() => {
+            window.location.reload();
           });
       } else {
         console.error("Invalid type");
@@ -152,15 +181,24 @@ const useViewModel = (id: number) => {
     setTab(newValue);
   };
 
-  const handleChangeOrder = (newOrder: string[]) => {
-    const newProcessData = newOrder.map(
-      (id) => processData.find((p) => String(p.ordering) === id)!
-    );
+  const handleChangeOrder = async (newOrder: string[]) => {
+    const newProcessData = newOrder.map((id, index) => {
+      const item = processData.find((p) => String(p.ordering) === id)!;
+      return { ...item, ordering: index + 1 };
+    });
 
     setProcessId(newOrder);
     setProcessData(newProcessData);
+    newProcessData.map(async (data) => {
+      await processService.reqPutProcessByID(data.process_id, {
+        ordering: data.ordering,
+        process_name: data.process_name,
+      });
+    });
+    // console.log(newProcessData);
   };
   const handelAddProcess = async (ordering: number, newProcess: string) => {
+    setLoading(true);
     await processService
       .reqPostProcess({
         product_id: id,
@@ -170,51 +208,76 @@ const useViewModel = (id: number) => {
       })
       .then((response) => {
         console.log("New process added:", response);
+      })
+      .catch((error) => {
+        console.error("Error adding process:", error);
+      })
+      .finally(() => {
+        window.location.reload();
       });
-    await fetchProcess();
   };
-  const handleUpdateProcess = (processId: number, updatedProcess: string) => {
-    processService
+  const handleUpdateProcess = async (
+    processId: number,
+    updatedProcess: string
+  ) => {
+    setLoading(true);
+    await processService
       .reqPutProcessByID(processId, {
         process_name: updatedProcess,
       })
       .then((response) => {
         console.log("Process updated:", response);
-        fetchProcess();
       })
       .catch((error) => {
         console.error("Error updating process:", error);
+      })
+      .finally(() => {
+        window.location.reload();
       });
   };
-  const handleDeleteProcess = (processId: number) => {
-    processService
+  const handleDeleteProcess = async (processId: number) => {
+    setLoading(true);
+    await processService
       .reqDeleteProcessByID(processId)
       .then((response) => {
         console.log("Process deleted:", response);
-        fetchProcess();
       })
       .catch((error) => {
         console.error("Error deleting process:", error);
+      })
+      .finally(() => {
+        window.location.reload();
       });
   };
   const fetchProcess = async () => {
-    const data = await processService.reqGetProcess(id);
+    setLoading(true);
 
-    setProcessData(data);
-    setProcessId(data?.map((data) => data.ordering.toString()));
+    await processService
+      .reqGetProcess(id)
+      .then((data) => {
+        setProcessData(data);
+        setProcessId(data?.map((data) => data.ordering.toString()));
+        new Promise((resolve) => setTimeout(resolve, 1000));
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   useEffect(() => {
     fetchProcess();
   }, []);
-  useEffect(() => {}, [processId]);
+  // useEffect(() => {}, [processId]);
 
   return {
     processData,
     processId,
     expandedItems,
     tab,
-
+    loading,
     handleTabChange,
     toggleExpanded,
     handleChangeOrder,

@@ -8,6 +8,7 @@ import type {
   TGOVehiclesWithEFType,
   TGOEFDropdownType,
 } from "../../../service/api/dropdown/type";
+import type { SelfCollectListType } from "../../../service/api/selfcollect/type";
 import type { SelfCollectProcessItemType } from "../../../service/api/selfcollect/type";
 import { SelfCollectService } from "../../../service/api/selfcollect";
 import { ExpandCircleDownOutlined } from "@mui/icons-material";
@@ -95,20 +96,26 @@ type processItemType = {
   addItem: boolean;
   handleCancleAdd?: (item: "input" | "output") => void;
   handleSubmit: (values: any, item_id?: number) => void;
+  handleDelete: (item_id: number) => void;
 };
 
 export const IOItem = (props: processItemType) => {
-  const { tgoEfDropdown, tgoVehicles, vehiclesDropdown, unitsDropdown } =
-    dropdown();
+  const {
+    tgoEfDropdown,
+    tgoVehicles,
+    vehiclesDropdown,
+    unitsDropdown,
+    selfCollectDropdown,
+  } = dropdown();
   const selfCollectService = new SelfCollectService();
-  const [open, setOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(true);
   const [isEdit, setIsEdit] = useState<boolean>(props.addItem);
   const [initialValues, setInitialValues] =
     useState<SelfCollectProcessItemType>({
       cfp_report43_selfcollect_efs_id: 0,
       self_collect_id: 0,
       item_name: "",
-      item_type: "input",
+      item_type: props.item_type,
       item_unit: "",
       item_qty: "",
       item_fu_qty: "",
@@ -184,7 +191,6 @@ export const IOItem = (props: processItemType) => {
             transport_type: "",
             add_on_detail: "",
           });
-          console.log(data);
         })
         .catch((err) => console.log(err));
     }
@@ -196,23 +202,102 @@ export const IOItem = (props: processItemType) => {
     fetchItemData();
   }, [open]);
   return (
-    <div className="border px-5 py-3 rounded mb-5">
+    <div className="border border-gray-200/30 px-5 py-3 rounded mb-5">
       <Formik
         initialValues={initialValues}
         enableReinitialize
-        onSubmit={(values) => props.handleSubmit(values, props.item_id)}
+        onSubmit={(values) => {
+          const ef =
+            values.item_ef_source === "TGO EF"
+              ? tgoEfDropdown?.find(
+                  (data) => data.ef_id === Number(values.item_ef_source_ref)
+                )?.ef
+              : values.item_ef_source === "Self collect"
+              ? selfCollectDropdown?.find(
+                  (data) =>
+                    data.self_collect_id === Number(values.item_ef_source_ref)
+                )?.self_collect_ef
+              : values.item_ef;
+
+          const transport_outboune_ef =
+            values.type2_ef_source === "TG_ef"
+              ? tgoVehicles.find(
+                  (vehicles) => vehicles.ef_id === Number(values.type2_vehicle)
+                )?.ef
+              : values.type2_outbound_ef;
+          const transport_return_ef =
+            values.type2_ef_source === "TG_ef"
+              ? tgoVehicles.find(
+                  (vehicles) =>
+                    vehicles.ef_id === Number(values.type2_vehicle_return)
+                )?.ef
+              : values.type2_return_ef;
+
+          const item_e = Number(values.item_fu_qty) * Number(ef);
+          const transport_e =
+            Number(values.item_fu_qty) *
+            (Number(transport_outboune_ef) + Number(transport_return_ef));
+
+          props.handleSubmit(
+            {
+              ...values,
+              transport_emission: transport_e,
+              item_emission: item_e,
+              total_emission: transport_e + item_e,
+              item_ef: ef,
+              type2_ef_source_ref:
+                values.type2_ef_source === "TG_ef"
+                  ? tgoVehicles.find(
+                      (vehicles) =>
+                        vehicles.ef_id === Number(values.type2_vehicle)
+                    )?.ef_source_ref
+                  : values.type2_ef_source_ref,
+
+              type2_outbound_ef: transport_outboune_ef,
+              type2_outbound_load:
+                values.type2_ef_source === "TG_ef"
+                  ? Math.round(
+                      Number(values.type2_distance) *
+                        Number(values.item_fu_qty) *
+                        10000
+                    ) / 10000
+                  : values.type2_outbound_load,
+              type2_return_ef: transport_return_ef,
+              type2_return_load:
+                values.type2_ef_source === "TG_ef"
+                  ? (() => {
+                      const itemDetail =
+                        vehiclesDropdown.find(
+                          (data) =>
+                            String(data.ef_id) ===
+                            String(values.type2_vehicle_return)
+                        )?.item_detail ?? "";
+                      const weight = extractWeightFromDetail(itemDetail) ?? 0;
+                      const tkm =
+                        Math.round(
+                          Number(values.type2_distance) *
+                            Number(values.item_fu_qty) *
+                            10000
+                        ) / 10000;
+                      return weight !== null ? weight * tkm : "-";
+                    })()
+                  : values.type2_return_load,
+            },
+            props.item_id
+          );
+        }}
       >
         {({ handleSubmit, values }) => (
           <Form onSubmit={handleSubmit}>
             <div>
               <div
-                className={`flex justify-between ${
-                  open ? "border-b pb-3" : ""
+                className={` flex justify-between ${
+                  open ? "border-b border-gray-200/30 pb-3" : ""
                 }`}
               >
                 {!isEdit ? (
                   <div className="flex">
-                    <p className="font-semibold text-lg my-auto">
+                    <p className="text-primary font-semibold text-xl my-1.5">
                       {props?.initialValue?.processName}
                     </p>
                   </div>
@@ -241,277 +326,327 @@ export const IOItem = (props: processItemType) => {
               {open &&
                 (isEdit ? (
                   <div className="mt-5">
-                    <div>
-                      <p className="font-semibold mb-2 text-lg">
-                        การประเมินการปล่อยก๊าซเรือนกระจกจากวัตถุดิบ
-                      </p>
-                      <div id="lci">
-                        <p>LCI</p>
-                        <div className="flex gap-4 mb-4">
-                          <Field
-                            name={`item_qty`}
-                            placeholder={"ปริมาณ"}
-                            label={"ปริมาณ"}
-                            type="number"
-                          />
-                          <AutoCompleteField
-                            items={unitsDropdown.map((units) => ({
-                              label: units,
-                              value: units,
-                            }))}
-                            name={`item_unit`}
-                            placeholder={"หน่วย"}
-                            label={"หน่วย"}
-                          />
-                          <Field
-                            name={`item_fu_qty`}
-                            placeholder={"ปริมาณ ton/FU"}
-                            label={"ปริมาณ ton/FU"}
-                          />
-                          <Field
-                            name={`item_source`}
-                            placeholder={"แหล่งที่มาของ LCI"}
-                            label={"แหล่งที่มาของ LCI"}
-                          />
-                        </div>
-                      </div>
-                      <div id="ef">
-                        <p>EF</p>
-                        <div className="flex gap-4 mb-4">
-                          <div className="w-40">
-                            <AutoCompleteField
-                              items={EF}
-                              name={`item_ef_source`}
-                              label="ที่มาของค่า EF"
-                            />
-                          </div>
-                          <div className="w-80">
-                            {tgoEfDropdown &&
-                            values.item_ef_source === "TGO EF" ? (
-                              <AutoCompleteField
-                                name={`item_ef_source_ref`}
-                                label="แหล่งอ้างอิง EF"
-                                placeholder="แหล่งอ้างอิง EF"
-                                items={tgoEfDropdown.map((item) => ({
-                                  label: item.item_detail,
-                                  value: item.ef_id,
-                                }))}
-                              />
-                            ) : (
-                              <Field
-                                name={`item_ef_source_ref`}
-                                label="แหล่งอ้างอิง EF"
-                                placeholder="แหล่งอ้างอิง EF"
-                              />
-                            )}
-                          </div>
-
-                          <div>
-                            {values.item_ef_source === "TGO EF" ? (
-                              <div>
-                                <p className="text-sm text-gray-300">ค่า EF</p>
-                                <p>
-                                  {tgoEfDropdown?.find(
-                                    (data) =>
-                                      data.ef_id ===
-                                      Number(values.item_ef_source_ref)
-                                  )?.ef ?? "-"}
-                                </p>
-                              </div>
-                            ) : (
-                              <Field
-                                name="item_ef"
-                                label="ค่า EF"
-                                placeholder="ค่า EF"
-                                type="number"
-                              />
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div id="transportation">
-                      <p className="font-semibold mb-2 text-lg">
-                        การประเมินการปล่อยก๊าซเรือนกระจกจากการขนส่ง
-                      </p>
-                      <p>การขนส่ง แบบการใช้ระยะทาง</p>
+                    <section className="p-6 mb-4 border border-stroke bg-white shadow-inner rounded-lg">
                       <div>
-                        <div className="flex gap-3">
-                          <div className="w-52">
+                        <p className="font-semibold mb-6 text-lg text-primary">
+                          การประเมินการปล่อยก๊าซเรือนกระจกจากวัตถุดิบ
+                        </p>
+                        <div id="lci">
+                          <p className="font-semibold mb-2 text-lg text-primary">
+                            LCI
+                          </p>
+                          <div className="flex gap-4 mb-4">
                             <Field
-                              name={`type2_distance`}
-                              placeholder={"ระยะทาง (km)"}
-                              label={"ระยะทาง (km)"}
+                              name={`item_qty`}
+                              placeholder={"ปริมาณ"}
+                              label={"ปริมาณ"}
                               type="number"
                             />
-                          </div>
-                        </div>
-
-                        <div className="flex gap-3">
-                          <div className="w-40">
                             <AutoCompleteField
-                              items={VehicalsEF}
-                              name="type2_ef_source"
-                              label="ที่มาของค่า EF"
+                              items={unitsDropdown.map((units) => ({
+                                label: units,
+                                value: units,
+                              }))}
+                              name={`item_unit`}
+                              placeholder={"หน่วย"}
+                              label={"หน่วย"}
+                            />
+                            <Field
+                              name={`item_fu_qty`}
+                              placeholder={"ปริมาณ ton/FU"}
+                              label={"ปริมาณ ton/FU"}
+                            />
+                            <Field
+                              name={`item_source`}
+                              placeholder={"แหล่งที่มาของ LCI"}
+                              label={"แหล่งที่มาของ LCI"}
                             />
                           </div>
-                          <div className="w-80">
-                            {tgoVehicles &&
-                            values.type2_ef_source === "TG_ef" ? (
+                        </div>
+                        <div id="ef">
+                          <p className="font-semibold mb-2 text-lg text-primary">
+                            EF
+                          </p>
+                          <div className="flex gap-4 mb-4">
+                            <div className="w-40">
                               <AutoCompleteField
-                                items={tgoVehicles.map((data) => {
-                                  return {
-                                    label: data.item,
-                                    value: data.ef_id,
-                                  };
-                                })}
-                                name="type2_vehicle"
-                                label="ประเภทพาหนะเที่ยวไป"
-                                placeholder="ประเภทพาหนะเที่ยวไป"
+                                items={EF}
+                                name={`item_ef_source`}
+                                label="ที่มาของค่า EF"
                               />
-                            ) : (
-                              <Field
-                                name="type2_vehicle"
-                                label="ประเภทพาหนะเที่ยวไป"
-                                placeholder="ประเภทพาหนะเที่ยวไป"
-                              />
-                            )}
-                          </div>
-                          <div className="w-80">
-                            {tgoVehicles &&
-                            values.type2_ef_source === "TG_ef" ? (
-                              <AutoCompleteField
-                                items={tgoVehicles.map((data) => {
-                                  return {
-                                    label: data.item,
-                                    value: data.ef_id,
-                                  };
-                                })}
-                                name="type2_vehicle_return"
-                                label="ประเภทพาหนะเที่ยวกลับ"
-                                placeholder="ประเภทพาหนะเที่ยวกลับ"
-                              />
-                            ) : (
-                              <Field
-                                name="type2_vehicle_return"
-                                label="ประเภทพาหนะเที่ยวกลับ"
-                                placeholder="ประเภทพาหนะเที่ยวกลับ"
-                              />
-                            )}
+                            </div>
+                            <div className="w-80">
+                              {tgoEfDropdown &&
+                              values.item_ef_source === "TGO EF" ? (
+                                <AutoCompleteField
+                                  name={`item_ef_source_ref`}
+                                  label="แหล่งอ้างอิง EF"
+                                  placeholder="แหล่งอ้างอิง EF"
+                                  items={tgoEfDropdown.map((item) => ({
+                                    label: item.item_detail,
+                                    value: item.ef_id,
+                                  }))}
+                                />
+                              ) : selfCollectDropdown &&
+                                values.item_ef_source === "Self collect" ? (
+                                <AutoCompleteField
+                                  name="ef_source_ref"
+                                  label="แหล่งอ้างอิง EF"
+                                  placeholder="แหล่งอ้างอิง EF"
+                                  items={selfCollectDropdown.map((item) => ({
+                                    label:
+                                      item.self_collect_name +
+                                      " (EF = " +
+                                      item.self_collect_ef +
+                                      ")",
+                                    value: item.self_collect_id,
+                                  }))}
+                                />
+                              ) : (
+                                <Field
+                                  name={`item_ef_source_ref`}
+                                  label="แหล่งอ้างอิง EF"
+                                  placeholder="แหล่งอ้างอิง EF"
+                                />
+                              )}
+                            </div>
+
+                            <div>
+                              {values.item_ef_source === "TGO EF" ? (
+                                <div>
+                                  <p className="text-sm text-gray-300">
+                                    ค่า EF
+                                  </p>
+                                  <p>
+                                    {tgoEfDropdown?.find(
+                                      (data) =>
+                                        data.ef_id ===
+                                        Number(values.item_ef_source_ref)
+                                    )?.ef || "-"}
+                                  </p>
+                                </div>
+                              ) : values.item_ef_source === "Self collect" ? (
+                                <div>
+                                  <p className="text-sm text-gray-300">
+                                    ค่า EF
+                                  </p>
+                                  <p>
+                                    {selfCollectDropdown?.find(
+                                      (data) =>
+                                        data.self_collect_id ===
+                                        Number(values.item_ef_source_ref)
+                                    )?.self_collect_ef || "-"}
+                                  </p>
+                                </div>
+                              ) : (
+                                <Field
+                                  name="item_ef"
+                                  label="ค่า EF"
+                                  placeholder="ค่า EF"
+                                  type="number"
+                                />
+                              )}
+                            </div>
                           </div>
                         </div>
-                        <div className="flex gap-3">
-                          <div>
-                            <p>ภาระบรรทุกขาไป (tkm)</p>
-                            <p>
-                              {Math.round(
-                                Number(values.type2_distance) *
-                                  Number(values.item_fu_qty) *
-                                  10000
-                              ) / 10000}
-                            </p>
+                      </div>
+                    </section>
+                    <section className="p-6 mb-4 border border-stroke bg-white shadow-inner rounded-lg">
+                      <div id="transportation">
+                        <p className="font-semibold text-lg text-primary">
+                          การประเมินการปล่อยก๊าซเรือนกระจกจากการขนส่ง
+                        </p>
+                        <p className="mb-6 italic text-gray-300">
+                          การขนส่ง แบบการใช้ระยะทาง
+                        </p>
+                        <div>
+                          <div className="flex gap-3">
+                            <div className="w-52">
+                              <Field
+                                name={`type2_distance`}
+                                placeholder={"ระยะทาง (km)"}
+                                label={"ระยะทาง (km)"}
+                                type="number"
+                              />
+                            </div>
                           </div>
-                          <div>
-                            <p>ภาระบรรทุกขากลับ (tkm)</p>
-                            <p>
-                              {(() => {
-                                const itemDetail =
-                                  vehiclesDropdown.find(
-                                    (data) =>
-                                      String(data.ef_id) ===
-                                      String(values.type2_vehicle_return)
-                                  )?.item_detail ?? "";
-                                const weight =
-                                  extractWeightFromDetail(itemDetail) ?? 0;
-                                const tkm =
-                                  Math.round(
+
+                          <div className="flex gap-3">
+                            <div className="w-40">
+                              <AutoCompleteField
+                                items={VehicalsEF}
+                                name="type2_ef_source"
+                                label="ที่มาของค่า EF"
+                              />
+                            </div>
+                            <div className="w-80">
+                              {tgoVehicles &&
+                              values.type2_ef_source === "TG_ef" ? (
+                                <AutoCompleteField
+                                  items={tgoVehicles.map((data) => {
+                                    return {
+                                      label: data.item,
+                                      value: data.ef_id,
+                                    };
+                                  })}
+                                  name="type2_vehicle"
+                                  label="ประเภทพาหนะเที่ยวไป"
+                                  placeholder="ประเภทพาหนะเที่ยวไป"
+                                />
+                              ) : (
+                                <Field
+                                  name="type2_vehicle"
+                                  label="ประเภทพาหนะเที่ยวไป"
+                                  placeholder="ประเภทพาหนะเที่ยวไป"
+                                />
+                              )}
+                            </div>
+                            <div className="w-80">
+                              {tgoVehicles &&
+                              values.type2_ef_source === "TG_ef" ? (
+                                <AutoCompleteField
+                                  items={tgoVehicles.map((data) => {
+                                    return {
+                                      label: data.item,
+                                      value: data.ef_id,
+                                    };
+                                  })}
+                                  name="type2_vehicle_return"
+                                  label="ประเภทพาหนะเที่ยวกลับ"
+                                  placeholder="ประเภทพาหนะเที่ยวกลับ"
+                                />
+                              ) : (
+                                <Field
+                                  name="type2_vehicle_return"
+                                  label="ประเภทพาหนะเที่ยวกลับ"
+                                  placeholder="ประเภทพาหนะเที่ยวกลับ"
+                                />
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex gap-3 w-2/3">
+                            {values.type2_ef_source === "TG_ef" ? (
+                              <div>
+                                <p>ภาระบรรทุกขาไป (tkm)</p>
+                                <p>
+                                  {Math.round(
                                     Number(values.type2_distance) *
                                       Number(values.item_fu_qty) *
                                       10000
-                                  ) / 10000;
-                                return weight !== null ? weight * tkm : "-";
-                              })()}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex gap-4">
-                          <div className="w-80">
-                            {values.type2_ef_source === "TG_ef" ? (
-                              <div>
-                                <p className="text-sm text-gray-300">
-                                  แหล่งอ้างอิง EF
-                                </p>
-                                <p>
-                                  {
-                                    tgoVehicles.find(
-                                      (vehicles) =>
-                                        vehicles.ef_id ===
-                                        Number(values.type2_vehicle)
-                                    )?.ef_source_ref
-                                  }
+                                  ) / 10000}
                                 </p>
                               </div>
                             ) : (
                               <Field
-                                name="type2_ef_source_ref"
-                                label="แหล่งอ้างอิง EF"
-                                placeholder="แหล่งอ้างอิง EF"
+                                name="type2_outbound_load"
+                                label="ภาระบรรทุกขาไป (tkm)"
+                                placeholder="ภาระบรรทุกขาไป (tkm)"
                               />
                             )}
-                          </div>
-                          <div className="w-40">
                             {values.type2_ef_source === "TG_ef" ? (
                               <div>
-                                <p className="text-sm text-gray-300">
-                                  ค่า EF เที่ยวไป
-                                </p>
+                                <p>ภาระบรรทุกขากลับ (tkm)</p>
                                 <p>
-                                  {
-                                    tgoVehicles.find(
-                                      (vehicles) =>
-                                        vehicles.ef_id ===
-                                        Number(values.type2_vehicle)
-                                    )?.ef
-                                  }
+                                  {(() => {
+                                    const itemDetail =
+                                      vehiclesDropdown.find(
+                                        (data) =>
+                                          String(data.ef_id) ===
+                                          String(values.type2_vehicle_return)
+                                      )?.item_detail ?? "";
+                                    const weight =
+                                      extractWeightFromDetail(itemDetail) ?? 0;
+                                    const tkm =
+                                      Math.round(
+                                        Number(values.type2_distance) *
+                                          Number(values.item_fu_qty) *
+                                          10000
+                                      ) / 10000;
+                                    return weight !== null ? weight * tkm : "-";
+                                  })()}
                                 </p>
                               </div>
                             ) : (
                               <Field
-                                label="ค่า EF เที่ยวไป"
-                                placeholder="ค่า EF เที่ยวไป"
-                                name={`type2_outbound_ef`}
-                                type="number"
+                                name="type2_return_load"
+                                label="ภาระบรรทุกขากลับ (tkm)"
+                                placeholder="ภาระบรรทุกขากลับ (tkm)"
                               />
                             )}
                           </div>
-                          <div className="w-40">
-                            {values.type2_ef_source === "TG_ef" ? (
-                              <div>
-                                <p className="text-sm text-gray-300">
-                                  ค่า EF เที่ยวกลับ
-                                </p>
-                                <p>
-                                  {
-                                    tgoVehicles.find(
+                          <div className="flex gap-4">
+                            <div className="w-80">
+                              {values.type2_ef_source === "TG_ef" ? (
+                                <div>
+                                  <p className="text-sm text-gray-300">
+                                    แหล่งอ้างอิง EF
+                                  </p>
+                                  <p>
+                                    {tgoVehicles.find(
+                                      (vehicles) =>
+                                        vehicles.ef_id ===
+                                        Number(values.type2_vehicle)
+                                    )?.ef_source_ref || "-"}
+                                  </p>
+                                </div>
+                              ) : (
+                                <Field
+                                  name="type2_ef_source_ref"
+                                  label="แหล่งอ้างอิง EF"
+                                  placeholder="แหล่งอ้างอิง EF"
+                                />
+                              )}
+                            </div>
+                            <div className="w-40">
+                              {values.type2_ef_source === "TG_ef" ? (
+                                <div>
+                                  <p className="text-sm text-gray-300">
+                                    ค่า EF เที่ยวไป
+                                  </p>
+                                  <p>
+                                    {tgoVehicles.find(
+                                      (vehicles) =>
+                                        vehicles.ef_id ===
+                                        Number(values.type2_vehicle)
+                                    )?.ef || "-"}
+                                  </p>
+                                </div>
+                              ) : (
+                                <Field
+                                  label="ค่า EF เที่ยวไป"
+                                  placeholder="ค่า EF เที่ยวไป"
+                                  name={`type2_outbound_ef`}
+                                  type="number"
+                                />
+                              )}
+                            </div>
+                            <div className="w-40">
+                              {values.type2_ef_source === "TG_ef" ? (
+                                <div>
+                                  <p className="text-sm text-gray-300">
+                                    ค่า EF เที่ยวกลับ
+                                  </p>
+                                  <p>
+                                    {tgoVehicles.find(
                                       (vehicles) =>
                                         vehicles.ef_id ===
                                         Number(values.type2_vehicle_return)
-                                    )?.ef
-                                  }
-                                </p>
-                              </div>
-                            ) : (
-                              <Field
-                                label="ค่า EF เที่ยวกลับ"
-                                placeholder="ค่า EF เที่ยวกลับ"
-                                name={`type2_return_ef`}
-                                type="number"
-                              />
-                            )}
+                                    )?.ef || "-"}
+                                  </p>
+                                </div>
+                              ) : (
+                                <Field
+                                  label="ค่า EF เที่ยวกลับ"
+                                  placeholder="ค่า EF เที่ยวกลับ"
+                                  name={`type2_return_ef`}
+                                  type="number"
+                                />
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </section>
 
                     <div className="mt-5 my-2 ml-auto w-fit flex gap-3 h-fit">
                       <button
@@ -535,109 +670,159 @@ export const IOItem = (props: processItemType) => {
                     </div>
                   </div>
                 ) : (
-                  <div className="mt-5 ">
-                    <div className="flex gap-10">
-                      <div>
-                        <p>ปริมาณ</p>
-                        <p>{initialValues.item_qty}</p>
+                  <div className="mt-5 font-medium">
+                    <section className="p-6 mb-4 border border-stroke bg-white shadow-inner rounded-lg">
+                      <p className="font-semibold mb-6 text-lg text-primary">
+                        การประเมินการปล่อยก๊าซเรือนกระจกจากวัตถุดิบ
+                      </p>
+                      <div className="flex gap-10">
+                        <div>
+                          <p className="text-sm text-gray-300">ปริมาณ</p>
+                          <p>
+                            {Number(initialValues.item_qty).toFixed(4) || "-"}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-300">หน่วย</p>
+                          <p>{initialValues.item_unit || "-"}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-300">ปริมาณ ton/FU</p>
+                          <p>
+                            {Number(initialValues.item_fu_qty).toFixed(4) ||
+                              "-"}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-300">
+                            แหล่งที่มาของ LCI
+                          </p>
+                          <p>{initialValues.item_source || "-"}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p>หน่วย</p>
-                        <p>{initialValues.item_unit}</p>
+                      <div className="flex gap-10 mt-5">
+                        <div>
+                          <p className="text-sm text-gray-300">
+                            ที่มาของค่า EF
+                          </p>
+                          <p>{initialValues.item_ef_source || "-"}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-300">
+                            แหล่งอ้างอิง EF
+                          </p>
+                          <p>{initialValues.item_ef_source_ref || "-"}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-300">EF</p>
+                          <p>
+                            {Number(initialValues.item_ef).toFixed(4) || "-"}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p>ปริมาณ ton/FU</p>
-                        <p>{initialValues.item_fu_qty}</p>
+                    </section>
+                    <section className="p-6 mb-4 border border-stroke bg-white shadow-inner rounded-lg">
+                      <p className="font-semibold  text-lg text-primary">
+                        การประเมินการปล่อยก๊าซเรือนกระจกจากการขนส่ง
+                      </p>
+                      <p className="mb-6 italic text-gray-300">
+                        การขนส่ง แบบการใช้ระยะทาง
+                      </p>
+                      <div className="flex gap-10 mt-5 ">
+                        <div>
+                          <p className="text-sm text-gray-300">ระยะทาง (km)</p>
+                          <p>{initialValues.type2_distance || "-"}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-300">
+                            ที่มาของค่า EF
+                          </p>
+                          <p>
+                            {VehicalsEF.find(
+                              (data) =>
+                                initialValues.type2_ef_source === data.value
+                            )?.label || "-"}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p>แหล่งที่มาของ LCI</p>
-                        <p>{initialValues.item_source}</p>
+                      <div className="flex gap-10 mt-5">
+                        <div>
+                          <p className="text-sm text-gray-300">
+                            ประเภทพาหนะเที่ยวไป
+                          </p>
+                          <p>{initialValues.type2_vehicle || "-"}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-300">
+                            ประเภทพาหนะเที่ยวกลับ
+                          </p>
+                          <p>{initialValues.type2_vehicle_return || "-"}</p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex gap-10 mt-5">
-                      <div>
-                        <p>ที่มาของค่า EF</p>
-                        <p>{initialValues.item_ef_source}</p>
+                      <div className="flex gap-10 mt-5">
+                        <div>
+                          <p className="text-sm text-gray-300">
+                            ภาระบรรทุกขาไป (tkm)
+                          </p>
+                          <p>{initialValues.type2_outbound_load || "-"}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-300">
+                            ภาระบรรทุกขากลับ (km)
+                          </p>
+                          <p>{initialValues.type2_return_load || "-"}</p>
+                        </div>
+                        {/* <div>
+                          <p className="text-sm text-gray-300">% เที่ยวไป</p>
+                          <p>
+                            {initialValues.type2_outbound_load_percent || "-"}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-300">% เที่ยวกลับ</p>
+                          <p>
+                            {initialValues.type2_return_load_percent || "-"}
+                          </p>
+                        </div> */}
+                      </div>{" "}
+                      <div className="flex gap-10 mt-5">
+                        <div>
+                          <p className="text-sm text-gray-300">
+                            แหล่งอ้างอิง EF
+                          </p>
+                          <p>{initialValues.type2_ef_source_ref || "-"}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-300">
+                            ค่า EF เที่ยวไป
+                          </p>
+                          <p>{initialValues.type2_outbound_ef || "-"}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-300">
+                            ค่า EF เที่ยวกลับ
+                          </p>
+                          <p>{initialValues.type2_return_ef || "-"}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p>แหล่งอ้างอิง EF</p>
-                        <p>{initialValues.item_ef_source_ref}</p>
-                      </div>
-                      <div>
-                        <p>EF</p>
-                        <p>{initialValues.item_ef}</p>
-                      </div>
-                    </div>
-                    <p className="font-semibold mb-2 text-lg mt-5">
-                      การประเมินการปล่อยก๊าซเรือนกระจกจากการขนส่ง
-                    </p>
-                    <p>การขนส่ง แบบการใช้ระยะทาง</p>
-                    <div className="flex gap-10 mt-5">
-                      <div>
-                        <p>ระยะทาง (km)</p>
-                        <p>{initialValues.type2_distance}</p>
-                      </div>
-                      <div>
-                        <p>ที่มาของค่า EF</p>
-                        <p>{initialValues.type2_ef_source}</p>
-                      </div>
-                    </div>
-                    <div className="flex gap-10 mt-5">
-                      <div>
-                        <p>ประเภทพาหนะเที่ยวไป</p>
-                        <p>{initialValues.type2_vehicle}</p>
-                      </div>
-                      <div>
-                        <p>ประเภทพาหนะเที่ยวกลับ</p>
-                        <p>{initialValues.type2_vehicle_return}</p>
-                      </div>
-                    </div>
-                    <div className="flex gap-10 mt-5">
-                      <div>
-                        <p>ภาระบรรทุกขาไป (tkm)</p>
-                        <p>{initialValues.type2_outbound_load}</p>
-                      </div>
-                      <div>
-                        <p>ภาระบรรทุกขากลับ (km)</p>
-                        <p>{initialValues.type2_return_load}</p>
-                      </div>
-                      <div>
-                        <p>% เที่ยวไป</p>
-                        <p>{initialValues.type2_outbound_load_percent}</p>
-                      </div>
-                      <div>
-                        <p>% เที่ยวกลับ</p>
-                        <p>{initialValues.type2_return_load_percent}</p>
-                      </div>
-                    </div>{" "}
-                    <div className="flex gap-10 mt-5">
-                      <div>
-                        <p>แหล่งอ้างอิง EF</p>
-                        <p>{initialValues.type2_ef_source_ref}</p>
-                      </div>
-                      <div>
-                        <p>ค่า EF เที่ยวไป</p>
-                        <p>{initialValues.type2_outbound_ef}</p>
-                      </div>
-                      <div>
-                        <p>ค่า EF เที่ยวกลับ</p>
-                        <p>{initialValues.type2_return_ef}</p>
-                      </div>
-                    </div>
+                    </section>
                     <div className="mt-5 my-2 ml-auto w-fit flex gap-3 h-fit">
-                      <button
-                        className="secondary-button px-6 py-2"
-                        type="button"
-                        //   onClick={() => setIsEditProcess(false)}
-                      >
-                        ลบรายการ
-                      </button>
                       <button
                         className="primary-button px-6 py-2"
                         type="button"
                         onClick={() => setIsEdit(true)}
                       >
                         แก้ไข
+                      </button>
+                      <button
+                        className="secondary-button px-6 py-2"
+                        type="button"
+                        onClick={() =>
+                          props.item_id ? props.handleDelete(props.item_id) : ""
+                        }
+                        //   onClick={() => setIsEditProcess(false)}
+                      >
+                        ลบรายการ
                       </button>
                     </div>
                   </div>
@@ -655,6 +840,7 @@ const dropdown = () => {
   const tGOEFDropdownService = new TGOEFDropdownService();
   const unitsDropdownService = new UnitsDropdownService();
   const vehiclesDropdownService = new TGOVehiclesService();
+  const selfCollectService = new SelfCollectService();
 
   const [tgoEfDropdown, setTgoEfDropdown] = useState<
     TGOEFDropdownType[] | null
@@ -663,6 +849,9 @@ const dropdown = () => {
   const [unitsDropdown, setUnitsDropdown] = useState<string[]>([]);
   const [vehiclesDropdown, setVehiclesDropdown] = useState<
     TGOVehiclesWithEFType[]
+  >([]);
+  const [selfCollectDropdown, setSelfCollectDropdown] = useState<
+    SelfCollectListType[]
   >([]);
 
   const fetchUnitsDropdown = async () => {
@@ -692,9 +881,19 @@ const dropdown = () => {
       .catch((error) => {
         console.log(error);
       });
+    selfCollectService
+      .reqGetSelfCollectList()
+      .then((res) => setSelfCollectDropdown(res))
+      .catch((err) => console.log(err));
   }, []);
 
-  return { tgoEfDropdown, tgoVehicles, vehiclesDropdown, unitsDropdown };
+  return {
+    tgoEfDropdown,
+    tgoVehicles,
+    vehiclesDropdown,
+    unitsDropdown,
+    selfCollectDropdown,
+  };
 };
 const VehicalsEF = [
   { label: "TGO EF", value: "TG_ef" },

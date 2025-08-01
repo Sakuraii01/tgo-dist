@@ -153,6 +153,17 @@ const AutoCompleteField = ({
         setValue(newValue?.value);
       }}
       value={selectedOption}
+      renderOption={(props, option, { index }) => (
+        <li
+          {...props}
+          key={index}
+          style={{
+            backgroundColor: index % 2 === 0 ? "white" : "#f7f7f7",
+          }}
+        >
+          {option.label}
+        </li>
+      )}
       renderInput={(params) => (
         <TextField
           {...params}

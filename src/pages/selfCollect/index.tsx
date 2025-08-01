@@ -7,54 +7,64 @@ import { useState } from "react";
 import { Popup } from "../../component/layout";
 import { Formik, Form } from "formik";
 import { Field } from "../../component/input/field";
+import { Backdrop, CircularProgress } from "@mui/material";
+
 const SelfCollect = () => {
   const navigate = useNavigate();
-  const { selfcollectList } = useViewModel();
+  const { selfcollectList, loading } = useViewModel();
   return (
-    <div>
-      <Navbar />
-      <BreadcrumbNav step={"Self Collect"} />
-      <div className="max-w-5xl mx-auto">
-        <div className="flex justify-between mt-20">
-          <h4 className="text-xl font-bold">
-            ข้อมูลค่า EF ที่กำหนดเอง (FR04.3)
-          </h4>
-          <CreateSelfCollect />
+    <>
+      {!loading ? (
+        <div>
+          <Navbar />
+          <BreadcrumbNav step={"Self Collect"} />
+          <div className="max-w-5xl mx-auto">
+            <div className="flex justify-between mt-20">
+              <h4 className="text-xl font-bold">
+                ข้อมูลค่า EF ที่กำหนดเอง (FR04.3)
+              </h4>
+              <CreateSelfCollect />
+            </div>
+            <table className="w-full my-10 text-left rounded-3xl">
+              <thead className="bg-primary text-white font-bold rounded-3xl">
+                <tr className="px-3 rounede-3xl">
+                  <th className="ps-3 py-2">ขื่อกระบวนการ</th>
+                  <th>ค่า EF (kgCO2 eq./หน่วย)</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {selfcollectList.map((data) => (
+                  <tr key={data.self_collect_id}>
+                    <td className="ps-3 py-4">{data.self_collect_name}</td>
+                    <td>{data.self_collect_ef}</td>
+                    <td>
+                      <div className="flex gap-3 justify-end mr-10">
+                        <button
+                          onClick={() =>
+                            navigate(
+                              PROTECTED_PATH.CREATE_SELF_COLLECT +
+                                `?id=${data.self_collect_id}`
+                            )
+                          }
+                        >
+                          <Edit fontSize="small" />
+                        </button>
+                        <Delete fontSize="small" />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-        <table className="w-full my-10 text-left rounded-3xl">
-          <thead className="bg-primary text-white font-bold rounded-3xl">
-            <tr className="px-3 rounede-3xl">
-              <th className="ps-3 py-2">ขื่อกระบวนการ</th>
-              <th>ค่า EF (kgCO2 eq./หน่วย)</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {selfcollectList.map((data) => (
-              <tr key={data.self_collect_id}>
-                <td className="ps-3 py-4">{data.self_collect_name}</td>
-                <td>{data.self_collect_ef}</td>
-                <td>
-                  <div className="flex gap-3 justify-end mr-10">
-                    <button
-                      onClick={() =>
-                        navigate(
-                          PROTECTED_PATH.CREATE_SELF_COLLECT +
-                            `?id=${data.self_collect_id}`
-                        )
-                      }
-                    >
-                      <Edit fontSize="small" />
-                    </button>
-                    <Delete fontSize="small" />
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+      ) : (
+        <Backdrop open>
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      )}
+    </>
   );
 };
 export default SelfCollect;

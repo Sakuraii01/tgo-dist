@@ -62,6 +62,13 @@ export class Fr04Service extends RemoteA {
     const { data } = response;
     return data;
   };
+  reqGetFr04_2Report = async (product_id: number): Promise<FR04ReportType> => {
+    const response = await this.getAxiosInstance().get(
+      PROTECTED_PATH.FR04_2_FORM + `/${product_id}`
+    );
+    const { data } = response;
+    return data;
+  };
   reqGetFr04_2 = async (product_id: number): Promise<FR04_1Type[]> => {
     const response = await this.getAxiosInstance().get(
       PROTECTED_PATH.FR04_1_FORM + `/${this.company_id}/${product_id}`
@@ -106,7 +113,9 @@ export class Fr04Service extends RemoteA {
   };
   reqGetFr04_3 = async (product_id: number): Promise<FR04_3Type> => {
     const response = await this.getAxiosInstance().get(
-      PROTECTED_PATH.FR04_3_REPORT + `/${this.company_id}` + `/${product_id}`
+      PROTECTED_PATH.SELF_COLLECT_LIST +
+        `/${this.company_id}` +
+        `/${product_id}`
     );
     const { data } = response;
     return data;

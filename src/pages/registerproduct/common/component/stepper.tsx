@@ -50,6 +50,7 @@ export const ProcessStepper = (props: stepperProps) => {
     },
   ];
   const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
+    zIndex: -1,
     [`&.${stepConnectorClasses.alternativeLabel}`]: {
       top: 22,
     },
@@ -78,7 +79,7 @@ export const ProcessStepper = (props: stepperProps) => {
     ownerState: { completed?: boolean; active?: boolean };
   }>(({ ownerState }) => ({
     backgroundColor: "white",
-    zIndex: 1,
+    // zIndex: 1,
     color: "#949699",
     border: "2px solid #949699",
     width: 50,
@@ -121,7 +122,7 @@ export const ProcessStepper = (props: stepperProps) => {
       >
         {steps.map((label) => (
           <Step
-            key={label.stepName}
+            key={label.stepName + label.subStepName}
             // onClick={() => navigate(label.navigate + `?id=${props.id}`)}
             sx={{ position: "relative" }}
           >

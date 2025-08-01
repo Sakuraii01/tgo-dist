@@ -7,7 +7,6 @@ import { PROTECTED_PATH } from "../../constants/path.route";
 const useViewModel = (product_id: number) => {
   const navigate = useNavigate();
   const [productData, setProductData] = useState<ProductType>();
-  const [excelLink, setExcelLink] = useState<string | null>(null);
   const productService = new ProductService();
   const companyService = new CompanyService();
 
@@ -18,14 +17,16 @@ const useViewModel = (product_id: number) => {
   };
   const fetchGenExcel = async () => {
     if (!product_id) return;
-
     try {
+      //generate excel first
+      await companyService.reqGetCompanyGenerateExcel(product_id);
+      //can download
       const data = await companyService.reqGetGenExcel(product_id);
 
-      setExcelLink(data.path_excel);
-    } catch (error) {
-      console.error("Error fetching generated Excel:", error);
-      throw error;
+      return data.path_excel;
+    } catch {
+      console.error("Error fetching generated Excel");
+      return null;
     }
   };
 
@@ -48,6 +49,6 @@ const useViewModel = (product_id: number) => {
   useEffect(() => {
     fetchProductData();
   }, []);
-  return { productData, fetchGenExcel, excelLink, sendExcelToAuditor };
+  return { productData, fetchGenExcel, sendExcelToAuditor };
 };
 export default useViewModel;

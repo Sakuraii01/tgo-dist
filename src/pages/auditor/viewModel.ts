@@ -9,7 +9,6 @@ import { CompanyService } from "../../service/api/company";
 import type { CompanyType } from "../../service/api/company/type";
 
 const auditorId = 1;
-const companyId = 1005;
 
 const useViewModel = () => {
   const [tab, setTab] = useState(0);
@@ -20,7 +19,8 @@ const useViewModel = () => {
   const [auditorData, setAuditorData] = useState<AuditorType>();
   const [companyData, setCompanyData] = useState<CompanyType>();
   const [productList, setProductList] = useState<ProductType[]>([]);
-  const [auditorReportData, setAuditorReportData] = useState<AuditorReportType>();
+  const [auditorReportData, setAuditorReportData] =
+    useState<AuditorReportType>();
 
   const handleTabChange = (newValue: number) => {
     setTab(newValue);
@@ -71,7 +71,7 @@ const useViewModel = () => {
 
   const fetchCompanyData = async () => {
     try {
-      const data = await companyService.reqGetCompany(companyId);
+      const data = await companyService.reqGetCompany();
       setCompanyData(data);
     } catch (error) {
       console.error("Error fetching company data:", error);

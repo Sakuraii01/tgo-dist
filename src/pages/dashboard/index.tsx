@@ -22,6 +22,13 @@ const Dashboard = () => {
           <div className="flex justify-between">
             <div className="w-[300px] p-5 rounded-3xl bg-stroke">
               <p>{companyData?.address}</p>
+              <p>
+                {companyData?.subdistrict_name}, {companyData?.district_name},
+              </p>
+              <p>
+                {companyData?.province_name}, {companyData?.zipcode}
+              </p>
+              <p>เบอร์โทรศัพท์: {companyData?.contact_no}</p>
             </div>
             <div className="w-[450px] bg-gradient-to-b from-[#F4F8F3] to-[#F2F7F1] p-5 rounded-3xl text-center">
               <p className="text-[#193F4F]"> ประเภทอุตสาหกรรม</p>

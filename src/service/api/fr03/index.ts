@@ -26,6 +26,7 @@ export class ProcessService extends RemoteA {
     process_id: number,
     entity: {
       process_name: string;
+      ordering?: number;
     }
   ): Promise<AxiosResponse> => {
     const response = await this.getAxiosInstance().put(

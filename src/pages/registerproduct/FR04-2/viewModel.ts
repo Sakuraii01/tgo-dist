@@ -10,8 +10,11 @@ import type {
   TGOVehiclesWithEFType,
   TGOEFDropdownType,
 } from "../../../service/api/dropdown/type";
+import { useNavigate } from "react-router-dom";
+import { PROTECTED_PATH } from "../../../constants/path.route";
 const useViewModel = (id: number) => {
   const tgoEfService = new TGOEFDropdownService();
+  const navigate = useNavigate();
   const fr04Service = new Fr04Service();
   const tgoVehiclesService = new TGOVehiclesService();
   const [fr04Data, setFr04Data] = useState<FR04_1Type[] | null>(null);
@@ -37,8 +40,6 @@ const useViewModel = (id: number) => {
     entity: FR04_2ItemItemInfo,
     item_id?: number
   ) => {
-    console.log(item_id);
-
     if (method === "POST") {
       fr04Service.reqPostFr04_2(entity);
     } else {
@@ -51,6 +52,19 @@ const useViewModel = (id: number) => {
     setFr04Data(data);
     await fetchTGOEFDropdown();
   };
+  const handleNavigateto04_3 = async () => {
+    const report_sum_id = await fr04Service
+      .reqGetFr04_2Report(id)
+      .then((data) => {
+        return data?.report42Sum?.[0]?.report42_sum_id;
+      });
+    if (!report_sum_id) {
+      await fr04Service.reqPostSumFR04_2(id);
+    } else {
+      await fr04Service.reqPutSumFR04_2(report_sum_id, id);
+    }
+    navigate(PROTECTED_PATH.REGISTER_PRODUCT_FR04_3 + `?id=${id}`);
+  };
   useEffect(() => {
     fetchfr04Data();
     fetchTgoVehicles();
@@ -62,6 +76,7 @@ const useViewModel = (id: number) => {
     tgoVehicles,
     tgoEfDropdown,
     handleTabChange,
+    handleNavigateto04_3,
   };
 };
 export default useViewModel;

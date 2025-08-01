@@ -31,6 +31,14 @@ export class CompanyService extends RemoteA {
     const { data } = response;
     return data;
   };
+  reqGetCompanyGenerateExcel = async (product_id: number) => {
+    const response = await this.getAxiosInstance().get(
+      PROTECTED_PATH.EXCEL_COMPANY_GENERATE +
+        `/${this.company_id}/${product_id}`
+    );
+    const { data } = response;
+    return data;
+  };
 
   reqGetGenExcel = async (product_id: number): Promise<ExcelGenType> => {
     console.log(

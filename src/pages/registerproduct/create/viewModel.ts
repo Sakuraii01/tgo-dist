@@ -120,7 +120,6 @@ const useViewModel = (id?: number) => {
         newId = Number(res?.product_id);
         await productService.reqPutProductPicture(newId, formData);
       }
-      console.log("success");
     } catch (err) {
       console.log(err);
     } finally {

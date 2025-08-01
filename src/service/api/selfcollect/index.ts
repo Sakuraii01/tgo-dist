@@ -7,12 +7,13 @@ import type {
   SelfCollectProcessItemType,
 } from "./type";
 import type { AxiosResponse } from "axios";
+import { useToken } from "../../../utils/localStorage";
 export class SelfCollectService extends RemoteA {
-  reqGetSelfCollectList = async (
-    company_id: number
-  ): Promise<SelfCollectListType[]> => {
+  token = useToken();
+  company_id = this.token?.company[0]?.company_id;
+  reqGetSelfCollectList = async (): Promise<SelfCollectListType[]> => {
     const response = await this.getAxiosInstance().get(
-      PROTECTED_PATH.SELF_COLLECT_LIST + `/${company_id}`
+      PROTECTED_PATH.SELF_COLLECT_LIST + `/${this.company_id}`
     );
     const { data } = response;
     return data;
@@ -22,7 +23,7 @@ export class SelfCollectService extends RemoteA {
   ): Promise<AxiosResponse> => {
     const response = await this.getAxiosInstance().post(
       PROTECTED_PATH.SELF_COLLECT,
-      entity
+      { ...entity, company_id: this.company_id }
     );
     const { data } = response;
     return data;
@@ -33,7 +34,7 @@ export class SelfCollectService extends RemoteA {
   ): Promise<AxiosResponse> => {
     const response = await this.getAxiosInstance().put(
       PROTECTED_PATH.SELF_COLLECT + `/${self_collect_id}`,
-      entity
+      { ...entity, company_id: this.company_id }
     );
     const { data } = response;
     return data;
@@ -44,18 +45,18 @@ export class SelfCollectService extends RemoteA {
   ): Promise<AxiosResponse> => {
     const response = await this.getAxiosInstance().post(
       PROTECTED_PATH.SELF_COLLECT_PROCESS,
-      entity
+      { ...entity, company_id: this.company_id }
     );
     const { data } = response;
     return data;
   };
 
   reqGetSelfCollectProcessItem = async (
-    company_id: number,
     process_id: number
   ): Promise<SelfCollectItemListType> => {
     const response = await this.getAxiosInstance().get(
-      PROTECTED_PATH.SELF_COLLECT_PROCESS_LIST + `/${company_id}/${process_id}`
+      PROTECTED_PATH.SELF_COLLECT_PROCESS_LIST +
+        `/${this.company_id}/${process_id}`
     );
     const { data } = response;
     return data;
@@ -88,6 +89,13 @@ export class SelfCollectService extends RemoteA {
     const response = await this.getAxiosInstance().put(
       PROTECTED_PATH.SELF_COLLECT_PROCESS_ITEM + `/${item_id}`,
       entity
+    );
+    const { data } = response;
+    return data;
+  };
+  reqDeleteSelfCollectProcessPerItem = async (item_id: number) => {
+    const response = await this.getAxiosInstance().delete(
+      PROTECTED_PATH.SELF_COLLECT_PROCESS_ITEM + `/${item_id}`
     );
     const { data } = response;
     return data;

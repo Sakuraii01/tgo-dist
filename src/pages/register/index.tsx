@@ -66,7 +66,7 @@ const Register = () => {
                     subdistrict.find(
                       (data) => data.subdistrict_name === values.subdistrict
                     )?.subdistrict_id ?? 0,
-                  contact_no: values.phoneNum,
+                  contact_no: "0" + values.phoneNum,
                   industrial_id: Number(values.industrial),
                 }
               )

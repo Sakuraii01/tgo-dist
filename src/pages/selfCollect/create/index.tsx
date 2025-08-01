@@ -4,13 +4,18 @@ import { useSearchParams } from "react-router-dom";
 
 import { IOItem, SelfCollectTopic } from "./form";
 import { useCallback, useState } from "react";
+import { Backdrop, CircularProgress } from "@mui/material";
 // import * as Yup from "yup";
 
 const CreateSelfCollect = () => {
   const [searchParams] = useSearchParams();
   const self_collect_id = Number(searchParams.get("id"));
-  const { selfcollectProcessItemList, handleFormSubmit } =
-    useViewModel(self_collect_id);
+  const {
+    loading,
+    selfcollectProcessItemList,
+    handleFormSubmit,
+    handleDeleteItem,
+  } = useViewModel(self_collect_id);
   const [addItem, setAddItem] = useState({ input: false, output: false });
   const handleCancleAdd = useCallback((section: "input" | "output") => {
     setAddItem((prev) => ({
@@ -18,10 +23,12 @@ const CreateSelfCollect = () => {
       [section]: false,
     }));
   }, []);
+
   return (
     <div>
       <Navbar />
       <BreadcrumbNav step="create self collect" />
+
       <div className="max-w-4xl mx-auto mt-10">
         <h3 className="font-bold text-2xl mb-5">
           เพิ่มข้อมูลค่า EF ที่กำหนดเอง
@@ -58,6 +65,7 @@ const CreateSelfCollect = () => {
                     handleSubmit={(values, item_id) =>
                       handleFormSubmit(values, item_id)
                     }
+                    handleDelete={handleDeleteItem}
                   />
                 </div>
               ))}
@@ -73,6 +81,7 @@ const CreateSelfCollect = () => {
                   }
                   handleSubmit={(values, _) => handleFormSubmit(values)}
                   handleCancleAdd={handleCancleAdd}
+                  handleDelete={handleDeleteItem}
                 />
               </div>
             ) : (
@@ -92,6 +101,13 @@ const CreateSelfCollect = () => {
           </div>
         ))}
       </div>
+      {!loading ? (
+        ""
+      ) : (
+        <Backdrop open>
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      )}
     </div>
   );
 };

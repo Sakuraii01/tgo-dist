@@ -11,16 +11,19 @@ const useViewModel = (id: number) => {
   const [selfcollectProcessItemList, setSelfCollectProcessItemList] =
     useState<SelfCollectItemListType>();
   const fetchSelfCollect = async () => {
-    const data = await selfCollectService.reqGetSelfCollectProcessItem(
-      1005,
-      id
-    );
+    setLoading(true);
+    const data = await selfCollectService.reqGetSelfCollectProcessItem(id);
     setSelfCollectProcessItemList(data);
+
+    new Promise((resolve) => setTimeout(resolve, 1000));
+    setLoading(false);
   };
+  const [loading, setLoading] = useState(false);
   const handleFormSubmit = async (
     entity: SelfCollectProcessItemType,
     item_id?: number
   ) => {
+    setLoading(true);
     if (item_id) {
       await selfCollectService
         .reqPutSelfCollectProcessPerItem(item_id, {
@@ -52,8 +55,8 @@ const useViewModel = (id: number) => {
           type2_ef_source: entity.type2_ef_source || "",
           type2_ef_source_ref: entity.type2_ef_source_ref || "",
 
-          transport_emission: 0,
-          total_emission: 0,
+          transport_emission: entity.transport_emission || 0,
+          total_emission: entity.total_emission || 0,
           proportion: null,
           ratio: 0,
           cut_off: 0,
@@ -62,7 +65,7 @@ const useViewModel = (id: number) => {
           type1_gas_qty: null,
           type1_ef: null,
           type1_ef_source: null,
-          item_emission: 0,
+          item_emission: entity.item_emission || 0,
           transport_type: "",
           add_on_detail: "",
         })
@@ -103,8 +106,8 @@ const useViewModel = (id: number) => {
           type2_ef_source: entity.type2_ef_source || "",
           type2_ef_source_ref: entity.type2_ef_source_ref || "",
 
-          transport_emission: 0,
-          total_emission: 0,
+          transport_emission: entity.transport_emission || 0,
+          total_emission: entity.total_emission || 0,
           proportion: null,
           ratio: 0,
           cut_off: 0,
@@ -113,7 +116,7 @@ const useViewModel = (id: number) => {
           type1_gas_qty: null,
           type1_ef: null,
           type1_ef_source: null,
-          item_emission: 0,
+          item_emission: entity.item_emission || 0,
           transport_type: "",
           add_on_detail: "",
         })
@@ -121,12 +124,24 @@ const useViewModel = (id: number) => {
           console.log(error);
         });
     }
+    window.location.reload();
+  };
+  const handleDeleteItem = async (id: number) => {
+    setLoading(true);
+    await selfCollectService.reqDeleteSelfCollectProcessPerItem(id);
+
+    window.location.reload();
   };
 
   useEffect(() => {
     fetchSelfCollect();
   }, []);
 
-  return { selfcollectProcessItemList, handleFormSubmit };
+  return {
+    selfcollectProcessItemList,
+    loading,
+    handleFormSubmit,
+    handleDeleteItem,
+  };
 };
 export default useViewModel;

@@ -336,7 +336,6 @@ const CProduct: React.FC = () => {
                     <button
                       onClick={async () => {
                         await fetchUploadExcel();
-                        console.log(excelLink);
                         window.open(
                           "http://178.128.123.212:5000" + excelLink,
                           "_blank"
@@ -391,7 +390,6 @@ const CProduct: React.FC = () => {
                             <button
                               onClick={async () => {
                                 await fetchGenExcel();
-                                console.log(excelLink);
                                 window.open(
                                   "http://178.128.123.212:5000" + excelLink,
                                   "_blank"

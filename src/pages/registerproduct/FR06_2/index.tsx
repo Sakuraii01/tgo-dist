@@ -17,7 +17,7 @@ const FR06_2 = () => {
       <div className="w-fit mx-auto">
         <Formik
           initialValues={{
-            std_emission: fr06Data?.std_emission || 0,
+            std_emission: sum4142?.toFixed(4) || 0,
             source: fr06Data?.std_emission_source ?? "",
           }}
           enableReinitialize
@@ -30,9 +30,7 @@ const FR06_2 = () => {
               document_no_by_TGO: null,
               std_emission: values.std_emission,
               product_emission: sum4142 || 0,
-              diff_emission:
-                Number(fr06Data?.product_emission || sum4142) -
-                Number(values.std_emission),
+              diff_emission: Number(sum4142) - Number(values.std_emission),
               std_emission_source: values.source,
             });
           }}
@@ -61,13 +59,11 @@ const FR06_2 = () => {
                         type="number"
                       />
                     </td>
+                    <td className="px-5"> {sum4142?.toFixed(4) || "-"} </td>
                     <td className="px-5">
-                      {" "}
-                      {fr06Data?.product_emission ?? sum4142}{" "}
-                    </td>
-                    <td className="px-5">
-                      {Number(fr06Data?.product_emission) -
-                        Number(values.std_emission) || "-"}
+                      {(Number(sum4142) - Number(values.std_emission)).toFixed(
+                        4
+                      ) || "-"}
                     </td>
                     <td className="px-5">
                       <Field name="source" label="ที่มาของ เกณฑ์เปรียบเทียบ" />

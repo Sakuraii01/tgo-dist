@@ -3,10 +3,10 @@ export type CompanyType = {
   user_id: number;
   name: string;
   address: string;
-  province: string;
-  district: string;
-  subdistrict: string;
-  zip_code: number;
+  province_name: string;
+  district_name: string;
+  subdistrict_name: string;
+  zipcode: number;
   province_id: number;
   district_id: number;
   subdistrict_id: number;
