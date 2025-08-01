@@ -13,12 +13,13 @@ import { useAuth } from "../../auth/useAuth";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
+
 export const Navbar = () => {
   const navigate = useNavigate();
   const auth = useAuth();
   const userData = useToken();
   const auditorId = 1;
-  const companyId = 1008;
+  const companyId = userData?.company[0]?.company_id;
 
   const [count, setCount] = useState<number>(0);
   const [showNotifications, setShowNotifications] = useState<boolean>(false);
