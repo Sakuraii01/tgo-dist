@@ -9,7 +9,6 @@ const Auditor = () => {
     tab,
     error,
     loading,
-    companyData,
     auditorData,
     productList,
     handleTabChange,
@@ -55,11 +54,6 @@ const Auditor = () => {
               {auditorData?.name || auth?.user?.user?.name}
             </span>
           </h1>
-          <div className="flex gap-5">
-            <div className="w-[450px] p-5 rounded-3xl bg-stroke">
-              <p>{companyData?.address}</p>
-            </div>
-          </div>
         </section>
         <section className="flex mt-15 my-5 justify-between">
           <div className="font-medium">

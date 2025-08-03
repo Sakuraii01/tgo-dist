@@ -10,7 +10,9 @@ const Response: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
-  const auditorId = 1;
+   const auditor_id = searchParams.get("user_id");
+  //const auditorId = Number(auditor_id);
+const auditorId =1;
 
   // สร้าง state สำหรับเก็บสถานะการเปิด/ปิด ของแต่ละความคิดเห็น
   const [expandedComments, setExpandedComments] = useState<{

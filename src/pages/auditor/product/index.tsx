@@ -10,14 +10,22 @@ import { useState } from "react";
 import { ProductService } from "../../../service/api/auditor/product";
 
 const AProduct: React.FC = () => {
-
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const id = searchParams.get("id");
+  const auditor_id = searchParams.get("user_id");
+  //const auditorId = Number(auditor_id);
   const auditorId = 1;
+  const id = searchParams.get("id");
 
-  const { productData, productDetail, loading, error, refetch,excelLink, fetchLatestExcel} =
-    useViewModel(auditorId, Number(id));
+  const {
+    productData,
+    productDetail,
+    loading,
+    error,
+    refetch,
+    excelLink,
+    fetchLatestExcel,
+  } = useViewModel(auditorId, Number(id));
 
   const [comment, setComment] = useState("");
   const [showCommentBox, setShowCommentBox] = useState(false);
@@ -396,13 +404,13 @@ const AProduct: React.FC = () => {
                 <div className="ml-auto mr-4">
                   <button
                     onClick={async () => {
-                    await fetchLatestExcel();
-                    console.log(excelLink);
-                    window.open(
-                      "http://178.128.123.212:5000" + excelLink,
-                      "_blank"
-                    );
-                  }}
+                      await fetchLatestExcel();
+                      console.log(excelLink);
+                      window.open(
+                        "http://178.128.123.212:5000" + excelLink,
+                        "_blank"
+                      );
+                    }}
                     type="button"
                     className="border border-green-500 shadow px-4 py-1 rounded-full flex gap-1 hover:bg-green-50 hover:opacity-90 transition-colors"
                   >

@@ -11,6 +11,7 @@ import { PROTECTED_PATH } from "../../constants/path.route";
 import { clearToken, useToken } from "../../utils/localStorage";
 import { useAuth } from "../../auth/useAuth";
 import { useState, useEffect } from "react";
+import { useSearchParams, } from "react-router-dom";
 import axios from "axios";
 
 
@@ -18,7 +19,10 @@ export const Navbar = () => {
   const navigate = useNavigate();
   const auth = useAuth();
   const userData = useToken();
-  const auditorId = 1;
+    const [searchParams] = useSearchParams();
+     const auditor_id = searchParams.get("user_id");
+    //const auditorId = Number(auditor_id);
+const auditorId =1;
   const companyId = userData?.company[0]?.company_id;
 
   const [count, setCount] = useState<number>(0);
