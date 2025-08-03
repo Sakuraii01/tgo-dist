@@ -11,8 +11,7 @@ const Response: React.FC = () => {
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
   const auditor_id = searchParams.get("user_id");
-  //const auditorId = Number(auditor_id);
-const auditorId =1;
+ const auditorId = Number(auditor_id);
 
   const [expandedComments, setExpandedComments] = useState<{
     [key: number]: boolean;
@@ -134,7 +133,7 @@ const auditorId =1;
             <div className="justify-end">
               <button
                 type="button"
-                onClick={() => navigate(`/product_adetail?id=${id}`)}
+                onClick={() => navigate(`/product_vdetail?id=${id}`)}
                 className="bg-gray-600 text-white font-semibold shadow px-6 py-2 rounded-full hover:bg-gray-700 transition-colors"
               >
                 กลับไปรายละเอียดผลิตภัณฑ์

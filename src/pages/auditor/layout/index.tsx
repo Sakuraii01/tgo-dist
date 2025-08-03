@@ -17,8 +17,7 @@ export const ANavbar = () => {
   const userData = useToken();
   const [searchParams] = useSearchParams();
   const auditor_id = searchParams.get("user_id");
-  //const auditorId = Number(auditor_id);
-const auditorId =1;
+ const auditorId = Number(auditor_id);
   const [count, setCount] = useState<number>(0);
   const [showNotifications, setShowNotifications] = useState<boolean>(false);
   const [notifications, setNotifications] = useState<any[]>([]);

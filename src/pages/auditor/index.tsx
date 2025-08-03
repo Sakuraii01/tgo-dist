@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../constants/path.route";
 import useViewModel from "./viewModel";
 import { useAuth } from "../../auth/useAuth";
+import { useToken } from "../../utils/localStorage";
 
 const Auditor = () => {
   const {
@@ -16,6 +17,7 @@ const Auditor = () => {
   
   const navigate = useNavigate();
   const auth = useAuth();
+  const userData = useToken();
 
   if (loading) {
     return (
@@ -51,7 +53,7 @@ const Auditor = () => {
           <h1 className="text-4xl font-medium mb-5 mt-10">
             ยินดีต้อนรับ{" "}
             <span className="font-bold text-linear text-primary-linear">
-              {auditorData?.name || auth?.user?.user?.name}
+              {userData?.user?.name || auditorData?.name || auth?.user?.user?.name}
             </span>
           </h1>
         </section>
@@ -211,7 +213,7 @@ const Auditor = () => {
                         <button
                           onClick={() =>
                             navigate(
-                              PROTECTED_PATH.PRODUCT_DETAIL_AUDITOR +
+                              PROTECTED_PATH.PRODUCT_DETAIL_VERIFIER +
                                 `?id=${data.product_id}`
                             )
                           }

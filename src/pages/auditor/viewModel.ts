@@ -5,7 +5,6 @@ import type {
 } from "../../service/api/auditor/type";
 import { AuditorService } from "../../service/api/auditor";
 import type { AuditorType } from "../../service/api/auditor/type";
-import { CompanyService } from "../../service/api/company";
 import type { CompanyType } from "../../service/api/company/type";
 import { useSearchParams } from "react-router-dom";
 
@@ -13,18 +12,16 @@ const useViewModel = () => {
   const [tab, setTab] = useState(0);
   const [loading, setLoading] = useState(true);
   const auditorService = new AuditorService();
-  const companyService = new CompanyService();
   const [searchParams] = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [auditorData, setAuditorData] = useState<AuditorType>();
-  const [companyData, setCompanyData] = useState<CompanyType>();
+  const [companyData] = useState<CompanyType>();
   const [productList, setProductList] = useState<ProductType[]>([]);
   const [auditorReportData, setAuditorReportData] =
     useState<AuditorReportType>();
 
   const auditor_id = searchParams.get("user_id");
-  //const auditorId = Number(auditor_id);
-const auditorId =1;
+ const auditorId = Number(auditor_id);
 
   const handleTabChange = (newValue: number) => {
     setTab(newValue);
@@ -73,18 +70,8 @@ const auditorId =1;
     }
   };
 
-  const fetchCompanyData = async () => {
-    try {
-      const data = await companyService.reqGetCompany();
-      setCompanyData(data);
-    } catch (error) {
-      console.error("Error fetching company data:", error);
-    }
-  };
-
   useEffect(() => {
     fetchProductList();
-    fetchCompanyData();
   }, []);
 
   return {

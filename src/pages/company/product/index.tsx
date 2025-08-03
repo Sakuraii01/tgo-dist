@@ -13,8 +13,7 @@ const CProduct: React.FC = () => {
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
    const auditor_id = searchParams.get("user_id");
-  //const auditorId = Number(auditor_id);
-const auditorId =1;
+ const auditorId = Number(auditor_id);
 
   const {
     productData: individualProduct,
