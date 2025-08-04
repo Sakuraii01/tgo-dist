@@ -22,10 +22,10 @@ export const Dropzone = (props: dropZoneType) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
+      // "image/*": [],
       "image/jpeg": [],
       "image/jpg": [],
       "image/png": [],
-      "image/tiff": [],
     },
     multiple: false,
   });

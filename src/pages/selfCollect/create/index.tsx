@@ -5,9 +5,12 @@ import { useSearchParams } from "react-router-dom";
 import { IOItem, SelfCollectTopic } from "./form";
 import { useCallback, useState } from "react";
 import { Backdrop, CircularProgress } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { PROTECTED_PATH } from "../../../constants/path.route";
 // import * as Yup from "yup";
 
 const CreateSelfCollect = () => {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const self_collect_id = Number(searchParams.get("id"));
   const {
@@ -30,6 +33,13 @@ const CreateSelfCollect = () => {
       <BreadcrumbNav step="create self collect" />
 
       <div className="max-w-4xl mx-auto mt-10">
+        <button
+          className="primary-button px-8 py-1 mb-10"
+          type="button"
+          onClick={() => navigate(PROTECTED_PATH.SELF_COLLECT)}
+        >
+          {"< ย้อนกลับ"}
+        </button>
         <h3 className="font-bold text-2xl mb-5">
           เพิ่มข้อมูลค่า EF ที่กำหนดเอง
         </h3>
@@ -48,7 +58,9 @@ const CreateSelfCollect = () => {
 
         {(["input", "output"] as Array<"input" | "output">).map((section) => (
           <div>
-            <p className="font-bold my-2 text-lg">{section}</p>
+            <p className="font-bold my-2 text-lg">
+              {section === "input" ? "สารขาเข้า (Input)" : "สารขาออก (Output)"}
+            </p>
             {selfcollectProcessItemList?.items
               .filter((item) => item.item_type === section)
               .map((item, index) => (

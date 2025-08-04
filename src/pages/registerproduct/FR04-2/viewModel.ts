@@ -35,16 +35,17 @@ const useViewModel = (id: number) => {
     const data = await tgoVehiclesService.reqGetTGOVehiclesWithEF();
     setTgoVehicles(data);
   };
-  const handleSubmit = (
+  const handleSubmit = async (
     method: "POST" | "PUT",
     entity: FR04_2ItemItemInfo,
     item_id?: number
   ) => {
     if (method === "POST") {
-      fr04Service.reqPostFr04_2(entity);
+      await fr04Service.reqPostFr04_2(entity);
     } else {
-      fr04Service.reqPutFr04_2(item_id || 0, entity);
+      await fr04Service.reqPutFr04_2(item_id || 0, entity);
     }
+    window.location.reload();
   };
 
   const fetchfr04Data = async () => {

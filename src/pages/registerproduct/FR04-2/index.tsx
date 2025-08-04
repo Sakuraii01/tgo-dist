@@ -69,14 +69,14 @@ const FR04_2 = () => {
           type="button"
           className="transition-colors rounded-full w-full mt-6 px-10 py-2 bg-gray-400 hover:bg-gray-300 text-white font-semibold"
         >
-          กลับ FR 04.2
+          ย้อนกลับ
         </button>
         <button
           onClick={() => handleNavigateto04_3()}
           type="submit"
           className="rounded-full w-full mt-6 px-10 py-2 bg-gradient-to-r from-[#2BCFF2] via-[#19C2E6] via-30% to-[#0190C3]  text-white font-semibold transition hover:opacity-80"
         >
-          บันทึกและไป FR 04.3
+          บันทึกและไปขั้นตอนถัดไป
         </button>
       </div>
     </div>
@@ -454,7 +454,12 @@ const FormTypeB = ({
                 type2_ef_source: values.type2_ef_source,
                 type2_ef_source_ref:
                   values.type2_ef_source === "TGO_ef"
-                    ? ""
+                    ? String(
+                        tgoVehicles.find(
+                          (data) =>
+                            data.ef_id === Number(values.type2_vehicle_outbound)
+                        )?.ef_id
+                      )
                     : values.type2_ef_source_ref,
                 type2_outbound_ef: Number(
                   tgoVehicles.find(
@@ -595,7 +600,13 @@ const FormTypeB = ({
                         <label className="text-sm text-gray-300">
                           ประเภทพาหนะ
                         </label>
-                        <p>{initialValues.type2_vehicle_outbound || "-"}</p>
+                        <p>
+                          {tgoVehicles.find(
+                            (data) =>
+                              data.ef_id ===
+                              Number(initialValues.type2_vehicle_outbound)
+                          )?.item || "-"}
+                        </p>
                       </div>
                     )}
                     <div className="mt-4 flex flex-wrap gap-x-4">
@@ -767,11 +778,17 @@ const FormTypeB = ({
                             </label>
                             <p>{values.type2_return_ef || "-"}</p>
                           </div>
-                          <div>
+                          <div className="w-1/3">
                             <label className="text-sm text-gray-300">
                               แหล่งอ้างอิง EF
                             </label>
-                            <p>{values.type2_ef_source_ref || "-"}</p>
+                            <p>
+                              {tgoVehicles.find(
+                                (data) =>
+                                  data.ef_id ===
+                                  Number(initialValues.type2_vehicle_outbound)
+                              )?.ef_source_ref || "-"}
+                            </p>
                           </div>
                           <div>
                             <label className="text-sm text-gray-300">

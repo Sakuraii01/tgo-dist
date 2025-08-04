@@ -236,7 +236,7 @@ const FR06_1 = () => {
                   </tr>
 
                   <tr className="border-b border-gray-200/10">
-                    <td className="px-5 py-3">การกระจายสินค้า </td>
+                    <td className="px-5 py-3">การผลิต</td>
                     <td className="px-5">
                       {values.registrationRound ? (
                         fr06Sum4142?.sum_lc2_emission.toFixed(4)
@@ -272,7 +272,7 @@ const FR06_1 = () => {
                     </td>
                   </tr>
                   <tr className="border-b border-gray-200/10">
-                    <td className="px-5 py-3">การใช้งาน </td>
+                    <td className="px-5 py-3">การกระจายสินค้า </td>
                     <td className="px-5">
                       {values.registrationRound ? (
                         fr06Sum4142?.sum_lc3_emission.toFixed(4)
@@ -308,7 +308,7 @@ const FR06_1 = () => {
                     </td>
                   </tr>
                   <tr className="border-b border-gray-200/10">
-                    <td className="px-5 py-3">การจัดการซาก </td>
+                    <td className="px-5 py-3">การใช้งาน </td>
                     <td className="px-5">
                       {values.registrationRound ? (
                         fr06Sum4142?.sum_lc4_emission.toFixed(4)
@@ -344,7 +344,7 @@ const FR06_1 = () => {
                     </td>
                   </tr>
                   <tr className="border-b border-gray-200/10">
-                    <td className="px-5 py-3">การผลิต</td>
+                    <td className="px-5 py-3">การจัดการซาก</td>
                     <td className="px-5">
                       {values.registrationRound ? (
                         fr06Sum4142?.sum_lc5_emission.toFixed(4)
@@ -387,14 +387,15 @@ const FR06_1 = () => {
                             .slice(0, 5)
                             .reduce((sum, val) => sum + val, 0)
                             .toFixed(4)
-                        : Number(fr06Data?.sum_based_emission).toFixed(4) ??
-                          (
-                            Number(values.ghg_cycle_1) +
-                            Number(values.ghg_cycle_2) +
-                            Number(values.ghg_cycle_3) +
-                            Number(values.ghg_cycle_4) +
-                            Number(values.ghg_cycle_5)
-                          ).toFixed(4)}
+                        : (fr06Data?.sum_based_emission
+                            ? Number(fr06Data.sum_based_emission).toFixed(4)
+                            : (
+                                (Number(values.ghg_cycle_1) || 0) +
+                                (Number(values.ghg_cycle_2) || 0) +
+                                (Number(values.ghg_cycle_3) || 0) +
+                                (Number(values.ghg_cycle_4) || 0) +
+                                (Number(values.ghg_cycle_5) || 0)
+                              ).toFixed(4)) || "0.000"}
                     </td>
                     <td className="px-5">
                       {baseStatic
@@ -477,13 +478,13 @@ const FR06_1 = () => {
                   }
                   className="transition-colors rounded-full w-full mt-6 px-10 py-2 bg-gray-400 hover:bg-gray-300 text-white font-semibold"
                 >
-                  กลับไป FR04.3
+                  ย้อนกลับ
                 </button>
                 <button
                   type="submit"
                   className="rounded-full w-full mt-6 px-10 py-2 bg-gradient-to-r from-[#2BCFF2] via-[#19C2E6] via-30% to-[#0190C3]  text-white font-semibold transition hover:opacity-80"
                 >
-                  บันทึกและไป FR06.2
+                  บันทึกและไปขั้นตอนถัดไป
                 </button>
               </div>
             </Form>

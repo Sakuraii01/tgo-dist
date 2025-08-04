@@ -50,7 +50,7 @@ export class ProductService extends RemoteA {
   ): Promise<ProductResponseType> => {
     const response = await this.getAxiosInstance().put(
       PROTECTED_PATH.PRODUCT + `/${product_id}`,
-      { ...entity, company_id: this.company_id }
+      entity
     );
     const { data } = response;
     return data;

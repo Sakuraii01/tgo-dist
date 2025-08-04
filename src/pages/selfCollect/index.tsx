@@ -21,7 +21,8 @@ const SelfCollect = () => {
           <div className="max-w-5xl mx-auto">
             <div className="flex justify-between mt-20">
               <h4 className="text-xl font-bold">
-                ข้อมูลค่า EF ที่กำหนดเอง (FR04.3)
+                ข้อมูลค่า EF ที่กำหนดเอง{" "}
+                <span className="font-normal">(FR04.3)</span>
               </h4>
               <CreateSelfCollect />
             </div>
@@ -76,7 +77,7 @@ const CreateSelfCollect = () => {
     <>
       <button
         onClick={() => setIsAddSelfCollect(true)}
-        className="primary-button px-6 py-1"
+        className="bg-gradient-to-r from-[#5EDCF5] via-20% via-[#5EDCF5] to-[#008FC3] text-white rounded-full py-2 px-8 shadow-md font-bold"
       >
         + เพิ่มข้อมูลค่า EF ที่กำหนดเอง
       </button>

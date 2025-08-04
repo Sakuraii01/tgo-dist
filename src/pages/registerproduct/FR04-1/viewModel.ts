@@ -64,13 +64,12 @@ const useViewModel = (id: number) => {
     data: FR04_1ItemType,
     item_id?: number
   ) => {
-    console.log(item_id, method);
-
     if (method === "POST") {
       await fr04Service.reqPostFr04_1(data);
     } else {
       await fr04Service.reqPutFr04_1(item_id || 0, data);
     }
+    window.location.reload();
   };
   const fetchfr04Data = async () => {
     const data = await fr04Service.reqGetFr04_1(id);

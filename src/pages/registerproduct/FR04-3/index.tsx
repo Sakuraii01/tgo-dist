@@ -335,7 +335,7 @@ const FR04_3 = () => {
           type="button"
           className="transition-colors rounded-full w-full mt-6 px-10 py-2 bg-gray-400 hover:bg-gray-300 text-white font-semibold"
         >
-          กลับ FR 04.2
+          ย้อนกลับ
         </button>
         <button
           onClick={() =>
@@ -344,7 +344,7 @@ const FR04_3 = () => {
           type="submit"
           className="rounded-full w-full mt-6 px-10 py-2 bg-gradient-to-r from-[#2BCFF2] via-[#19C2E6] via-30% to-[#0190C3]  text-white font-semibold transition hover:opacity-80"
         >
-          บันทึกและไป FR 06.1
+          บันทึกและไปขั้นตอนถัดไป
         </button>
       </div>
     </div>

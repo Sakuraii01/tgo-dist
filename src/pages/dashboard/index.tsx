@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../constants/path.route";
 import useViewModel from "./viewModel";
 import { useAuth } from "../../auth/useAuth";
+import { Add } from "@mui/icons-material";
 const Dashboard = () => {
   const { productList, tab, companyData, handleTabChange } = useViewModel();
   const navigate = useNavigate();
@@ -20,39 +21,43 @@ const Dashboard = () => {
             </span>
           </h1>
           <div className="flex justify-between">
-            <div className="w-[300px] p-5 rounded-3xl bg-stroke">
-              <p>{companyData?.address}</p>
-              <p>
-                {companyData?.subdistrict_name}, {companyData?.district_name},
-              </p>
-              <p>
-                {companyData?.province_name}, {companyData?.zipcode}
-              </p>
-              <p>เบอร์โทรศัพท์: {companyData?.contact_no}</p>
+            <div className="w-[400px] bg-gradient-to-b from-[#F4F8F3] to-[#F2F7F1] p-5 rounded-3xl text-center">
+              <p className="text-[#193F4F]">ที่อยู่</p>
+              <div className="text-secondary-500 font-semibold">
+                <p>{companyData?.address}</p>
+                <p>
+                  {companyData?.subdistrict_name}, {companyData?.district_name},
+                </p>
+                <p>
+                  {companyData?.province_name}, {companyData?.zipcode}
+                </p>
+                <p>เบอร์โทรศัพท์: {companyData?.contact_no}</p>
+              </div>
             </div>
-            <div className="w-[450px] bg-gradient-to-b from-[#F4F8F3] to-[#F2F7F1] p-5 rounded-3xl text-center">
+            <div className="w-[350px] bg-gradient-to-b from-[#F4F8F3] to-[#F2F7F1] p-5 rounded-3xl text-center">
               <p className="text-[#193F4F]"> ประเภทอุตสาหกรรม</p>
 
-              <p className="text-linear text-secondary-linear text-xl font-bold my-3">
+              <p className="text-linear text-secondary-linear text-xl font-semibold my-3">
                 {companyData?.industrial_name}
               </p>
             </div>
             <div className="flex gap-5">
-              <div className="px-10 bg-gradient-to-b from-[#F1FCFF] to-[#E2F7FB] rounded-3xl w-fit pb-2 pt-7 text-center">
-                <p className="text-sm">รอบขึ้นทะเบียนปัจจุบัน</p>
-                <p className="font-bold text-primary text-3xl">1 / 2568</p>
-                <p className="bg-white rounded-full font-bold text-xs w-fit px-2 mx-auto my-2">
-                  01/01/2568 - 31/03/2568
-                </p>
-              </div>
-              <div className="bg-gradient-to-b from-[#F1FCFF] to-[#E2F7FB] rounded-3xl w-fit px-10 text-center py-9">
-                <p className="text-sm mb-3">ค่า EF แบบกำหนดเอง</p>
+              <div className="bg-gradient-to-b from-[#F4F8F3] to-[#F2F7F1] rounded-3xl w-fit px-10 text-center py-5">
+                <p className="mb-3">ข้อมูลของสถานประกอบการ</p>
                 <button
                   onClick={() => navigate(PROTECTED_PATH.SELF_COLLECT)}
-                  className="text-primary w-fit bg-white rounded-full py-2 px-8 shadow-md font-bold"
+                  className="text-white bg-gradient-to-r from-secondary-500/70 to-secondary-500 w-fit rounded-full py-2 px-8 shadow-md font-bold"
                 >
-                  <p>ดูข้อมูลค่า EF</p>
+                  <p>ข้อมูลค่า EF</p>
+                  <p>(Self collect)</p>
                 </button>
+              </div>
+              <div className="px-10 bg-gradient-to-b from-[#F1FCFF] to-[#E2F7FB] rounded-3xl w-fit pb-2 pt-5 text-center">
+                <p>รอบขึ้นทะเบียนปัจจุบัน</p>
+                <p className="font-bold text-primary text-3xl mt-2">1 / 2568</p>
+                <p className="rounded-full text-xs w-fit px-2 mx-auto my-2">
+                  01/01/2568 - 31/03/2568
+                </p>
               </div>
             </div>
           </div>
@@ -69,9 +74,13 @@ const Dashboard = () => {
           <div className="h-fit mt-auto">
             <button
               onClick={() => navigate(PROTECTED_PATH.REGISTER_PRODUCT_CREATE)}
+              //from-secondary-500/70 to-secondary-500
               className="h-fit text-white bg-gradient-to-r from-[#5EDCF5] via-20% via-[#5EDCF5] to-[#008FC3] w-fit bg-white rounded-full py-2 px-8 shadow-md font-bold"
             >
-              <p>ขึ้นทะเบียนผลิตภัณฑ์</p>
+              <div className="flex gap-1">
+                <Add />
+                <p>เพิ่มขึ้นทะเบียนผลิตภัณฑ์</p>
+              </div>
             </button>
           </div>
         </section>

@@ -711,7 +711,13 @@ export const IOItem = (props: processItemType) => {
                           <p className="text-sm text-gray-300">
                             แหล่งอ้างอิง EF
                           </p>
-                          <p>{initialValues.item_ef_source_ref || "-"}</p>
+                          <p>
+                            {tgoEfDropdown?.find(
+                              (data) =>
+                                data.ef_id ===
+                                Number(initialValues.item_ef_source_ref)
+                            )?.item || "-"}
+                          </p>
                         </div>
                         <div>
                           <p className="text-sm text-gray-300">EF</p>
@@ -750,13 +756,25 @@ export const IOItem = (props: processItemType) => {
                           <p className="text-sm text-gray-300">
                             ประเภทพาหนะเที่ยวไป
                           </p>
-                          <p>{initialValues.type2_vehicle || "-"}</p>
+                          <p>
+                            {vehiclesDropdown?.find(
+                              (data) =>
+                                data.ef_id ===
+                                Number(initialValues.type2_vehicle)
+                            )?.item || "-"}
+                          </p>
                         </div>
                         <div>
                           <p className="text-sm text-gray-300">
                             ประเภทพาหนะเที่ยวกลับ
                           </p>
-                          <p>{initialValues.type2_vehicle_return || "-"}</p>
+                          <p>
+                            {vehiclesDropdown?.find(
+                              (data) =>
+                                data.ef_id ===
+                                Number(initialValues.type2_vehicle_return)
+                            )?.item || "-"}
+                          </p>
                         </div>
                       </div>
                       <div className="flex gap-10 mt-5">
@@ -784,14 +802,8 @@ export const IOItem = (props: processItemType) => {
                             {initialValues.type2_return_load_percent || "-"}
                           </p>
                         </div> */}
-                      </div>{" "}
+                      </div>
                       <div className="flex gap-10 mt-5">
-                        <div>
-                          <p className="text-sm text-gray-300">
-                            แหล่งอ้างอิง EF
-                          </p>
-                          <p>{initialValues.type2_ef_source_ref || "-"}</p>
-                        </div>
                         <div>
                           <p className="text-sm text-gray-300">
                             ค่า EF เที่ยวไป
@@ -803,6 +815,12 @@ export const IOItem = (props: processItemType) => {
                             ค่า EF เที่ยวกลับ
                           </p>
                           <p>{initialValues.type2_return_ef || "-"}</p>
+                        </div>
+                        <div className="w-1/2">
+                          <p className="text-sm text-gray-300 ">
+                            แหล่งอ้างอิง EF
+                          </p>
+                          <p>{initialValues.type2_ef_source_ref || "-"}</p>
                         </div>
                       </div>
                     </section>

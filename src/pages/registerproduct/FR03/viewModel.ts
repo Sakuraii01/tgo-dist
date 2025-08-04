@@ -29,146 +29,165 @@ const useViewModel = (id: number) => {
     type: "input" | "intermediate" | "waste",
     processId: number,
     dataId?: number,
-    isUpdate?: boolean
+    isUpdate?: boolean,
+    isChangeCategory?: boolean
   ) => {
     setLoading(true);
-    if (isUpdate) {
-      if (type === "input") {
-        console.log(processId);
+    if (isChangeCategory && dataId) {
+      handleDeleteFR03Item(type, dataId);
+    }
+    if (!isChangeCategory) {
+      if (isUpdate) {
+        if (type === "input") {
+          console.log(processId);
 
-        await inputProcessService
-          .reqPutInputProcessByID(dataId || 0, {
-            process_id: processId,
-            input_cat_id: entity.materialType,
-            input_title_id:
-              entity.materialType === 7
-                ? 1
-                : entity.materialType === 8
-                ? 3
-                : entity.materialType === 9
-                ? 2
-                : 0,
-            input_name: entity.itemName,
-            input_unit: entity.unit,
-            input_quantity: entity.amount,
-            chemical_reaction: 0,
-          } as InputProcessType)
-          .then((response) => {
-            console.log("Input process updated:", response);
-          })
-          .catch((error) => {
-            console.log(error);
-          })
-          .finally(() => {
-            window.location.reload();
-          });
-      } else if (type === "intermediate") {
-        await outputProcessService
-          .reqPutOutputProcessByID(dataId || 0, {
-            process_id: processId,
-            output_cat_id: 2,
-            output_name: entity.itemName,
-            output_unit: entity.unit,
-            output_quantity: entity.amount,
-            finish_output: entity.isLastProduct,
-            packaging_output: entity.sumPackage,
-          } as OutputProcessType)
-          .then((response) => {
-            console.log("Output process updated:", response);
-          })
-          .catch((error) => {
-            console.log(error);
-          })
-          .finally(() => {
-            window.location.reload();
-          });
-      } else if (type === "waste") {
-        await wasteProcessService
-          .reqPutWasteProcessByID(dataId || 0, entity as WasteProcessType)
-          .then((response) => {
-            console.log("Waste process updated:", response);
-          })
-          .catch((error) => {
-            console.log(error);
-          })
-          .finally(() => {
-            window.location.reload();
-          });
-      } else {
-        console.error("Invalid type");
-      }
-    } else {
-      if (type === "input") {
-        await inputProcessService
-          .reqPostInputProcess({
-            process_id: processId,
-            input_cat_id: entity.materialType,
-            input_title_id:
-              entity.materialType === 7
-                ? 1
-                : entity.materialType === 8
-                ? 3
-                : entity.materialType === 9
-                ? 2
-                : 0,
-            input_name: entity.itemName,
-            input_unit: entity.unit,
-            input_quantity: entity.amount,
-            chemical_reaction: 0,
-          } as InputProcessType)
-          .then((response) => {
-            console.log("New input process added:", response);
-          })
-          .finally(() => {
-            window.location.reload();
-          });
-      } else if (type === "intermediate") {
-        await outputProcessService
-          .reqPostOutputProcess({
-            process_id: processId,
-            output_cat_id: 2,
-            output_name: entity.itemName,
-            output_unit: entity.unit,
-            output_quantity: entity.amount,
-            finish_output: entity.isLastProduct,
-            packaging_output: entity.sumPackage,
-          })
-          .then((response) => {
-            console.log("New output process added:", response);
-          })
-          .catch((error) => {
-            console.error("Error adding output process:", error);
-          })
-          .finally(() => {
-            window.location.reload();
-          });
-      } else if (type === "waste") {
-        console.log(entity);
-
-        await wasteProcessService
-          .reqPostWasteProcess({
-            process_id: processId,
-            waste_cat_id: entity.materialType,
-            waste_name: entity.itemName,
-            waste_unit: entity.unit,
-            waste_qty: entity.amount,
-            life_cycle_phase: 0,
-          })
-          .then((response) => {
-            console.log("New waste process added:", response);
-          })
-          .catch((error) => {
-            console.error("Error adding waste process:", error);
-          })
-          .finally(() => {
-            window.location.reload();
-          });
-      } else {
-        console.error("Invalid type");
+          await inputProcessService
+            .reqPutInputProcessByID(dataId || 0, {
+              process_id: processId,
+              input_cat_id: entity.materialType,
+              input_title_id:
+                entity.materialType === 7
+                  ? 1
+                  : entity.materialType === 8
+                  ? 3
+                  : entity.materialType === 9
+                  ? 2
+                  : 0,
+              input_name: entity.itemName,
+              input_unit: entity.unit,
+              input_quantity: entity.amount,
+              chemical_reaction: 0,
+            } as InputProcessType)
+            .then((response) => {
+              console.log("Input process updated:", response);
+            })
+            .catch((error) => {
+              console.log(error);
+            })
+            .finally(() => {
+              window.location.reload();
+            });
+        } else if (type === "intermediate") {
+          await outputProcessService
+            .reqPutOutputProcessByID(dataId || 0, {
+              process_id: processId,
+              output_cat_id: 2,
+              output_name: entity.itemName,
+              output_unit: entity.unit,
+              output_quantity: entity.amount,
+              finish_output: entity.isLastProduct,
+              packaging_output: entity.sumPackage,
+            } as OutputProcessType)
+            .then((response) => {
+              console.log("Output process updated:", response);
+            })
+            .catch((error) => {
+              console.log(error);
+            })
+            .finally(() => {
+              window.location.reload();
+            });
+        } else if (type === "waste") {
+          await wasteProcessService
+            .reqPutWasteProcessByID(dataId || 0, entity as WasteProcessType)
+            .then((response) => {
+              console.log("Waste process updated:", response);
+            })
+            .catch((error) => {
+              console.log(error);
+            })
+            .finally(() => {
+              window.location.reload();
+            });
+        } else {
+          console.error("Invalid type");
+        }
+        return;
       }
     }
-  };
 
+    if (type === "input") {
+      await inputProcessService
+        .reqPostInputProcess({
+          process_id: processId,
+          input_cat_id: entity.materialType,
+          input_title_id:
+            entity.materialType === 7
+              ? 1
+              : entity.materialType === 8
+              ? 3
+              : entity.materialType === 9
+              ? 2
+              : 0,
+          input_name: entity.itemName,
+          input_unit: entity.unit,
+          input_quantity: entity.amount,
+          chemical_reaction: 0,
+        } as InputProcessType)
+        .then((response) => {
+          console.log("New input process added:", response);
+        })
+        .finally(() => {
+          window.location.reload();
+        });
+    } else if (type === "intermediate") {
+      await outputProcessService
+        .reqPostOutputProcess({
+          process_id: processId,
+          output_cat_id: 2,
+          output_name: entity.itemName,
+          output_unit: entity.unit,
+          output_quantity: entity.amount,
+          finish_output: entity.isLastProduct || false,
+          packaging_output: entity.sumPackage || false,
+        })
+        .then((response) => {
+          console.log("New output process added:", response);
+        })
+        .catch((error) => {
+          console.error("Error adding output process:", error);
+        })
+        .finally(() => {
+          window.location.reload();
+        });
+    } else if (type === "waste") {
+      console.log(entity);
+
+      await wasteProcessService
+        .reqPostWasteProcess({
+          process_id: processId,
+          waste_cat_id: entity.materialType,
+          waste_name: entity.itemName,
+          waste_unit: entity.unit,
+          waste_qty: entity.amount,
+          life_cycle_phase: 0,
+        })
+        .then((response) => {
+          console.log("New waste process added:", response);
+        })
+        .catch((error) => {
+          console.error("Error adding waste process:", error);
+        })
+        .finally(() => {
+          window.location.reload();
+        });
+    } else {
+      console.error("Invalid type");
+    }
+  };
+  const handleDeleteFR03Item = async (type: string, item_id: number) => {
+    await processService
+      .reqDeleteItemCategory(type, item_id)
+      .then((response) => {
+        console.log("Item deleted:", response);
+      })
+      .catch((error) => {
+        console.error("Error deleting item:", error);
+      })
+      .finally(() => {
+        window.location.reload();
+      });
+  };
   const toggleExpanded = (id: string) => {
     setExpandedItems((prev) => {
       const isExpanded = prev.includes(id);
@@ -285,6 +304,7 @@ const useViewModel = (id: number) => {
     handleDeleteProcess,
     handleUpdateProcess,
     handleOnSubmitFR03Item,
+    handleDeleteFR03Item,
   };
 };
 export default useViewModel;

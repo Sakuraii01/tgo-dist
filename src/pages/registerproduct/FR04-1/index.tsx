@@ -66,14 +66,14 @@ const FR04_1 = () => {
           type="button"
           className="transition-colors rounded-full w-full mt-6 px-10 py-2 bg-gray-400 hover:bg-gray-300 text-white font-semibold"
         >
-          กลับ FR 03
+          ย้อนกลับ
         </button>
         <button
           onClick={() => handleNavigateto04_2()}
           type="button"
           className="rounded-full w-full mt-6 px-10 py-2 bg-gradient-to-r from-[#2BCFF2] via-[#19C2E6] via-30% to-[#0190C3]  text-white font-semibold transition hover:opacity-80"
         >
-          บันทึกและไป FR 04.2
+          บันทึกและไปขั้นตอนถัดไป
         </button>
       </div>
     </div>
@@ -351,7 +351,19 @@ const FR04_1Form = (props: {
                             แหล่งอ้างอิง EF
                           </label>
                           <p className="w-fit">
-                            {initialValues?.ef_source_ref || "-"}
+                            {(initialValues.ef_source === "TGO EF"
+                              ? tgoEfDropdown?.find(
+                                  (data) =>
+                                    data.ef_id ===
+                                    Number(initialValues.ef_source_ref)
+                                )?.item
+                              : initialValues.ef_source === "Self collect"
+                              ? selfCollectDropdown.find(
+                                  (data) =>
+                                    data.self_collect_id ===
+                                    Number(initialValues.ef_source_ref)
+                                )?.self_collect_name
+                              : initialValues.ef_source_ref) || "-"}
                           </p>
                         </div>
                         <div>

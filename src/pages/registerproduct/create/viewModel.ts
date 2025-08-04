@@ -105,17 +105,16 @@ const useViewModel = (id?: number) => {
     };
     try {
       const formData = new FormData();
+
       if (savePicture) {
         formData.append("product_photo", savePicture);
       }
-
       if (id) {
         entity.product_id = id;
         await productService.reqPutProduct(id, entity);
         await productService.reqPutProductPicture(id, formData);
       } else {
         const res = await productService.reqPostProduct(entity);
-        console.log(res);
 
         newId = Number(res?.product_id);
         await productService.reqPutProductPicture(newId, formData);
@@ -157,8 +156,6 @@ const useViewModel = (id?: number) => {
       productService
         .reqGetProduct(id)
         .then((data) => {
-          console.log(data);
-
           if (data) {
             setInitialValues({
               registrationRound: data.submitted_round,

@@ -101,7 +101,7 @@ const FR03 = () => {
           type="button"
           className="transition-colors rounded-full w-full mt-6 px-10 py-2 bg-gray-400 hover:bg-gray-300 text-white font-semibold"
         >
-          กลับ FR 01
+          ย้อนกลับ
         </button>
         <button
           onClick={() =>
@@ -110,7 +110,7 @@ const FR03 = () => {
           type="submit"
           className="rounded-full w-full mt-6 px-10 py-2 bg-gradient-to-r from-[#2BCFF2] via-[#19C2E6] via-30% to-[#0190C3]  text-white font-semibold transition hover:opacity-80"
         >
-          บันทึกและไป FR 04.1
+          บันทึกและไปขั้นตอนถัดไป
         </button>
       </div>
     </div>
@@ -195,8 +195,12 @@ type FR03ItemProps = {
   dragHandleProps?: React.HTMLAttributes<any>;
 };
 const FR03Item = (props: FR03ItemProps) => {
-  const { handleDeleteProcess, handleUpdateProcess, handleOnSubmitFR03Item } =
-    useViewModel(props.data.product_id);
+  const {
+    handleDeleteProcess,
+    handleUpdateProcess,
+    handleOnSubmitFR03Item,
+    handleDeleteFR03Item,
+  } = useViewModel(props.data.product_id);
   const { AddProcessValidationSchema } = FR03FormSchema();
   const { isOpen, onToggle } = props;
   const [isEdit, setIsEdit] = useState(false);
@@ -216,7 +220,7 @@ const FR03Item = (props: FR03ItemProps) => {
         >
           <CreateRounded sx={{ fontSize: "16px" }} className="text-primary" />
         </button>
-        <button onClick={() => console.log(type, process_id, item_id)}>
+        <button onClick={() => handleDeleteFR03Item(type, item_id)}>
           <DeleteRounded sx={{ fontSize: "16px" }} className="text-error" />
         </button>
       </div>
@@ -377,7 +381,8 @@ const FR03Item = (props: FR03ItemProps) => {
                                     type,
                                     props.data.process_id,
                                     data.input_process_id,
-                                    true
+                                    true,
+                                    "input" === type ? false : true
                                   );
 
                                   setShowform(false);
@@ -438,7 +443,8 @@ const FR03Item = (props: FR03ItemProps) => {
                                   type,
                                   props.data.process_id,
                                   data.input_process_id,
-                                  true
+                                  true,
+                                  "input" === type ? false : true
                                 );
                                 setShowform(false);
                                 setEditIsOpen("close");
@@ -497,7 +503,8 @@ const FR03Item = (props: FR03ItemProps) => {
                                   type,
                                   props.data.process_id,
                                   data.input_process_id,
-                                  true
+                                  true,
+                                  "input" === type ? false : true
                                 );
                                 setShowform(false);
                                 setEditIsOpen("close");
@@ -559,7 +566,8 @@ const FR03Item = (props: FR03ItemProps) => {
                               type,
                               props.data.process_id,
                               data.output_process_id,
-                              true
+                              true,
+                              "intermediate" === type ? false : true
                             );
                             setShowform(false);
                             setEditIsOpen("close");
@@ -623,7 +631,8 @@ const FR03Item = (props: FR03ItemProps) => {
                                   type,
                                   props.data.process_id,
                                   data.waste_process_id,
-                                  true
+                                  true,
+                                  "waste" === type ? false : true
                                 );
                                 setShowform(false);
                                 setEditIsOpen("close");
@@ -677,7 +686,8 @@ const FR03Item = (props: FR03ItemProps) => {
                                   type,
                                   props.data.process_id,
                                   data.waste_process_id,
-                                  true
+                                  true,
+                                  "waste" === type ? false : true
                                 );
                                 setShowform(false);
                                 setEditIsOpen("close");

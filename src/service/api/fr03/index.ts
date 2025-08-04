@@ -51,6 +51,13 @@ export class ProcessService extends RemoteA {
     const { data } = response;
     return data;
   };
+  reqDeleteItemCategory = async (category: string, item_id: number) => {
+    const response = await this.getAxiosInstance().delete(
+      `/${category === "intermediate" ? "output" : category}/process/${item_id}`
+    );
+    const { data } = response;
+    return data;
+  };
 }
 
 export class OutputProcessService extends RemoteA {

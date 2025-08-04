@@ -30,12 +30,12 @@ export const ProcessStepper = (props: stepperProps) => {
     },
     {
       stepName: "การประเมิน GHG",
-      subStepName: "การขนส่ง",
+      subStepName: "ขนส่ง",
       navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR04_2,
     },
     {
       stepName: "การประเมิน GHG",
-      subStepName: "การกำหนดเอง",
+      subStepName: "กำหนดเอง",
       navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR04_3,
     },
     {
@@ -45,7 +45,7 @@ export const ProcessStepper = (props: stepperProps) => {
     },
     {
       stepName: "การเปรียบเทียบ",
-      subStepName: "สมถนะผลิตภัณฑ์",
+      subStepName: "สมรรถนะผลิตภัณฑ์",
       navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR06_2,
     },
   ];
