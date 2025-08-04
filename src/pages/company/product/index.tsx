@@ -10,9 +10,10 @@ import React, { useState } from "react";
 
 const CProduct: React.FC = () => {
   const navigate = useNavigate();
-  const auditorId = 1;
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
+   const auditor_id = searchParams.get("user_id");
+ const auditorId = Number(auditor_id);
 
   const {
     productData: individualProduct,
@@ -534,7 +535,7 @@ const CProduct: React.FC = () => {
 
                         {!isCfpFormConfirmed && (
                           <div className="flex justify-end text-xs text-orange-500 items-center">
-                            <span>กรุณาแก้ไขกดแนบแบบฟอร์มการแก้ไข</span>
+                            <span>กรุณากดแนบแบบฟอร์มการแก้ไข</span>
                           </div>
                         )}
                       </div>
@@ -560,11 +561,10 @@ const CProduct: React.FC = () => {
                   />
 
                   {/* Action Buttons */}
-                  <div className="flex justify-end gap-3 mt-4">
+                    <div className="flex justify-end gap-3 mt-4">
                     <button
                       type="button"
                       onClick={() => setComment("")}
-                      disabled={submitting}
                       className="px-4 py-2 border border-gray-300 rounded-full font-semibold hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       ล้างข้อความ
@@ -576,14 +576,14 @@ const CProduct: React.FC = () => {
                         callExcelApi();
                       }}
                       disabled={!comment.trim() || submitting || uploading}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700"
+                      className="primary-button font-semibold shadow px-4 py-2 rounded-full flex gap-1 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      บันทึกและอัปโหลด
+                      {submitting ? "กำลังบันทึก..." : "บันทึกและอัปโหลด"}
                     </button>
+                  </div>
                   </div>
                 </div>
               </div>
-            </div>
           )}
         {/* Back to List Button */}
         <button

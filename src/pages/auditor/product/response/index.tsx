@@ -10,7 +10,8 @@ const Response: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
-  const auditorId = 1; 
+  const auditor_id = searchParams.get("user_id");
+ const auditorId = Number(auditor_id);
 
   const [expandedComments, setExpandedComments] = useState<{
     [key: number]: boolean;
@@ -132,7 +133,7 @@ const Response: React.FC = () => {
             <div className="justify-end">
               <button
                 type="button"
-                onClick={() => navigate(`/product_adetail?id=${id}`)}
+                onClick={() => navigate(`/product_vdetail?id=${id}`)}
                 className="bg-gray-600 text-white font-semibold shadow px-6 py-2 rounded-full hover:bg-gray-700 transition-colors"
               >
                 กลับไปรายละเอียดผลิตภัณฑ์
@@ -147,7 +148,7 @@ const Response: React.FC = () => {
                   className="bg-white border border-gray-200 shadow-md rounded-lg overflow-hidden"
                 >
                   <div
-                    className="bg-gray-100 p-3 border-b border-gray-200 flex justify-between items-center cursor-pointer"
+                    className="bg-secondary-100 p-3 border-b border-gray-200 flex justify-between items-center cursor-pointer"
                     onClick={() => toggleComment(index)}
                   >
                     <div className="flex items-center">

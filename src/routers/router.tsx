@@ -54,9 +54,9 @@ const Router = () => {
 
           <Route path={PROTECTED_PATH.PRODUCT_DETAIL} element={<Product />} />
 
-          <Route path={PROTECTED_PATH.AUDITOR} element={<Auditor />} />
+          <Route path={PROTECTED_PATH.VERIFIER} element={<Auditor />} />
           <Route
-            path={PROTECTED_PATH.PRODUCT_DETAIL_AUDITOR}
+            path={PROTECTED_PATH.PRODUCT_DETAIL_VERIFIER}
             element={<AProduct/>}
           />
           <Route

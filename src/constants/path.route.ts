@@ -7,9 +7,9 @@ export const PROTECTED_PATH = {
   CBAM: "/cbam",
   DASHBOARD: "/",
 
-  AUDITOR: "/auditor",
-  PRODUCT_DETAIL_AUDITOR: "/product_adetail",
-  AUDITOR_COMMENT_HISTORY: "/aresponse",
+  VERIFIER:"/verifier",
+  PRODUCT_DETAIL_VERIFIER:"/product_vdetail",
+  AUDITOR_COMMENT_HISTORY: "/vresponse",
   COMPANY_COMMENT_HISTORY: "/cresponse",
 
 

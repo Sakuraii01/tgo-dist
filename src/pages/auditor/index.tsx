@@ -3,13 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../constants/path.route";
 import useViewModel from "./viewModel";
 import { useAuth } from "../../auth/useAuth";
+import { useToken } from "../../utils/localStorage";
 
 const Auditor = () => {
   const {
     tab,
     error,
     loading,
-    companyData,
     auditorData,
     productList,
     handleTabChange,
@@ -17,6 +17,7 @@ const Auditor = () => {
   
   const navigate = useNavigate();
   const auth = useAuth();
+  const userData = useToken();
 
   if (loading) {
     return (
@@ -52,14 +53,9 @@ const Auditor = () => {
           <h1 className="text-4xl font-medium mb-5 mt-10">
             ยินดีต้อนรับ{" "}
             <span className="font-bold text-linear text-primary-linear">
-              {auditorData?.name || auth?.user?.user?.name}
+              {userData?.user?.name || auditorData?.name || auth?.user?.user?.name}
             </span>
           </h1>
-          <div className="flex gap-5">
-            <div className="w-[450px] p-5 rounded-3xl bg-stroke">
-              <p>{companyData?.address}</p>
-            </div>
-          </div>
         </section>
         <section className="flex mt-15 my-5 justify-between">
           <div className="font-medium">
@@ -217,7 +213,7 @@ const Auditor = () => {
                         <button
                           onClick={() =>
                             navigate(
-                              PROTECTED_PATH.PRODUCT_DETAIL_AUDITOR +
+                              PROTECTED_PATH.PRODUCT_DETAIL_VERIFIER +
                                 `?id=${data.product_id}`
                             )
                           }

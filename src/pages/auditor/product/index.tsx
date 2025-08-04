@@ -12,8 +12,9 @@ import { ProductService } from "../../../service/api/auditor/product";
 const AProduct: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const auditor_id = searchParams.get("user_id");
+  const auditorId = Number(auditor_id);
   const id = searchParams.get("id");
-  const auditorId = 1;
 
   const {
     productData,
@@ -59,7 +60,7 @@ const AProduct: React.FC = () => {
       setShowCommentBox(false); // Hide comment box after submission
       await refetch();
       alert("บันทึกความคิดเห็นเรียบร้อยแล้ว");
-      navigate("/auditor");
+      navigate("/verifier");
     } catch (error) {
       console.error("Error saving comment:", error);
       alert("เกิดข้อผิดพลาดในการบันทึกความคิดเห็น");
@@ -117,7 +118,7 @@ const AProduct: React.FC = () => {
 
       const statusText = newStatus === 3 ? "อนุมัติ" : "ปฏิเสธ";
       alert(`${statusText}ผลิตภัณฑ์เรียบร้อยแล้ว`);
-      navigate("/auditor");
+      navigate("/verifier");
     } catch (error) {
       console.error("Error updating status:", error);
       alert(
@@ -197,7 +198,7 @@ const AProduct: React.FC = () => {
                   ลองใหม่อีกครั้ง
                 </button>
                 <button
-                  onClick={() => navigate(PROTECTED_PATH.AUDITOR)}
+                  onClick={() => navigate(PROTECTED_PATH.VERIFIER)}
                   className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
                 >
                   กลับไปหน้ารายการ
@@ -403,6 +404,7 @@ const AProduct: React.FC = () => {
                   <button
                     onClick={async () => {
                       await fetchLatestExcel();
+                      console.log(excelLink);
                       window.open(
                         "http://178.128.123.212:5000" + excelLink,
                         "_blank"
@@ -630,7 +632,7 @@ const AProduct: React.FC = () => {
         {/* Back to List Button */}
         <button
           type="button"
-          onClick={() => navigate(PROTECTED_PATH.AUDITOR)}
+          onClick={() => navigate(PROTECTED_PATH.VERIFIER)}
           className="flex 
               bg-gray-600 text-white  shadow px-4 py-2 rounded-full hover:bg-gray-700 transition-colors ml-auto justify-end mt-4"
         >
