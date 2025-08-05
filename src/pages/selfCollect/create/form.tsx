@@ -279,7 +279,7 @@ export const IOItem = (props: processItemType) => {
                             Number(values.item_fu_qty) *
                             10000
                         ) / 10000;
-                      return weight !== null ? weight * tkm : "-";
+                      return weight !== null ? tkm / weight : "-";
                     })()
                   : values.type2_return_load,
             },
@@ -562,7 +562,7 @@ export const IOItem = (props: processItemType) => {
                                           Number(values.item_fu_qty) *
                                           10000
                                       ) / 10000;
-                                    return weight !== null ? weight * tkm : "-";
+                                    return weight !== null ? tkm / weight : "-";
                                   })()}
                                 </p>
                               </div>
