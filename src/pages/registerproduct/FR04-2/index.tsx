@@ -449,7 +449,7 @@ const FormTypeB = ({
                         10000
                     ) / 10000;
 
-                  return weight !== null ? weight * tkm : 0;
+                  return weight !== null ? tkm / weight : 0;
                 })(),
                 type2_ef_source: values.type2_ef_source,
                 type2_ef_source_ref:
@@ -670,7 +670,7 @@ const FormTypeB = ({
                                       Number(values.item_fu_qty) *
                                       10000
                                   ) / 10000;
-                                return weight !== null ? weight * tkm : "-";
+                                return weight !== null ? tkm / weight : "-";
                               })()
                             ) : (
                               <Field
