@@ -57,19 +57,19 @@ const Router = () => {
           <Route path={PROTECTED_PATH.VERIFIER} element={<Auditor />} />
           <Route
             path={PROTECTED_PATH.PRODUCT_DETAIL_VERIFIER}
-            element={<AProduct/>}
+            element={<AProduct />}
           />
           <Route
             path={PROTECTED_PATH.PRODUCT_DETAIL_COMPANY}
-            element={<CProduct/>}
+            element={<CProduct />}
           />
           <Route
             path={PROTECTED_PATH.AUDITOR_COMMENT_HISTORY}
-            element={<AResponse/>}
+            element={<AResponse />}
           />
           <Route
             path={PROTECTED_PATH.COMPANY_COMMENT_HISTORY}
-            element={<CResponse/>}
+            element={<CResponse />}
           />
 
           <Route element={<Outlet />}>
@@ -139,10 +139,18 @@ function UnRequireAuth() {
   const auth = useAuth();
   const location = useLocation();
 
-  if (auth?.user) {
+  if (auth?.user?.role.role_id === 2) {
     return (
       <Navigate
         to={PROTECTED_PATH.SELECT_CBAM_CFP}
+        state={{ from: location }}
+        replace
+      />
+    );
+  } else if (auth?.user?.role.role_id === 3) {
+    return (
+      <Navigate
+        to={PROTECTED_PATH.VERIFIER}
         state={{ from: location }}
         replace
       />

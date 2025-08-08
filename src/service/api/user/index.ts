@@ -1,6 +1,6 @@
 import { RemoteA } from "../../remote";
 import { PROTECTED_PATH } from "../../../constants/api.route";
-import type { CompanyInfo, UserInfo, Login } from "./type";
+import type { CompanyInfo, UserInfo, Login, VerifierInfo } from "./type";
 
 export class UserService extends RemoteA {
   reqPostUser = async (entity: UserInfo) => {
@@ -24,6 +24,15 @@ export class UserService extends RemoteA {
       PROTECTED_PATH.LOGIN,
       entity
     );
+    const { data } = response;
+    return data;
+  };
+  reqPostVerifier = async (entity: VerifierInfo) => {
+    const response = await this.getAxiosInstance().post(
+      PROTECTED_PATH.AUDITORS,
+      entity
+    );
+
     const { data } = response;
     return data;
   };

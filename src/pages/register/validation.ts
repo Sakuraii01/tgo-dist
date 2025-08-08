@@ -27,8 +27,26 @@ const RegisterSchema = () => {
       .oneOf([yup.ref("password")], "รหัสผ่านไม่ตรงกัน"),
   });
 
+  const VerifierRegisterFormValidationSchema = yup.object({
+    namePrefix: yup.string().required("กรุณาระบุคํานําหน้า"),
+    verifierNumber: yup.string().required("เลขประจำตัวผู้ทวนสอบ"),
+    name: yup.string().required("กรุณาระบุชื่อ"),
+    email: yup
+      .string()
+      .email("กรุณาระบุอีเมลให้ถูกต้อง")
+      .required("กรุณาระบุอีเมล"),
+    password: yup
+      .string()
+      .required("กรุณาระบุรหัสผ่าน")
+      .min(8, "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร"),
+    passwordcomfirm: yup
+      .string()
+      .required("กรุณาระบุรหัสผ่าน")
+      .oneOf([yup.ref("password")], "รหัสผ่านไม่ตรงกัน"),
+  });
   return {
     RegisterFormValidationSchema,
+    VerifierRegisterFormValidationSchema,
   };
 };
 

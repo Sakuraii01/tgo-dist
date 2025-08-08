@@ -5,7 +5,6 @@ export type StepNavigateProps = {
   }[];
   current_step: number;
 };
-export const StepNavigate = () => {};
 export type TabNavigateProps = {
   title: {
     title: string;

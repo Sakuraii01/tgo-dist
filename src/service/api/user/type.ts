@@ -21,7 +21,6 @@ export type UserResponse = {
   };
 };
 export type UserInfo = {
-  company_id: number;
   name: string;
   email: string;
   password: string;
@@ -48,6 +47,11 @@ export type UserLoginInfo = {
     created_date: string;
     updated_date: string;
   };
+  role: {
+    role_id: number;
+    role_name: string;
+    role_description: string;
+  };
   company: {
     company_id: number;
     user_id: number;
@@ -59,4 +63,11 @@ export type UserLoginInfo = {
     created_date: string;
     updated_date: string;
   }[];
+};
+
+export type VerifierInfo = {
+  user_id: number;
+  prefix_name: string;
+  name: string;
+  register_id: string;
 };
