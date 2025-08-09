@@ -7,29 +7,30 @@ import {
 
 import { Badge } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { PROTECTED_PATH } from "../../constants/path.route";
+import { PROTECTED_PATH, UNPROTECTED_PATH } from "../../constants/path.route";
 import { clearToken, useToken } from "../../utils/localStorage";
 import { useAuth } from "../../auth/useAuth";
 import { useState, useEffect } from "react";
-import { useSearchParams, } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import axios from "axios";
-
 
 export const Navbar = () => {
   const navigate = useNavigate();
   const auth = useAuth();
   const userData = useToken();
-    const [searchParams] = useSearchParams();
-     const auditor_id = searchParams.get("user_id");
-   const auditorId = Number(auditor_id);
-  const companyId = userData?.company[0]?.company_id;
+  const [searchParams] = useSearchParams();
+  const auditor_id = searchParams.get("user_id");
+  const auditorId = Number(auditor_id);
+  const companyId = userData?.company?.[0]?.company_id;
 
   const [count, setCount] = useState<number>(0);
   const [showNotifications, setShowNotifications] = useState<boolean>(false);
   const [notifications, setNotifications] = useState<any[]>([]);
 
   const navigateToLoginPage = async () => {
-    await clearToken();
+    await clearToken().then(() =>
+      navigate(UNPROTECTED_PATH.LOGIN, { replace: true })
+    );
     window.location.reload();
   };
 
@@ -128,7 +129,7 @@ export const Navbar = () => {
           </div>
           <div
             className="text-error mx-5 cursor-pointer hover:bg-error/10 p-2 rounded-full"
-            onClick={navigateToLoginPage}
+            onClick={() => navigateToLoginPage()}
           >
             <LogoutRounded />
           </div>

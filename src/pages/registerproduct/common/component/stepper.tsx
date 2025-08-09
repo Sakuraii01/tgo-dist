@@ -24,17 +24,17 @@ export const ProcessStepper = (props: stepperProps) => {
       navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR03,
     },
     {
-      stepName: "การประเมิน GHG",
+      stepName: "การประเมิน GHGs",
       subStepName: "วัตถุดิบ",
       navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR04_1,
     },
     {
-      stepName: "การประเมิน GHG",
+      stepName: "การประเมิน GHGs",
       subStepName: "ขนส่ง",
       navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR04_2,
     },
     {
-      stepName: "การประเมิน GHG",
+      stepName: "การประเมิน GHGs",
       subStepName: "กำหนดเอง",
       navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR04_3,
     },

@@ -48,7 +48,7 @@ const CreateProduct = () => {
                     name={`registrationRound`}
                     label="เลือกรอบการขึ้นทะเบียน"
                     items={registerRoundList.map((item) => ({
-                      label: `${item.quarter}(${item.start} - ${item.end})`,
+                      label: `${item.quarter}`,
                       value: item.quarter,
                     }))}
                   />

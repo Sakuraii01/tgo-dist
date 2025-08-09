@@ -52,12 +52,9 @@ const Dashboard = () => {
                   <p>(Self collect)</p>
                 </button>
               </div>
-              <div className="px-10 bg-gradient-to-b from-[#F1FCFF] to-[#E2F7FB] rounded-3xl w-fit pb-2 pt-5 text-center">
+              <div className="px-10 bg-gradient-to-b from-[#F1FCFF] to-[#E2F7FB] rounded-3xl w-fit pt-10 text-center">
                 <p>รอบขึ้นทะเบียนปัจจุบัน</p>
                 <p className="font-bold text-primary text-3xl mt-2">1 / 2568</p>
-                <p className="rounded-full text-xs w-fit px-2 mx-auto my-2">
-                  01/01/2568 - 31/03/2568
-                </p>
               </div>
             </div>
           </div>

@@ -391,7 +391,6 @@ const FR04_1Form = (props: {
                           name="description"
                           label="หมายเหตุ / คำอธิบายเพิ่มเติม"
                           placeholder="หมายเหตุ / คำอธิบายเพิ่มเติม"
-                          require
                         />
                       </div>
                     ) : (

@@ -72,7 +72,8 @@ export class TGOEFDropdownService extends RemoteA {
       PROTECTED_PATH.PRC_DROPDOWN
     );
     const { data } = response;
-    return data.ข้อกำหนดระดับประเทศ;
+
+    return [...data.ข้อกำหนดระดับประเทศ, ...data.ข้อกำหนดทั่วไป];
   };
 }
 

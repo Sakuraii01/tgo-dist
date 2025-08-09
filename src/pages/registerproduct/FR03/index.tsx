@@ -254,7 +254,8 @@ const FR03Item = (props: FR03ItemProps) => {
               <div
                 className={`flex ${
                   isOpen ? "border-b" : ""
-                } border-gray-400 pb-4 px-6 justify-between`}
+                } border-gray-400 pb-4 px-6 gap-2 
+                `}
               >
                 <div className="my-auto h-fit">
                   {!isEdit ? (
@@ -270,48 +271,58 @@ const FR03Item = (props: FR03ItemProps) => {
                   )}
                 </div>
 
-                <div className="flex my-auto gap-2">
+                <div className="ml-3 flex my-auto gap-2 pt-1">
                   {!isEdit ? (
                     <>
                       <button
-                        className="border border-primary rounded-full text-primary hover:bg-primary/10 transition font-semibold text-sm flex items-center gap-2 h-fit my-3 px-3 py-1 transform"
+                        type="button"
+                        className="rounded-full text-primary hover:bg-primary/10 transition font-semibold text-sm flex items-center h-fit my-3 px-1 py-1 transform"
                         onClick={() => setIsEdit(true)}
                       >
-                        <Edit />
-                      </button>
-                      <button
-                        onClick={() => {
-                          handleDeleteProcess(props.data.process_id);
-                        }}
-                        type="button"
-                        className="border border-red-700 rounded-full text-red-700 hover:bg-red-50 transition font-semibold text-sm flex items-center gap-2 h-fit my-3 px-3 py-1 transform"
-                      >
-                        <DeleteRounded />
+                        <Edit fontSize="small" />
                       </button>
                     </>
                   ) : (
                     <>
                       <button
-                        className="border border-gray-200 rounded-full text-gray-200 hover:bg-gray-200/10 transition font-semibold text-sm flex items-center gap-2 h-fit my-3 px-3 py-1 transform"
+                        type="button"
+                        className="rounded-full text-gray-200 hover:bg-gray-200/10 transition font-semibold text-sm flex items-center h-fit my-3 px-1 py-1 transform"
                         onClick={() => setIsEdit(false)}
                       >
-                        <Clear />
+                        <Clear fontSize="small" />
                       </button>
                       <button
                         type="submit"
-                        className="border border-primary rounded-full text-primary hover:bg-primary/10 transition font-semibold text-sm flex items-center gap-2 h-fit my-3 px-3 py-1 transform"
+                        className="rounded-full text-primary hover:bg-primary/10 transition font-semibold text-sm flex items-center h-fit my-3 px-1 py-1 transform"
                       >
-                        <Check />
+                        <Check fontSize="small" />
                       </button>
                     </>
                   )}
-                  <div className="my-auto" onClick={onToggle}>
+                </div>
+                <div className="flex ml-auto gap-2 my-auto">
+                  <button
+                    onClick={() => {
+                      handleDeleteProcess(props.data.process_id);
+                    }}
+                    type="button"
+                    className="border border-red-700 rounded-full text-red-700 hover:bg-red-50 transition font-semibold text-sm flex px-3 py-1 transform"
+                  >
+                    <DeleteRounded fontSize="small" />
+                    ลบกระบวนการ
+                  </button>
+                  <button
+                    className="cursor-pointer text-sm border border-primary rounded-full  hover:bg-primary/10 transition h-fit px-3 py-1 font-semibold text-primary bg-primary-2/10"
+                    onClick={onToggle}
+                    type="button"
+                  >
+                    รายละเอียด
                     {isOpen ? (
-                      <KeyboardArrowUpRounded />
+                      <KeyboardArrowUpRounded fontSize="small" />
                     ) : (
-                      <KeyboardArrowDownRounded />
+                      <KeyboardArrowDownRounded fontSize="small" />
                     )}
-                  </div>
+                  </button>
                 </div>
               </div>
             </form>
@@ -539,7 +550,7 @@ const FR03Item = (props: FR03ItemProps) => {
                   </div>
                 </div>
               </div>
-              <div className="w-full flex flex-col gap-2">
+              <div className="w-full flex flex-col-reverse gap-2 justify-end">
                 <div className="rounded-md bg-white border border-gray-400 p-4">
                   <div>
                     <h5 className="text-black font-medium text-lg mb-4">

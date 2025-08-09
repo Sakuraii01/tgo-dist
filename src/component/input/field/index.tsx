@@ -11,11 +11,13 @@ import {
   Checkbox,
   FormGroup,
 } from "@mui/material";
+
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs, { Dayjs } from "dayjs";
+import AdapterDayjsBE from "./adapter";
 
+import dayjs, { Dayjs } from "dayjs";
+import "dayjs/locale/th";
 type RadioOption = {
   label: string;
   value: string;
@@ -196,9 +198,10 @@ export const DatePickerField = ({
 
   return (
     <div className="my-2">
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <LocalizationProvider dateAdapter={AdapterDayjsBE} adapterLocale="th">
         <DatePicker
           label={label}
+          format="DD/MM/YYYY"
           value={field.value ? dayjs(field.value) : null}
           onChange={(date: Dayjs | null) => {
             setFieldValue(name, date ? date.toISOString() : "");

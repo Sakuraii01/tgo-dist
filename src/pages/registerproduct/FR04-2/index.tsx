@@ -613,7 +613,7 @@ const FormTypeB = ({
                       <div>
                         {isEdit && values.type2_ef_source === "TGO_ef" ? (
                           <p className="text-sm text-gray-300">
-                            ภาระบรรทุกเที่ยวไป (KM)
+                            ภาระบรรทุกเที่ยวไป (tkm)
                           </p>
                         ) : (
                           ""
@@ -629,14 +629,14 @@ const FormTypeB = ({
                             ) : (
                               <Field
                                 name="type2_outbound_load"
-                                label="ภาระบรรทุกเที่ยวไป (KM)"
-                                placeholder="ภาระบรรทุกเที่ยวไป (KM)"
+                                label="ภาระบรรทุกเที่ยวไป (tkm)"
+                                placeholder="ภาระบรรทุกเที่ยวไป (tkm)"
                               />
                             )
                           ) : (
                             <>
                               <p className="text-sm text-gray-300">
-                                ภาระบรรทุกเที่ยวกลับ (KM)
+                                ภาระบรรทุกเที่ยวไป (tkm)
                               </p>
                               {values.type2_outbound_load || "-"}
                             </>
@@ -647,7 +647,7 @@ const FormTypeB = ({
                       <div>
                         {isEdit && values.type2_ef_source === "TGO_ef" ? (
                           <p className="text-sm text-gray-300">
-                            ภาระบรรทุกเที่ยวกลับ (KM)
+                            ภาระบรรทุกเที่ยวกลับ (km)
                           </p>
                         ) : (
                           ""
@@ -675,14 +675,14 @@ const FormTypeB = ({
                             ) : (
                               <Field
                                 name="type2_return_load"
-                                label="ภาระบรรทุกเที่ยวกลับ (KM)"
-                                placeholder="ภาระบรรทุกเที่ยวกลับ (KM)"
+                                label="ภาระบรรทุกเที่ยวกลับ (km)"
+                                placeholder="ภาระบรรทุกเที่ยวกลับ (km)"
                               />
                             )
                           ) : (
                             <>
                               <p className="text-sm text-gray-300">
-                                ภาระบรรทุกเที่ยวกลับ (KM)
+                                ภาระบรรทุกเที่ยวกลับ (km)
                               </p>
                               {values.type2_return_load || "-"}
                             </>

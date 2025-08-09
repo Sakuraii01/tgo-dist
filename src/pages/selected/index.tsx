@@ -13,13 +13,12 @@ const SelectPage = () => {
         >
           <img src="./Climate change-rafiki.svg" className="w-60" />
           <div className="mt-auto mb-9">
-            <p className="text-2xl font-bold mt-5 mb-3 text-primary">
+            <p className="text-3xl font-bold mt-5 mb-3 text-primary">
               เข้าสู่หน้าหลัก CFP
             </p>
             <p className="w-72 text-sm">
-              ประเมินปริมาณก๊าซเรือนกระจกที่ปล่อยออกมาตลอดวงจรชีวิตของผลิตภัณฑ์
-              ตั้งแต่กระบวนการผลิต วัตถุดิบ การขนส่ง การใช้งาน
-              ไปจนถึงการกำจัดทิ้ง
+              ระบบคำนวณและทวนสอบคาร์บอนฟุตพริ้นท์ของผลิตภัณฑ์ (Carbon Footprint
+              of Products)
             </p>
           </div>
         </div>{" "}
@@ -29,12 +28,13 @@ const SelectPage = () => {
         >
           <img src="./Container ship-rafiki.svg" className="w-60" />
           <div className="mt-auto mb-9">
-            <p className="text-2xl font-bold mt-5 mb-3 text-secondary-500">
+            <p className="text-3xl font-bold mt-5 mb-3 text-secondary-500">
               เข้าสู่หน้าหลัก CBAM
             </p>
             <p className="w-72 text-sm">
-              calculation platform
-              เพื่อให้สามารถรองรับภายใต้ข้อกำหนดของมาตราการการปรับภาษีคาร์บอนข้ามพรมแดนของสหภาพยุโรป
+              ระบบคำนวณคำนวณค่า Embedded emission
+              ภายใต้ข้อกำหนดของมาตรการการปรับภาษีคาร์บอนข้ามพรมแดนของสหภาพยุโรป
+              (Carbon Border Adjustment Mechanism)
             </p>
           </div>
         </div>
