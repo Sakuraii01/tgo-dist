@@ -139,7 +139,7 @@ function UnRequireAuth() {
   const auth = useAuth();
   const location = useLocation();
 
-  if (auth?.user?.role.role_id === 2) {
+  if (auth?.user?.role?.role_id === 2) {
     return (
       <Navigate
         to={PROTECTED_PATH.SELECT_CBAM_CFP}
@@ -147,7 +147,7 @@ function UnRequireAuth() {
         replace
       />
     );
-  } else if (auth?.user?.role.role_id === 3) {
+  } else if (auth?.user?.role?.role_id === 3) {
     return (
       <Navigate
         to={PROTECTED_PATH.VERIFIER}

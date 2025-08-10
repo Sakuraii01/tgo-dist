@@ -1,8 +1,13 @@
 import { Navbar } from "../../component/layout";
 import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../constants/path.route";
+import { useAuth } from "../../auth/useAuth";
 const SelectPage = () => {
   const navigate = useNavigate();
+  const auth = useAuth();
+  const token = auth?.user;
+  const server = "http://178.128.123.212:8080/cbam/Home";
+
   return (
     <div>
       <Navbar />
@@ -21,10 +26,20 @@ const SelectPage = () => {
               of Products)
             </p>
           </div>
-        </div>{" "}
+        </div>
         <div
           className="bg-secondary-500/20 rounded-3xl px-8 hover:bg-secondary-500/30  transition flex mx-auto w-fit gap-3 cursor-pointer"
-          onClick={() => window.open("http://178.128.123.212:8080/cbam/Home")}
+          onClick={() => {
+            const cbamWindow = window.open(server);
+
+            window.addEventListener("message", (event) => {
+              console.log("Reply from second site:", event.data);
+            });
+            function sendToken() {
+              if (cbamWindow) cbamWindow.postMessage({ token }, server);
+            }
+            setTimeout(sendToken, 1000);
+          }}
         >
           <img src="./Container ship-rafiki.svg" className="w-60" />
           <div className="mt-auto mb-9">
