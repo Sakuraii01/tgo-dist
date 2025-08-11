@@ -27,11 +27,13 @@ const Register = () => {
   return (
     <div className="flex justify-between p-5 w-full h-screen bg-gradient-to-tl from-[#DEF0D9] to-[#E2F7FB]">
       <div className="w-fit mx-auto my-auto">
-        <img src="./Forms-amico.svg" className="w-80" />
+        <img src="./Forms-amico.svg" className="w-80 mx-auto" />
         <div className="w-fit mx-auto mt-4">
           <h1 className="text-primary-linear text-linear text-center text-5xl font-medium">
-            TGO <br />
-            <span className="text-2xl">for CFP and CBAM</span>
+            CBAM and CFP platform <br />
+            <span className="text-2xl">
+              แพลตฟอร์มคำนวณค่าคาร์บอนแฝงและคาร์บอนฟุตพรินท์ของผลิตภัณฑ์
+            </span>
           </h1>
         </div>
       </div>

@@ -7,6 +7,7 @@ const SelectPage = () => {
   const auth = useAuth();
   const token = auth?.user;
   const server = "http://178.128.123.212:8080/cbam/Home";
+  // const local = "http://localhost:3000/cbam/Home";
 
   return (
     <div>
@@ -47,7 +48,7 @@ const SelectPage = () => {
               เข้าสู่หน้าหลัก CBAM
             </p>
             <p className="w-72 text-sm">
-              ระบบคำนวณคำนวณค่า Embedded emission
+              ระบบคำนวณ Embedded emission
               ภายใต้ข้อกำหนดของมาตรการการปรับภาษีคาร์บอนข้ามพรมแดนของสหภาพยุโรป
               (Carbon Border Adjustment Mechanism)
             </p>

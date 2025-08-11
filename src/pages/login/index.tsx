@@ -14,9 +14,9 @@ const Login = () => {
         <img src="./Forms-amico.svg" className="w-80 mx-auto" />
         <div className="w-fit mx-auto mt-10">
           <h1 className="text-primary-linear text-linear text-center text-5xl font-medium">
-            CFP and CBAM platform <br />
+            CBAM and CFP platform <br />
             <span className="text-2xl">
-              แพลตฟอร์มคำนวณค่าคาร์บอนแผงและคาร์บอนฟุตพรินท์ของผลิตภัณฑ์
+              แพลตฟอร์มคำนวณค่าคาร์บอนแฝงและคาร์บอนฟุตพรินท์ของผลิตภัณฑ์
             </span>
           </h1>
         </div>
