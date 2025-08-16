@@ -21,14 +21,24 @@ import { PROTECTED_PATH } from "../../../constants/path.route";
 const FR04_2 = () => {
   const [searchParams] = useSearchParams();
   const id = Number(searchParams.get("id"));
-  const { fr04Data, tab, handleTabChange, handleNavigateto04_3 } =
-    useViewModel(id);
+  const {
+    fr04Data,
+    tab,
+    handleTabChange,
+    handleNavigateto04_3,
+    handleSetAddItem,
+  } = useViewModel(id);
   const navigate = useNavigate();
   return (
     <div>
       <ProcessStepper isActive={3} id={id} />
 
-      <FR04Layout isB2B={true} tabIndex={tab} handleTabChange={handleTabChange}>
+      <FR04Layout
+        handleSetItem={handleSetAddItem}
+        isB2B={false}
+        tabIndex={tab}
+        handleTabChange={handleTabChange}
+      >
         <div>
           {fr04Data?.[tab - 1]?.processes.map((data, index) => (
             <div className="border-b border-gray-300 pb-10 mb-10" key={index}>
@@ -397,7 +407,12 @@ const FormTypeB = ({
   };
   useEffect(() => {
     (async () => {
-      await handleSetInitialValue(lifePhase, id, data.item_class, data.item_id);
+      await handleSetInitialValue(
+        lifePhase,
+        id,
+        data.item_class || "",
+        data.item_id
+      );
     })();
   }, []);
 
@@ -418,7 +433,7 @@ const FormTypeB = ({
                 product_id: id,
                 process_id: process_id,
                 life_cycle_phase: lifePhase,
-                production_class: data.item_class,
+                production_class: data.item_class || "input",
                 item_process_id: data.item_id,
                 item_name: data.item_name,
                 item_fu_qty: values.item_fu_qty,

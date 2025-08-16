@@ -55,6 +55,13 @@ export class Fr04Service extends RemoteA {
     const { data } = response;
     return data;
   };
+  reqDeleteFr04_1 = async (item_id: number): Promise<AxiosResponse> => {
+    const response = await this.getAxiosInstance().delete(
+      PROTECTED_PATH.FR04_1_ITEM + `/${item_id}`
+    );
+    const { data } = response;
+    return data;
+  };
   reqGetFr04_1Report = async (product_id: number): Promise<FR04ReportType> => {
     const response = await this.getAxiosInstance().get(
       PROTECTED_PATH.FR04_1_REPORT + `/${product_id}`

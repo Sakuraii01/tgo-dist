@@ -26,6 +26,7 @@ const CreateSelfCollect = () => {
       [section]: false,
     }));
   }, []);
+  console.log(selfcollectProcessItemList);
 
   return (
     <div>
@@ -57,14 +58,14 @@ const CreateSelfCollect = () => {
         />
 
         {(["input", "output"] as Array<"input" | "output">).map((section) => (
-          <div>
+          <div key={section}>
             <p className="font-bold my-2 text-lg">
               {section === "input" ? "สารขาเข้า (Input)" : "สารขาออก (Output)"}
             </p>
             {selfcollectProcessItemList?.items
               .filter((item) => item.item_type === section)
               .map((item, index) => (
-                <div key={index}>
+                <div key={section + index}>
                   <IOItem
                     addItem={false}
                     item_type={item.item_type}

@@ -7,6 +7,7 @@ export type ItemProcessType = {
   process_id: number;
   life_cycle_phase: number;
   production_class: string;
+  item_id: number;
   item_name: string;
   item_unit: string;
   item_quantity: number;
@@ -90,7 +91,7 @@ export type ProcessItemType = {
   item_quantity: number;
   chemical_reaction: number;
   input_title: string;
-  item_class: "input" | "output" | "waste";
+  item_class: "input" | "output" | "waste" | null;
 };
 export type ProcessType = {
   process_id: number;
@@ -100,9 +101,10 @@ export type ProcessType = {
 export type FR04ReportType = {
   form41: {
     life_cycle_phase: number;
+    life_cycle_phase_name: string;
     process: {
       process_name: string;
-      product: { production_class: string; items: ItemProcessType[] }[];
+      product: ItemProcessType[];
     }[];
   }[];
   form42: {
@@ -174,7 +176,7 @@ export type FR04_1ItemType = {
   process_id: number;
   item_process_id: number;
   life_cycle_phase: number;
-  production_class: "input" | "output" | "waste";
+  production_class: "input" | "output" | "waste" | null;
   item_name: string;
   item_unit: string;
   item_quantity: number;

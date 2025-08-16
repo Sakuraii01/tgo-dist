@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 import { useSearchParams } from "react-router-dom";
 
-import { Save, Edit } from "@mui/icons-material";
+import { Save, Edit, Delete } from "@mui/icons-material";
 import { Accordion } from "../common/component/accordion";
 import { ProcessStepper } from "../common/component/stepper";
 import { FR04Layout } from "../common/layout";
@@ -10,54 +10,112 @@ import { FR04Layout } from "../common/layout";
 import useViewModel from "./viewModel";
 import type {
   ProcessItemType,
-  // FR04_1ItemInfoType,
+  ItemProcessType,
 } from "../../../service/api/fr04/type";
 
 import { Formik, Form } from "formik";
 import { Field, AutoCompleteField } from "../../../component/input/field";
 import { Fr04Service } from "../../../service/api/fr04";
+import { Popup } from "../../../component/layout";
 const FR04_1 = () => {
   const [searchParams] = useSearchParams();
   const id = Number(searchParams.get("id"));
   const {
+    addItem,
     fr04Data,
     tab,
+    fr04LifeCycleData,
+    handleSetAddItem,
     handleTabChange,
     handleNavigateto04_2,
     handleNavigateto03,
+    handleAddItemB2C,
   } = useViewModel(id);
+  console.log(fr04Data);
+
   return (
     <div>
+      {addItem && (
+        <Popup>
+          <AddItemForm
+            handleSubmit={(values) =>
+              handleAddItemB2C(
+                values.name,
+                tab,
+                fr04Data?.[tab - 1].processes[0].process_id
+              )
+            }
+            setShowForm={handleSetAddItem}
+          />
+        </Popup>
+      )}
       <ProcessStepper isActive={2} id={id} />
 
       <FR04Layout
+        handleSetItem={handleSetAddItem}
         isB2B={false}
         tabIndex={tab}
         handleTabChange={handleTabChange}
       >
         <div>
-          {fr04Data?.[tab - 1]?.processes.map((data, key) => (
-            <div className="border-b border-gray-300 pb-10 mb-10" key={key}>
-              <h3 className="font-semibold text-linear text-primary-linear text-3xl mb-5">
-                {data.process_name}
-              </h3>
-              {/* <h4>สารขาเข้า</h4> */}
-              {data.item?.map((product, index) => (
-                <div className="my-5" key={key + `${index}`}>
-                  <Accordion title={product.item_name}>
+          {tab <= 2 &&
+            fr04Data?.[tab - 1]?.processes.map((data, key) => (
+              <div
+                className="border-b border-gray-300 pb-10 mb-10"
+                key={key + " " + tab}
+              >
+                <h3 className="font-semibold text-linear text-primary-linear text-3xl mb-5">
+                  {data.process_name}
+                </h3>
+
+                {data.item?.map((product, index) => (
+                  <div className="my-5" key={key + `${index}`}>
+                    <Accordion title={product.item_name}>
+                      <FR04_1Form
+                        data={product}
+                        id={id}
+                        processName={data.process_name}
+                        processId={data.process_id}
+                        lifePhase={tab}
+                        fu={fr04Data[tab - 1].FU || 0}
+                      />
+                    </Accordion>
+                  </div>
+                ))}
+              </div>
+            ))}
+          {tab > 2 &&
+            fr04LifeCycleData?.form41?.[tab - 1].process
+              .find(
+                (process) =>
+                  process.process_name ===
+                  fr04LifeCycleData.form41?.[tab - 1].life_cycle_phase_name
+              )
+              ?.product.map((data, index) => (
+                <div className="my-5" key={`${index}`}>
+                  <Accordion title={data.item_name}>
                     <FR04_1Form
-                      data={product}
+                      data={{
+                        item_id: data.item_id,
+                        item_name: data.item_name,
+                        item_unit: data.item_unit,
+                        item_quantity: data.item_quantity,
+                        chemical_reaction: 0,
+                        input_title: "",
+                        item_class: null,
+                      }}
                       id={id}
                       processName={data.process_name}
                       processId={data.process_id}
                       lifePhase={tab}
-                      fu={fr04Data[tab - 1].FU || 0}
+                      fu={fr04Data[0].FU || 0}
+                      isB2C={true}
+                      report_id={data.report_41_id}
+                      B2CData={data}
                     />
                   </Accordion>
                 </div>
               ))}
-            </div>
-          ))}
         </div>
       </FR04Layout>
       <div className="w-1/3 mx-auto flex gap-4">
@@ -88,17 +146,24 @@ const FR04_1Form = (props: {
   processId: number;
   lifePhase: number;
   fu?: number;
+  isB2C?: boolean;
+  report_id?: number;
+  B2CData?: ItemProcessType;
 }) => {
   const {
+    unitList,
     tgoEfDropdown,
     selfCollectDropdown,
     fetchTGOEFDropdown,
     handleSubmit,
+    handleDeleteItem,
   } = useViewModel(props.id);
   const fr04Service = new Fr04Service();
   const [isEdit, setIsEdit] = useState(false);
   const [loading, setLoading] = useState(false);
   const [initialValues, setInitialValues] = useState({
+    item_unit: "",
+    item_quantity: "",
     lci_source_period: "",
     ef_source: "",
     ef_source_ref: "",
@@ -107,6 +172,8 @@ const FR04_1Form = (props: {
     description: "",
   });
   const [fr4_1ReportId, setFr4_1ReportId] = useState<number>(0);
+  console.log(initialValues);
+
   // const [fr04Item, setFr04Item] = useState<FR04_1ItemInfoType | null>(null);
   const handleSetInitialValues = async (
     life_cycle_phase: number,
@@ -115,33 +182,55 @@ const FR04_1Form = (props: {
     item_id: number
   ) => {
     setLoading(true);
-    await fr04Service
-      .reqGetFR04Item(life_cycle_phase, product_id, class_type, item_id)
-      .then(
-        (data) => (
-          setInitialValues({
-            lci_source_period: data?.itemInfo[0].lci_source_period ?? "",
-            ef_source: data?.itemInfo[0].ef_source ?? "",
-            ef_source_ref: data?.itemInfo[0].ef_source_ref,
-            ef: String(data?.itemInfo[0].ef) ?? "",
-            ratio: String(data?.itemInfo[0].ratio) ?? "",
-            description: data.itemInfo[0].description,
-          }),
-          setFr4_1ReportId(data.itemInfo[0].report_41_id)
-          // setFr04Item(data)
+
+    if (props.isB2C) {
+      setInitialValues({
+        item_unit: props.B2CData?.item_unit || "",
+        item_quantity: String(props.B2CData?.item_quantity) || "",
+        lci_source_period: props.B2CData?.lci_source_period || "",
+        ef_source: props.B2CData?.ef_source || "",
+        ef_source_ref: props.B2CData?.ef_source_ref || "",
+        ef: String(props.B2CData?.ef),
+        ratio: String(props.B2CData?.ratio),
+        description: props.B2CData?.description || "",
+      });
+    } else {
+      await fr04Service
+        .reqGetFR04Item(life_cycle_phase, product_id, class_type, item_id)
+        .then(
+          (data) => (
+            setInitialValues({
+              item_unit: data.itemInfo[0].item_unit,
+              item_quantity: String(data.itemInfo[0].item_quantity),
+              lci_source_period: data?.itemInfo[0].lci_source_period ?? "",
+              ef_source: data?.itemInfo[0].ef_source ?? "",
+              ef_source_ref: data?.itemInfo[0].ef_source_ref,
+              ef: String(data?.itemInfo[0].ef) ?? "",
+              ratio: String(data?.itemInfo[0].ratio) ?? "",
+              description: data.itemInfo[0].description,
+            }),
+            setFr4_1ReportId(data.itemInfo[0].report_41_id)
+            // setFr04Item(data)
+          )
         )
-      )
-      .catch((err) => console.log(err));
+        .catch((err) => console.log(err));
+    }
+
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setLoading(false);
   };
   useEffect(() => {
-    handleSetInitialValues(
-      props.lifePhase,
-      props.id,
-      props.data.item_class,
-      props.data.item_id
-    );
+    if (props.isB2C && props.report_id) {
+      setFr4_1ReportId(props.report_id);
+      handleSetInitialValues(0, 0, "", 0);
+    } else {
+      handleSetInitialValues(
+        props.lifePhase,
+        props.id,
+        props.data.item_class || "",
+        props.data.item_id
+      );
+    }
   }, [isEdit]);
 
   return (
@@ -166,8 +255,12 @@ const FR04_1Form = (props: {
                 life_cycle_phase: props.lifePhase,
                 production_class: props.data.item_class,
                 item_name: props.data.item_name,
-                item_unit: props.data.item_unit,
-                item_quantity: props.data.item_quantity,
+                item_unit: props.isB2C
+                  ? values.item_unit
+                  : props.data.item_unit,
+                item_quantity: props.isB2C
+                  ? Number(values.item_quantity)
+                  : props.data.item_quantity,
                 lci_source_period: values.lci_source_period,
                 ef:
                   values.ef_source === "TGO EF"
@@ -212,12 +305,41 @@ const FR04_1Form = (props: {
                     <p className="font-semibold text-primary">LCI</p>
                     <div className="flex gap-8">
                       <div>
-                        <p className="text-sm text-gray-300">หน่วย</p>
-                        <p>{props.data.item_unit}</p>
+                        {isEdit && props.isB2C ? (
+                          <div className="w-40">
+                            <AutoCompleteField
+                              name={`item_unit`}
+                              label="หน่วย"
+                              items={unitList.map((item) => ({
+                                label: item.label,
+                                value: item.value,
+                              }))}
+                            />
+                          </div>
+                        ) : (
+                          <div>
+                            <p className="text-sm text-gray-300">หน่วย</p>
+                            <p>{props.data.item_unit}</p>
+                          </div>
+                        )}
                       </div>
                       <div>
-                        <p className="text-sm text-gray-300">ปริมาณ</p>
-                        <p>{props.data.item_quantity}</p>
+                        <p>
+                          {isEdit && props.isB2C ? (
+                            <Field
+                              name="item_quantity"
+                              label="ปริมาณ"
+                              placeholder="ปริมาณ"
+                              type="number"
+                              require
+                            />
+                          ) : (
+                            <div>
+                              <p className="text-sm text-gray-300">ปริมาณ</p>
+                              <p>{props.data.item_quantity}</p>
+                            </div>
+                          )}
+                        </p>
                       </div>
                       <div>
                         <p className="text-sm text-gray-300">ปริมาณ/FU</p>
@@ -434,7 +556,7 @@ const FR04_1Form = (props: {
         <div>Loading ...</div>
       )}
       {!isEdit && (
-        <div className="w-fit ml-auto">
+        <div className="w-fit ml-auto flex gap-3">
           <button
             type="button"
             onClick={() => setIsEdit(true)}
@@ -443,9 +565,62 @@ const FR04_1Form = (props: {
             <Edit />
             <p>แก้ไข</p>
           </button>
+          {props.isB2C && (
+            <button
+              type="button"
+              onClick={() => handleDeleteItem(props.data.item_id)}
+              className="border border-error rounded-full text-error text-sm flex items-center gap-2 h-fit mt-4.5 px-4 py-1 ml-4"
+            >
+              <Delete />
+              <p>ลบรายการ</p>
+            </button>
+          )}
         </div>
       )}
     </>
+  );
+};
+
+const AddItemForm = ({
+  setShowForm,
+  handleSubmit,
+}: {
+  setShowForm: (value: boolean) => void;
+  handleSubmit: (name: { name: string }) => void;
+}) => {
+  return (
+    <Formik
+      initialValues={{ name: "" }}
+      onSubmit={(values) => handleSubmit(values)}
+    >
+      {({ handleSubmit }) => (
+        <Form onSubmit={handleSubmit}>
+          <Field
+            name="name"
+            label="ชื่อรายการ"
+            placeholder="ชื่อรายการ"
+            require
+          />
+          <div className="flex gap-4 justify-center">
+            <button
+              type="button"
+              onClick={() => {
+                setShowForm(false);
+              }}
+              className="border border-gray-200 rounded-full text-gray-200 hover:bg-gray-200/10 transition font-semibold text-sm flex items-center gap-2 h-fit my-3 px-3 py-1 transform"
+            >
+              ยกเลิก
+            </button>
+            <button
+              type="submit"
+              className="border border-primary rounded-full text-primary hover:bg-primary/10 transition font-semibold text-sm flex items-center gap-2 h-fit my-3 px-3 py-1 transform"
+            >
+              + เพิ่มรายการ
+            </button>
+          </div>
+        </Form>
+      )}
+    </Formik>
   );
 };
 

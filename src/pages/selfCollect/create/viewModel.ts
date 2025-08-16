@@ -23,7 +23,7 @@ const useViewModel = (id: number) => {
     entity: SelfCollectProcessItemType,
     item_id?: number
   ) => {
-    setLoading(true);
+    // setLoading(true);
     if (item_id) {
       await selfCollectService
         .reqPutSelfCollectProcessPerItem(item_id, {
@@ -124,7 +124,7 @@ const useViewModel = (id: number) => {
           console.log(error);
         });
     }
-    window.location.reload();
+    // window.location.reload();
   };
   const handleDeleteItem = async (id: number) => {
     setLoading(true);

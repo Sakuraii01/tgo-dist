@@ -77,6 +77,7 @@ const FR03 = () => {
               <FR03Summary />
             </div>
           ) : ( */}
+
           <div>
             <DraggableList />
             <AddProcess

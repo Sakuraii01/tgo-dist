@@ -10,14 +10,16 @@ import type {
   InputCategoryDropdown,
   WasteCategoryDropdown,
 } from "./type";
-
+import { useToken } from "../../../utils/localStorage";
 export class ProcessService extends RemoteA {
+  token = useToken();
+  company_id = this.token?.company[0]?.company_id;
   reqGetProcess = async (
     // company_id: number,
     product_id: number
   ): Promise<ProcessType[]> => {
     const response = await this.getAxiosInstance().get(
-      PROTECTED_PATH.OVERALL + `/${product_id}`
+      PROTECTED_PATH.OVERALL + `/${this.company_id}` + `/${product_id}`
     );
     const { data } = response;
     return data.processes;

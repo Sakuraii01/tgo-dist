@@ -49,7 +49,7 @@ export const PROTECTED_PATH = {
   INDUSTRIAL: "/industry",
 
   VEHICLES: "/tgo/categories/3/23",
-  OVERALL: "/f1/1005",
+  OVERALL: "/f1",
 
   AUDITOR: "/auditor",
   AUDITOR_REPORT: "/auditor/report",

@@ -30,7 +30,7 @@ const SelfCollect = () => {
               <thead className="bg-primary text-white font-bold rounded-3xl">
                 <tr className="px-3 rounede-3xl">
                   <th className="ps-3 py-2">ขื่อกระบวนการ</th>
-                  <th>ค่า EF (kgCO2 eq./หน่วย)</th>
+                  <th>ค่า EF (tCO2 eq./หน่วย)</th>
                   <th></th>
                 </tr>
               </thead>

@@ -1,4 +1,5 @@
 export type FR04LayoutProps = {
+  handleSetItem: (item: boolean) => void;
   isB2B: boolean;
   children?: React.ReactNode;
   tabIndex: number;
@@ -19,9 +20,8 @@ export const FR04Layout = (props: FR04LayoutProps) => {
     <div className="max-w-7xl mx-auto">
       <div className="border-b border-gray-50 mb-3">
         <div className="w-fit mx-auto"></div>
-      </div>{" "}
+      </div>
       <div className="flex">
-        {" "}
         <div className="w-1/4">
           <ul className="flex flex-col gap-2 fixed">
             {subMethod.map((data, index) => (
@@ -59,7 +59,10 @@ export const FR04Layout = (props: FR04LayoutProps) => {
         <div className="w-3/4 px-4 mx-auto">
           {props.tabIndex !== 1 && props.tabIndex !== 2 && (
             <div className="px-4 mt-3 pb-3 mb-3 border-b border-stroke">
-              <button className="text-white bg-primary-2 rounded-full px-4 py-2 text-xs font-semibold flex items-center gap-2">
+              <button
+                className="text-white bg-primary-2 rounded-full px-4 py-2 text-xs font-semibold flex items-center gap-2"
+                onClick={() => props.handleSetItem(true)}
+              >
                 + เพิ่มรายการ
               </button>
             </div>

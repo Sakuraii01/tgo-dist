@@ -17,6 +17,7 @@ const useViewModel = (id: number) => {
   const navigate = useNavigate();
   const fr04Service = new Fr04Service();
   const tgoVehiclesService = new TGOVehiclesService();
+  const [addItem, setAddItem] = useState(false);
   const [fr04Data, setFr04Data] = useState<FR04_1Type[] | null>(null);
   const [tgoEfDropdown, setTgoEfDropdown] = useState<
     TGOEFDropdownType[] | null
@@ -34,6 +35,9 @@ const useViewModel = (id: number) => {
   const fetchTgoVehicles = async () => {
     const data = await tgoVehiclesService.reqGetTGOVehiclesWithEF();
     setTgoVehicles(data);
+  };
+  const handleSetAddItem = (item: boolean) => {
+    setAddItem(item);
   };
   const handleSubmit = async (
     method: "POST" | "PUT",
@@ -71,6 +75,7 @@ const useViewModel = (id: number) => {
     fetchTgoVehicles();
   }, []);
   return {
+    addItem,
     fr04Data,
     tab,
     handleSubmit,
@@ -78,6 +83,7 @@ const useViewModel = (id: number) => {
     tgoEfDropdown,
     handleTabChange,
     handleNavigateto04_3,
+    handleSetAddItem,
   };
 };
 export default useViewModel;
