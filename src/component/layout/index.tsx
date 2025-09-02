@@ -21,6 +21,7 @@ export const Navbar = () => {
   const userData = useToken();
     const [searchParams] = useSearchParams();
      const auditor_id = searchParams.get("user_id");
+//const auditor_id = 1;
    const auditorId = Number(auditor_id);
   const companyId = userData?.company[0]?.company_id;
 

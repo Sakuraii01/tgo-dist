@@ -6,15 +6,9 @@ import { useAuth } from "../../auth/useAuth";
 import { useToken } from "../../utils/localStorage";
 
 const Auditor = () => {
-  const {
-    tab,
-    error,
-    loading,
-    auditorData,
-    productList,
-    handleTabChange,
-  } = useViewModel();
-  
+  const { tab, error, loading, auditorData, productList, handleTabChange } =
+    useViewModel();
+
   const navigate = useNavigate();
   const auth = useAuth();
   const userData = useToken();
@@ -53,9 +47,16 @@ const Auditor = () => {
           <h1 className="text-4xl font-medium mb-5 mt-10">
             ยินดีต้อนรับ{" "}
             <span className="font-bold text-linear text-primary-linear">
-              {userData?.user?.name || auditorData?.name || auth?.user?.user?.name}
+              {userData?.user?.name ||
+                auditorData?.name ||
+                auth?.user?.user?.name}
             </span>
           </h1>
+          <div className="flex justify-between">
+            <div className="w-[300px] p-5 rounded-3xl bg-stroke">
+              {/* <p>{userData.}</p>   เพิ่ม verifier detail*/} 
+            </div>
+          </div>
         </section>
         <section className="flex mt-15 my-5 justify-between">
           <div className="font-medium">

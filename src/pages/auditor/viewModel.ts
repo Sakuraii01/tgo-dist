@@ -21,6 +21,7 @@ const useViewModel = () => {
     useState<AuditorReportType>();
 
   const auditor_id = searchParams.get("user_id");
+//const auditor_id = 1;
  const auditorId = Number(auditor_id);
 
   const handleTabChange = (newValue: number) => {
