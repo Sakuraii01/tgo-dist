@@ -13,15 +13,14 @@ const FR06_2 = () => {
   const navigate = useNavigate();
   return (
     <div>
-      <ProcessStepper isActive={6} id={id} />
+      <ProcessStepper isActive={5} id={id} />
       <div className="w-fit mx-auto">
         <Formik
           initialValues={{
-            std_emission: sum4142?.toFixed(4) || 0,
-            source: fr06Data?.std_emission_source ?? "",
+            std_emission: fr06Data?.std_emission || 0,
+            source: fr06Data?.std_emission_source || "",
           }}
           enableReinitialize
-          // validationSchema={{}}
           onSubmit={(values) => {
             handleFormSubmit(fr06Data?.report62_sum_id || 0, {
               product_id: id,

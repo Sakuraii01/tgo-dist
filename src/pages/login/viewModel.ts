@@ -1,10 +1,12 @@
 import { UserService } from "../../service/api/user";
 import type { Login } from "../../service/api/user/type";
 import { useAuth } from "../../auth/useAuth";
+import { useState } from "react";
 
 const useViewModel = () => {
   const userService = new UserService();
   const auth = useAuth();
+  const [passWrong, setPassWrong] = useState(false);
   const handleOnSubmit = async (entity: Login) => {
     await userService
       .reqPostLogin(entity)
@@ -12,13 +14,14 @@ const useViewModel = () => {
         if (res?.token && res?.user) {
           auth?.setCredential(res);
         } else {
-          console.warn("Invalid login response", res.data);
+          setPassWrong(true);
         }
       })
       .catch((error) => {
+        setPassWrong(true);
         console.log(error);
       });
   };
-  return { handleOnSubmit };
+  return { handleOnSubmit, passWrong };
 };
 export default useViewModel;

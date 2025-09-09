@@ -21,6 +21,7 @@ const FR04_1 = () => {
   const [searchParams] = useSearchParams();
   const id = Number(searchParams.get("id"));
   const {
+    productInfo,
     addItem,
     fr04Data,
     tab,
@@ -31,7 +32,6 @@ const FR04_1 = () => {
     handleNavigateto03,
     handleAddItemB2C,
   } = useViewModel(id);
-  console.log(fr04Data);
 
   return (
     <div>
@@ -53,9 +53,10 @@ const FR04_1 = () => {
 
       <FR04Layout
         handleSetItem={handleSetAddItem}
-        isB2B={false}
+        isB2C={productInfo?.scope === "B2B" ? true : false}
         tabIndex={tab}
         handleTabChange={handleTabChange}
+        isAddItem={true}
       >
         <div>
           {tab <= 2 &&
@@ -425,36 +426,78 @@ const FR04_1Form = (props: {
                             )}
                           </div>
                         </div>
-                        <div>
-                          {values.ef_source === "TGO EF" ? (
-                            <div>
-                              <p className="text-sm text-gray-300">ค่า EF</p>
-                              <p>
-                                {tgoEfDropdown?.find(
-                                  (data) =>
-                                    data.ef_id === Number(values.ef_source_ref)
-                                )?.ef || "-"}
-                              </p>
-                            </div>
-                          ) : values.ef_source === "Self collect" ? (
-                            <div>
-                              <p className="text-sm text-gray-300">ค่า EF</p>
-                              <p>
-                                {selfCollectDropdown?.find(
-                                  (data) =>
-                                    data.self_collect_id ===
-                                    Number(values.ef_source_ref)
-                                )?.self_collect_ef || "-"}
-                              </p>
-                            </div>
-                          ) : (
-                            <Field
-                              name="ef"
-                              label="ค่า EF"
-                              placeholder="ค่า EF"
-                              type="number"
-                            />
-                          )}
+                        <div className="flex gap-x-4 gap-y-2 mt-2">
+                          <div className="w-60">
+                            {values.ef_source === "TGO EF" ? (
+                              <div>
+                                <p className="text-sm text-gray-300">
+                                  ค่า EF (kgCO2eq./หน่วย)
+                                </p>
+                                <p>
+                                  {tgoEfDropdown?.find(
+                                    (data) =>
+                                      data.ef_id ===
+                                      Number(values.ef_source_ref)
+                                  )?.ef || "-"}
+                                </p>
+                              </div>
+                            ) : values.ef_source === "Self collect" ? (
+                              <div>
+                                <p className="text-sm text-gray-300">
+                                  ค่า EF (kgCO2eq./หน่วย)
+                                </p>
+                                <p>
+                                  {selfCollectDropdown?.find(
+                                    (data) =>
+                                      data.self_collect_id ===
+                                      Number(values.ef_source_ref)
+                                  )?.self_collect_ef || "-"}
+                                </p>
+                              </div>
+                            ) : (
+                              <Field
+                                name="ef"
+                                label="ค่า EF (kgCO2eq./หน่วย)"
+                                placeholder="ค่า EF (kgCO2eq./หน่วย)"
+                                type="number"
+                              />
+                            )}
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-300">
+                              การปล่อยก๊าซเรือนกระจก (kgCO2eq.)
+                            </p>
+                            <p>
+                              {props.fu
+                                ? values.ef_source === "TGO EF"
+                                  ? (
+                                      Number(
+                                        tgoEfDropdown?.find(
+                                          (data) =>
+                                            data.ef_id ===
+                                            Number(values.ef_source_ref)
+                                        )?.ef
+                                      ) *
+                                      (props.data.item_quantity / props.fu)
+                                    ).toFixed(4)
+                                  : values.ef_source === "Self collect"
+                                  ? (
+                                      Number(
+                                        selfCollectDropdown?.find(
+                                          (data) =>
+                                            data.self_collect_id ===
+                                            Number(values.ef_source_ref)
+                                        )?.self_collect_ef
+                                      ) *
+                                      (props.data.item_quantity / props.fu)
+                                    ).toFixed(4)
+                                  : (
+                                      Number(values.ef) *
+                                      (props.data.item_quantity / props.fu)
+                                    ).toFixed(4)
+                                : "-"}
+                            </p>
+                          </div>
                         </div>
                       </div>
                     ) : (
@@ -490,9 +533,22 @@ const FR04_1Form = (props: {
                         </div>
                         <div>
                           <label className="text-sm text-gray-300">
-                            ค่า EF
+                            ค่า EF (kgCO2eq./หน่วย)
                           </label>
                           <p>{initialValues.ef || "-"}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-300">
+                            การปล่อยก๊าซเรือนกระจก (kgCO2eq.)
+                          </p>
+                          <p>
+                            {props.fu
+                              ? (
+                                  Number(values.ef) *
+                                  (props.data.item_quantity / props.fu)
+                                ).toFixed(4)
+                              : "-"}
+                          </p>
                         </div>
                       </div>
                     )}
@@ -503,8 +559,8 @@ const FR04_1Form = (props: {
                         <div className="w-64">
                           <Field
                             name="ratio"
-                            label="สัดส่วนการปันส่วน"
-                            placeholder="สัดส่วนการปันส่วน"
+                            label="สัดส่วนการปันส่วน (%)"
+                            placeholder="สัดส่วนการปันส่วน (%)"
                             type="number"
                             require
                           />
@@ -518,7 +574,9 @@ const FR04_1Form = (props: {
                     ) : (
                       <div className="flex gap-8 mt-5">
                         <div>
-                          <p className="text-sm text-gray-300">การปันส่วน %</p>
+                          <p className="text-sm text-gray-300">
+                            การปันส่วน (%)
+                          </p>
                           <p className="w-fit">{initialValues?.ratio || "-"}</p>
                         </div>
                         <div>

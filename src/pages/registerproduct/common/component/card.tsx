@@ -22,19 +22,20 @@ export const MaterialCardItem = (props: MaterialCardProps) => {
   return (
     <div className="border-2 border-stroke rounded-lg py-3 px-5 w-full bg-white mb-2">
       <div className="mb-3 flex justify-between">
-        <h3 className="font-semibold text-xl">{props.title}</h3>
+        <div className="flex gap-6">
+          <h3 className="font-semibold text-xl">{props.title}</h3>
+          <Info title="หน่วย" amount={props.unit} />
+          <Info title="ปริมาณ" amount={props.amount} />
+
+          {props.type && <Info title="ประเภท" amount={props.type} />}
+        </div>
         {props.button}
       </div>
-      <div className="flex gap-6">
-        <Info title="หน่วย" amount={props.unit} />
-        <Info title="ปริมาณ" amount={props.amount} />
-        {props.isLastProduct && (
-          <p className="mt-auto font-medium text-sm ml-auto text-primary">
-            เป็นผลิตภัณฑ์สุดท้าย
-          </p>
-        )}
-        {props.type && <Info title="ประเภท" amount={props.type} />}
-      </div>
+      {props.isLastProduct && (
+        <p className="mt-auto font-medium text-sm ml-auto text-primary w-fit">
+          เป็นผลิตภัณฑ์สุดท้าย
+        </p>
+      )}
     </div>
   );
 };

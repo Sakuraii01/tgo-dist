@@ -9,11 +9,13 @@ import type {
   ProcessDTO,
   InputCategoryDropdown,
   WasteCategoryDropdown,
+  PDFExcelType,
 } from "./type";
 import { useToken } from "../../../utils/localStorage";
 export class ProcessService extends RemoteA {
   token = useToken();
-  company_id = this.token?.company[0]?.company_id;
+  // company_id = 1024;
+  company_id = this.token?.company?.[0]?.company_id;
   reqGetProcess = async (
     // company_id: number,
     product_id: number
@@ -58,6 +60,14 @@ export class ProcessService extends RemoteA {
       `/${category === "intermediate" ? "output" : category}/process/${item_id}`
     );
     const { data } = response;
+    return data;
+  };
+  reqGetPDFExcel = async (product_id: number): Promise<PDFExcelType[]> => {
+    const response = await this.getAxiosInstance().get(
+      "/excel/fr03" + `/${this.company_id}/${product_id}`
+    );
+    const { data } = response;
+
     return data;
   };
 }

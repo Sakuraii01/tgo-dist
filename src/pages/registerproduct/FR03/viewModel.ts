@@ -18,6 +18,7 @@ const useViewModel = (id: number) => {
   const [processId, setProcessId] = useState<string[]>([]);
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [pdflink, setPdflink] = useState("");
 
   const processService = new ProcessService();
   const inputProcessService = new InputProcessService();
@@ -268,6 +269,19 @@ const useViewModel = (id: number) => {
         window.location.reload();
       });
   };
+  const fetchPDFExcel = async () => {
+    await processService
+      .reqGetPDFExcel(id)
+      .then((data) => {
+        setPdflink(data[0].path_excel_fr03);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
   const fetchProcess = async () => {
     setLoading(true);
 
@@ -288,6 +302,7 @@ const useViewModel = (id: number) => {
 
   useEffect(() => {
     fetchProcess();
+    fetchPDFExcel();
   }, []);
   // useEffect(() => {}, [processId]);
 
@@ -297,6 +312,7 @@ const useViewModel = (id: number) => {
     expandedItems,
     tab,
     loading,
+    pdflink,
     handleTabChange,
     toggleExpanded,
     handleChangeOrder,

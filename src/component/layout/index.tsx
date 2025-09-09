@@ -3,9 +3,11 @@ import {
   KeyboardArrowRightRounded,
   HomeRounded,
   LogoutRounded,
+  EditRounded,
+  Grid3x3Rounded,
 } from "@mui/icons-material";
 
-import { Badge } from "@mui/material";
+import { Badge, Popover } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH, UNPROTECTED_PATH } from "../../constants/path.route";
 import { clearToken, useToken } from "../../utils/localStorage";
@@ -26,6 +28,15 @@ export const Navbar = () => {
   const [count, setCount] = useState<number>(0);
   const [showNotifications, setShowNotifications] = useState<boolean>(false);
   const [notifications, setNotifications] = useState<any[]>([]);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
 
   const navigateToLoginPage = async () => {
     await clearToken().then(() =>
@@ -37,7 +48,9 @@ export const Navbar = () => {
   const fetchNotifications = async () => {
     try {
       const res = await axios.get(
-        `http://178.128.123.212:5000/api/v1/notifications/company/${companyId}`
+        `${
+          import.meta.env.VITE_APP_API_V1
+        }/api/v1/notifications/company/${companyId}`
       );
       const unread = res.data.filter((n: any) => n.is_read === 0);
       setNotifications(res.data);
@@ -51,7 +64,9 @@ export const Navbar = () => {
     if (!auditorId) return;
     try {
       await axios.put(
-        `http://178.128.123.212:5000/api/v1/notifications/auditor/read/${auditorId}`
+        `${
+          import.meta.env.VITE_APP_API_V1
+        }/api/v1/notifications/auditor/read/${auditorId}`
       );
       setCount(0);
     } catch (err) {
@@ -121,18 +136,55 @@ export const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <div>
+          <button aria-describedby={id} type="button" onClick={handleClick}>
             <p className="text-sm font-medium text-primary">
               {userData?.user?.name}
             </p>
             <p className="text-xs text-gray-400">{auth?.user?.user?.email}</p>
-          </div>
-          <div
-            className="text-error mx-5 cursor-pointer hover:bg-error/10 p-2 rounded-full"
-            onClick={() => navigateToLoginPage()}
+          </button>
+          <Popover
+            id={id}
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "left",
+            }}
           >
-            <LogoutRounded />
-          </div>
+            <ul className="p-4 font-medium">
+              <li className="mb-2">
+                <button
+                  type="button"
+                  className="w-full text-primary-3 cursor-pointer bg-primary-2/5 hover:bg-primary-2/15 p-2 rounded flex gap-3 px-5"
+                  onClick={() => navigate(PROTECTED_PATH.SELECT_CBAM_CFP)}
+                >
+                  <Grid3x3Rounded fontSize="small" className="my-auto" />
+                  <p>กลับสู่หน้าเลือกการประเมิน</p>
+                </button>
+              </li>
+              <li className="mb-2">
+                <button
+                  type="button"
+                  className="w-full text-primary-3 cursor-pointer bg-primary-2/5 hover:bg-primary-2/15 p-2 rounded flex gap-3 px-5"
+                  onClick={() => navigate(PROTECTED_PATH.COMPANY_INFO)}
+                >
+                  <EditRounded fontSize="small" className="my-auto" />
+                  <p>แก้ไขข้อมูล</p>
+                </button>
+              </li>
+              <li className="">
+                <button
+                  type="button"
+                  className="w-full text-error cursor-pointer bg-error/5 hover:bg-error/10 p-2 rounded flex gap-3 px-5"
+                  onClick={() => navigateToLoginPage()}
+                >
+                  <LogoutRounded fontSize="small" className="my-auto" />
+                  <p>ลงชื่อออก</p>
+                </button>
+              </li>
+            </ul>
+          </Popover>
         </div>
       </div>
     </nav>

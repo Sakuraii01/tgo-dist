@@ -25,6 +25,7 @@ export const PROTECTED_PATH = {
   FR04_2: "/f4-2",
   FR04_2_ITEM: "/f4-2/item",
   FR04_2_FORM: "/f4-2/form",
+  FR04_2_RERORT: "/f4-2/reportweb",
   FR04_2_SUM: "/f4-2/sum",
 
   FR04_3_REPORT: "/selfcollect/product",

@@ -21,7 +21,7 @@ const FR06_1 = () => {
   ];
   return (
     <div>
-      <ProcessStepper isActive={5} id={id} />
+      <ProcessStepper isActive={4} id={id} />
       <div className="w-fit mx-auto">
         <Formik
           initialValues={{
@@ -473,7 +473,7 @@ const FR06_1 = () => {
                   type="button"
                   onClick={() =>
                     navigate(
-                      PROTECTED_PATH.REGISTER_PRODUCT_FR04_3 + `?id=${id}`
+                      PROTECTED_PATH.REGISTER_PRODUCT_FR04_2 + `?id=${id}`
                     )
                   }
                   className="transition-colors rounded-full w-full mt-6 px-10 py-2 bg-gray-400 hover:bg-gray-300 text-white font-semibold"

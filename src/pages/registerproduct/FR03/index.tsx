@@ -34,23 +34,20 @@ import { PROTECTED_PATH } from "../../../constants/path.route";
 import { useState } from "react";
 import { Popup } from "../../../component/layout";
 import FR03FormSchema from "./validation";
+import { ExcelViewer } from "./excelView";
 const FR03 = () => {
   const [searchParams] = useSearchParams();
   const id = Number(searchParams.get("id"));
-  const {
-    //  tab, handleTabChange,
-    handelAddProcess,
-    loading,
-  } = useViewModel(id);
+  const { tab, handleTabChange, handelAddProcess, pdflink, loading } =
+    useViewModel(id);
   const { processData } = useViewModel(id);
   const navigate = useNavigate();
-
   return (
     <div>
       <ProcessStepper isActive={1} id={id} />
       {!loading ? (
         <div>
-          {/* <div className="flex w-fit mx-auto text-xl font-medium text-gray-300">
+          <div className="flex w-fit mx-auto text-xl font-medium text-gray-300">
             <p
               onClick={() => handleTabChange(1)}
               className={`${
@@ -71,25 +68,25 @@ const FR03 = () => {
             >
               สรุปผล
             </p>
-          </div> */}
-          {/* {tab === 0 ? (
-            <div>
-              <FR03Summary />
-            </div>
-          ) : ( */}
-
-          <div>
-            <DraggableList />
-            <AddProcess
-              processId={processData?.length ?? 0}
-              handleAddProcess={handelAddProcess}
-            />
           </div>
-          {/* )} */}
+          {tab === 0 ? (
+            <div className="mx-10 mt-10" style={{ height: "750px" }}>
+              {pdflink && (
+                <ExcelViewer url={import.meta.env.VITE_APP_API_V1 + pdflink} />
+              )}
+            </div>
+          ) : (
+            <div>
+              <DraggableList />
+              <AddProcess
+                processId={processData?.length ?? 0}
+                handleAddProcess={handelAddProcess}
+              />
+            </div>
+          )}
         </div>
       ) : (
         <Backdrop open>
-          {" "}
           <CircularProgress color="inherit" />
         </Backdrop>
       )}

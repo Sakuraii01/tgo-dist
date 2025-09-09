@@ -14,10 +14,12 @@ const useViewModel = (id: number) => {
     setLoading(true);
     const data = await selfCollectService.reqGetSelfCollectProcessItem(id);
     setSelfCollectProcessItemList(data);
-
+    await fetchFindLastProd(data);
     new Promise((resolve) => setTimeout(resolve, 1000));
+
     setLoading(false);
   };
+  const [lastProdValues, setLastProdvalues] = useState<number>(0);
   const [loading, setLoading] = useState(false);
   const handleFormSubmit = async (
     entity: SelfCollectProcessItemType,
@@ -68,6 +70,9 @@ const useViewModel = (id: number) => {
           item_emission: entity.item_emission || 0,
           transport_type: "",
           add_on_detail: "",
+
+          type2_FU: entity.type2_FU,
+          finish_output: entity.finish_output,
         })
         .then((res) => {
           console.log(res);
@@ -119,18 +124,37 @@ const useViewModel = (id: number) => {
           item_emission: entity.item_emission || 0,
           transport_type: "",
           add_on_detail: "",
+          type2_FU: entity.type2_FU,
+          finish_output: entity.finish_output,
         })
         .catch((error) => {
           console.log(error);
         });
     }
+    await fetchSelfCollect();
+    setLoading(false);
     // window.location.reload();
   };
   const handleDeleteItem = async (id: number) => {
     setLoading(true);
     await selfCollectService.reqDeleteSelfCollectProcessPerItem(id);
-
-    window.location.reload();
+    await fetchSelfCollect();
+    setLoading(false);
+    // window.location.reload();
+  };
+  const fetchFindLastProd = async (entity: SelfCollectItemListType) => {
+    entity?.items.map(
+      async (data) =>
+        await selfCollectService
+          .reqGetSelfCollectProcessPerItem(data.cfp_report43_selfcollect_efs_id)
+          .then((res) => {
+            console.log({ res: res.finish_output });
+            res.finish_output === 1
+              ? setLastProdvalues(res.finish_output)
+              : setLastProdvalues(0);
+          })
+          .catch((err) => console.error(err))
+    );
   };
 
   useEffect(() => {
@@ -140,6 +164,7 @@ const useViewModel = (id: number) => {
   return {
     selfcollectProcessItemList,
     loading,
+    lastProdValues,
     handleFormSubmit,
     handleDeleteItem,
   };
