@@ -506,7 +506,7 @@ const CProduct: React.FC = () => {
                 {/* Header */}
                 <div className="bg-gradient-to-r text-black px-6 py-4 rounded-t-xl">
                   <div className="flex justify-between items-center">
-                    <h3 className="text-lg font-semibold">เพิ่มประเด็นใหม่</h3>
+                    <h3 className="text-lg font-semibold">ตอบกลับความคิดเห็น</h3>
                     <div className="space-y-2">
                       {/* checkbox สำหรับยืนยันแบบฟอร์ม CFP */}
                       <div className="space-y-2">
