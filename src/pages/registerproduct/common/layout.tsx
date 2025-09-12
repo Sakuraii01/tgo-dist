@@ -1,13 +1,14 @@
 export type FR04LayoutProps = {
   handleSetItem: (item: boolean) => void;
-  isB2B: boolean;
+  isB2C: boolean;
   children?: React.ReactNode;
   tabIndex: number;
+  isAddItem?: boolean;
   handleTabChange: (value: number) => void;
 };
 
 export const FR04Layout = (props: FR04LayoutProps) => {
-  const subMethod = props.isB2B
+  const subMethod = props.isB2C
     ? ["การได้มาของวัตถุดิบ", "การผลิต"]
     : [
         "การได้มาของวัตถุดิบ",
@@ -57,7 +58,7 @@ export const FR04Layout = (props: FR04LayoutProps) => {
           </ul>
         </div>
         <div className="w-3/4 px-4 mx-auto">
-          {props.tabIndex !== 1 && props.tabIndex !== 2 && (
+          {props.isAddItem && props.tabIndex !== 1 && props.tabIndex !== 2 && (
             <div className="px-4 mt-3 pb-3 mb-3 border-b border-stroke">
               <button
                 className="text-white bg-primary-2 rounded-full px-4 py-2 text-xs font-semibold flex items-center gap-2"

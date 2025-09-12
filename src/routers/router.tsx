@@ -10,6 +10,7 @@ import { PROTECTED_PATH, UNPROTECTED_PATH } from "../constants/path.route";
 import Login from "../pages/login";
 import Register from "../pages/register";
 import Dashboard from "../pages/dashboard";
+import CompanyInfo from "../pages/company/info";
 import SelfCollect from "../pages/selfCollect";
 import CreateSelfCollect from "../pages/selfCollect/create";
 import RegisterProduct from "../pages/registerproduct";
@@ -47,6 +48,7 @@ const Router = () => {
             element={<CreateSelfCollect />}
           />
           <Route path={PROTECTED_PATH.DASHBOARD} element={<Dashboard />} />
+          <Route path={PROTECTED_PATH.COMPANY_INFO} element={<CompanyInfo />} />
           <Route
             path={PROTECTED_PATH.SELECT_CBAM_CFP}
             element={<SelectPage />}

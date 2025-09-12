@@ -25,27 +25,27 @@ export const ProcessStepper = (props: stepperProps) => {
     },
     {
       stepName: "การประเมิน GHGs",
-      subStepName: "วัตถุดิบ",
+      subStepName: "กระบวนการผลิตจากวัตถุดิบ",
       navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR04_1,
     },
     {
       stepName: "การประเมิน GHGs",
-      subStepName: "ขนส่ง",
+      subStepName: "กระบวนการขนส่ง",
       navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR04_2,
     },
-    {
-      stepName: "การประเมิน GHGs",
-      subStepName: "กำหนดเอง",
-      navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR04_3,
-    },
+    // {
+    //   stepName: "การประเมิน GHGs",
+    //   subStepName: "หน่วยสนับสนุน",
+    //   navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR04_3,
+    // },
     {
       stepName: "การเปรียบเทียบ",
-      subStepName: "จากค่าปีฐาน",
+      subStepName: "กับปีฐาน",
       navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR06_1,
     },
     {
       stepName: "การเปรียบเทียบ",
-      subStepName: "สมรรถนะผลิตภัณฑ์",
+      subStepName: "กับผลิตภัณฑ์อื่น",
       navigate: PROTECTED_PATH.REGISTER_PRODUCT_FR06_2,
     },
   ];
@@ -108,6 +108,9 @@ export const ProcessStepper = (props: stepperProps) => {
       <ColorlibStepIconRoot
         ownerState={{ completed, active }}
         className={className}
+        //  onClick={() =>
+        //       active ? navigate(label + `?id=${props.id}`) : ""
+        //     }
       >
         {icons[String(props.icon)]}
       </ColorlibStepIconRoot>
@@ -123,7 +126,6 @@ export const ProcessStepper = (props: stepperProps) => {
         {steps.map((label) => (
           <Step
             key={label.stepName + label.subStepName}
-            // onClick={() => navigate(label.navigate + `?id=${props.id}`)}
             sx={{ position: "relative" }}
           >
             <StepLabel StepIconComponent={ColorlibStepIcon}>

@@ -94,6 +94,7 @@ type FieldProps = {
   placeholder?: string;
   type?: "text" | "number" | "password";
   require?: boolean;
+  disable?: boolean;
 };
 
 const Field = ({
@@ -102,6 +103,7 @@ const Field = ({
   placeholder,
   type = "text",
   require = false,
+  disable = false,
 }: FieldProps) => {
   const [field, meta] = useField(name);
 
@@ -118,6 +120,7 @@ const Field = ({
       helperText={meta.touched && meta.error}
       {...field}
       required={require}
+      disabled={disable}
     />
   );
 };
@@ -133,6 +136,7 @@ type AutoCompleteProps = {
   name: string;
   placeholder?: string;
   type?: "primary" | "secondary";
+  disable?: boolean;
 };
 
 const AutoCompleteField = ({
@@ -140,6 +144,7 @@ const AutoCompleteField = ({
   items,
   name,
   placeholder,
+  disable = false,
 }: AutoCompleteProps) => {
   const [field, meta, helpers] = useField(name);
   const { setValue, setTouched } = helpers;
@@ -155,6 +160,7 @@ const AutoCompleteField = ({
         setValue(newValue?.value);
       }}
       value={selectedOption}
+      disabled={disable}
       renderOption={(props, option, { index }) => (
         <li
           {...props}
@@ -172,6 +178,7 @@ const AutoCompleteField = ({
           margin="dense"
           label={label}
           placeholder={placeholder}
+          disabled={disable}
           error={meta.touched && Boolean(meta.error)}
           helperText={meta.touched && meta.error}
           variant="outlined"

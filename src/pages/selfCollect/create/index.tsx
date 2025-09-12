@@ -16,6 +16,7 @@ const CreateSelfCollect = () => {
   const {
     loading,
     selfcollectProcessItemList,
+    lastProdValues,
     handleFormSubmit,
     handleDeleteItem,
   } = useViewModel(self_collect_id);
@@ -26,7 +27,6 @@ const CreateSelfCollect = () => {
       [section]: false,
     }));
   }, []);
-  console.log(selfcollectProcessItemList);
 
   return (
     <div>
@@ -49,6 +49,8 @@ const CreateSelfCollect = () => {
           initialValue={{
             selfCollectName:
               selfcollectProcessItemList?.self_collect.self_collect_name || "",
+            fu: String(selfcollectProcessItemList?.self_collect.FU_value) || "",
+            unit: Number(selfcollectProcessItemList?.self_collect.FU_en) || 0,
           }}
           validation={{}}
           self_collect_id={
@@ -69,6 +71,8 @@ const CreateSelfCollect = () => {
                   <IOItem
                     addItem={false}
                     item_type={item.item_type}
+                    fu={selfcollectProcessItemList.self_collect.FU_value}
+                    last_prod_value={lastProdValues}
                     initialValue={{ processName: item.item_name || "" }}
                     validation={{}}
                     self_collect_topic_id={
@@ -89,6 +93,8 @@ const CreateSelfCollect = () => {
                   addItem={true}
                   item_type={section}
                   validation={{}}
+                  fu={selfcollectProcessItemList.self_collect.FU_value}
+                  last_prod_value={lastProdValues}
                   self_collect_topic_id={
                     selfcollectProcessItemList.self_collect.self_collect_id
                   }

@@ -1,3 +1,5 @@
+import { ProductService } from "../../../service/api/product";
+import type { ProductType } from "../../../service/api/product/type";
 import { Fr04Service } from "../../../service/api/fr04";
 import { TGOEFDropdownService } from "../../../service/api/dropdown";
 import type {
@@ -15,12 +17,16 @@ import { PROTECTED_PATH } from "../../../constants/path.route";
 import { SelfCollectService } from "../../../service/api/selfcollect";
 import type { SelfCollectListType } from "../../../service/api/selfcollect/type";
 import { UnitsDropdownService } from "../../../service/api/dropdown";
+import Swal from "sweetalert2";
+
 const useViewModel = (id: number) => {
   const fr04Service = new Fr04Service();
   const tgoEfService = new TGOEFDropdownService();
+  const productService = new ProductService();
   const selfCollectService = new SelfCollectService();
   const unitService = new UnitsDropdownService();
   const navigate = useNavigate();
+  const [productInfo, setProductInfo] = useState<ProductType>();
   const [addItem, setAddItem] = useState(false);
   const [tgoEfDropdown, setTgoEfDropdown] = useState<
     TGOEFDropdownType[] | null
@@ -75,10 +81,14 @@ const useViewModel = (id: number) => {
     data: FR04_1ItemType,
     item_id?: number
   ) => {
-    if (method === "POST") {
-      await fr04Service.reqPostFr04_1(data);
-    } else {
-      await fr04Service.reqPutFr04_1(item_id || 0, data);
+    try {
+      if (method === "POST") {
+        await fr04Service.reqPostFr04_1(data);
+      } else {
+        await fr04Service.reqPutFr04_1(item_id || 0, data);
+      }
+    } catch (err) {
+      console.error(err);
     }
     // window.location.reload();
   };
@@ -90,36 +100,60 @@ const useViewModel = (id: number) => {
     const data = await fr04Service.reqGetFr04_1(id);
     setFr04Data(data);
 
+    await productService
+      .reqGetProduct(id)
+      .then((res) => setProductInfo(res))
+      .catch((err) => console.log(err));
     await fetchTGOEFDropdown();
     await fetchSelfCollectDropdown();
   };
   const handleNavigateto04_2 = async () => {
-    const report_sum_id = await fr04Service
-      .reqGetFr04_1Report(id)
-      .then((data) => {
-        return data?.report41Sum?.[0]?.report41_sum_id;
+    try {
+      const report_sum_id = await fr04Service
+        .reqGetFr04_1Report(id)
+        .then((data) => {
+          return data?.report41Sum?.[0]?.report41_sum_id;
+        });
+      if (!report_sum_id) {
+        await fr04Service.reqPostSumFR04_1(id);
+      } else {
+        await fr04Service.reqPutSumFR04_1(report_sum_id, id);
+      }
+      navigate(PROTECTED_PATH.REGISTER_PRODUCT_FR04_2 + `?id=${id}`);
+    } catch (error) {
+      console.error("Error in handleNavigateto04_2:", error);
+      Swal.fire({
+        title: "ไม่สามารถไปขั้นตอนถัดไปได้",
+        text: "กรุณากรอกข้อมูลอย่างน้อย 1 รายการ",
+        icon: "warning",
+        confirmButtonText: "ปิด",
+        confirmButtonColor: "#0190c3",
+        customClass: {
+          title: "swal-title-custom",
+          htmlContainer: "swal-text-custom",
+        },
       });
-    if (!report_sum_id) {
-      await fr04Service.reqPostSumFR04_1(id);
-    } else {
-      await fr04Service.reqPutSumFR04_1(report_sum_id, id);
     }
-    navigate(PROTECTED_PATH.REGISTER_PRODUCT_FR04_2 + `?id=${id}`);
   };
 
   const handleNavigateto03 = async () => {
-    const report_sum_id = await fr04Service
-      .reqGetFr04_1Report(id)
-      .then((data) => {
-        return data?.report41Sum?.[0]?.report41_sum_id;
-      });
-    if (!report_sum_id) {
-      await fr04Service.reqPostSumFR04_1(id);
-    } else {
-      await fr04Service.reqPutSumFR04_1(report_sum_id, id);
+    try {
+      const report_sum_id = await fr04Service
+        .reqGetFr04_1Report(id)
+        .then((data) => data?.report41Sum?.[0]?.report41_sum_id);
+
+      if (!report_sum_id) {
+        await fr04Service.reqPostSumFR04_1(id);
+      } else {
+        await fr04Service.reqPutSumFR04_1(report_sum_id, id);
+      }
+    } catch (error) {
+      console.error("Error in handleNavigateto03:", error);
+    } finally {
+      navigate(PROTECTED_PATH.REGISTER_PRODUCT_FR03 + `?id=${id}`);
     }
-    navigate(PROTECTED_PATH.REGISTER_PRODUCT_FR03 + `?id=${id}`);
   };
+
   const handleSetAddItem = (item: boolean) => {
     setAddItem(item);
   };
@@ -149,7 +183,6 @@ const useViewModel = (id: number) => {
       cut_off: 0,
       description: "",
     };
-    // console.log(data);
 
     await fr04Service.reqPostFr04_1(data);
     window.location.reload();
@@ -170,6 +203,7 @@ const useViewModel = (id: number) => {
     fetchUnitlist();
   }, []);
   return {
+    productInfo,
     unitList,
     fr04Data,
     addItem,

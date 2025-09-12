@@ -4,6 +4,7 @@ import useViewModel from "./viewModel";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../constants/path.route";
+import BarChart from "../../component/chart/barChart";
 import Swal from "sweetalert2";
 const Product = () => {
   const navigate = useNavigate();
@@ -12,6 +13,23 @@ const Product = () => {
   const { productData, fetchGenExcel, sendExcelToAuditor } = useViewModel(
     Number(id)
   );
+  const data = {
+    labels: [
+      "การได้มาของวัตถุดิบ",
+      "การผลิต",
+      "การกระจายสินค้า",
+      "การใช้งาน",
+      "การจัดการซาก",
+    ],
+    datasets: [
+      {
+        label: "Min",
+        data: [0.78],
+        backgroundColor: "#5B4C97",
+        borderRadius: 5,
+      },
+    ],
+  };
 
   return (
     <div>
@@ -36,7 +54,9 @@ const Product = () => {
               <div className="ml-auto">
                 <button
                   onClick={() =>
-                    navigate(PROTECTED_PATH.REGISTER_PRODUCT_FR03 + `?id=${id}`)
+                    navigate(
+                      PROTECTED_PATH.REGISTER_PRODUCT_CREATE + `?id=${id}`
+                    )
                   }
                   type="button"
                   className="bg-white font-semibold shadow px-4 py-1 rounded-full flex gap-1 ml-auto mb-4"
@@ -62,7 +82,7 @@ const Product = () => {
                       });
                     } else {
                       window.open(
-                        "http://178.128.123.212:5000" + data || "",
+                        import.meta.env.VITE_APP_API_V1 + "/" + data || "",
                         "_blank"
                       );
                     }
@@ -95,7 +115,8 @@ const Product = () => {
           {(() => {
             let photoSrc: string = "/";
             if (typeof productData?.product_photo === "string") {
-              photoSrc = "http://178.128.123.212:5000" + productData.photo_path;
+              photoSrc =
+                import.meta.env.VITE_APP_API_V1 + "/" + productData.photo_path;
             }
             return <img src={photoSrc} className="w-80" />;
           })()}
@@ -151,7 +172,7 @@ const Product = () => {
                 <tbody>
                   <tr>
                     <td className="bg-[#36449A] text-white font-bold pr-5 ps-3 border-b border-white w-60">
-                      ตรวจสอบโดย
+                      ทวนสอบโดย
                     </td>
                     <td className="border-b border-gray-300 py-2 px-4 bg-stroke w-72">
                       {productData?.editor_name}
@@ -159,7 +180,7 @@ const Product = () => {
                   </tr>
                   <tr>
                     <td className="bg-[#36449A] text-white font-bold pr-5 ps-3 border-b border-white w-60">
-                      วันที่ตรวจสอบ
+                      วันที่ทวนสอบ
                     </td>
                     <td className="border-b border-stroke py-2 px-4 bg-stroke w-72">
                       -
@@ -183,6 +204,9 @@ const Product = () => {
               </div>
             </div>
           </div>
+        </section>
+        <section>
+          <BarChart data={data} />
         </section>
       </div>
     </div>

@@ -10,7 +10,7 @@ import type { AxiosResponse } from "axios";
 import { useToken } from "../../../utils/localStorage";
 export class SelfCollectService extends RemoteA {
   token = useToken();
-  company_id = this.token?.company[0]?.company_id;
+  company_id = this.token?.company?.[0]?.company_id;
   reqGetSelfCollectList = async (): Promise<SelfCollectListType[]> => {
     const response = await this.getAxiosInstance().get(
       PROTECTED_PATH.SELF_COLLECT_LIST + `/${this.company_id}`

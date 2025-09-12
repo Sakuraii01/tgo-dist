@@ -13,7 +13,7 @@ import { type AxiosResponse } from "axios";
 import { useToken } from "../../../utils/localStorage";
 export class Fr04Service extends RemoteA {
   token = useToken();
-  company_id = this.token?.company[0]?.company_id;
+  company_id = this.token?.company?.[0]?.company_id;
 
   reqGetFr04_1 = async (product_id: number): Promise<FR04_1Type[]> => {
     const response = await this.getAxiosInstance().get(
@@ -71,7 +71,7 @@ export class Fr04Service extends RemoteA {
   };
   reqGetFr04_2Report = async (product_id: number): Promise<FR04ReportType> => {
     const response = await this.getAxiosInstance().get(
-      PROTECTED_PATH.FR04_2_FORM + `/${product_id}`
+      PROTECTED_PATH.FR04_2_RERORT + `/${product_id}`
     );
     const { data } = response;
     return data;

@@ -194,8 +194,8 @@ const CreateProduct = () => {
                 <div className="w-80">
                   <Field
                     name="sale_ratio"
-                    placeholder="สัดส่วนยอดขายผลิตภัณฑ์ในปีล่าสุด"
-                    label="สัดส่วนยอดขายผลิตภัณฑ์ในปีล่าสุด"
+                    placeholder="สัดส่วนยอดขายผลิตภัณฑ์ในปีล่าสุด (%)"
+                    label="สัดส่วนยอดขายผลิตภัณฑ์ในปีล่าสุด (%)"
                     type="number"
                     require
                   />

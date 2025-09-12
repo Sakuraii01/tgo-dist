@@ -62,14 +62,14 @@ export const FR03Form = (props: FR03FormType) => {
                         color: "#87AD0A",
                       },
                       {
-                        label: "ผลิตภัณฑ์ระหว่างทาง",
-                        value: "intermediate",
-                        color: "#FAB431",
-                      },
-                      {
                         label: "ผลิตภัณฑ์ร่วม/ของเสีย",
                         value: "waste",
                         color: "#EE5F5F",
+                      },
+                      {
+                        label: "ผลิตภัณฑ์ระหว่างทาง",
+                        value: "intermediate",
+                        color: "#FAB431",
                       },
                     ]}
                     row

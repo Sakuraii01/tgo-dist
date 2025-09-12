@@ -39,7 +39,7 @@ body {
   @apply duration-300 ease-in-out;
 }
 button {
-  @apply cursor-pointer;
+  @apply cursor-pointer hover:opacity-85 transition-all;
 }
 
 .primary-button {

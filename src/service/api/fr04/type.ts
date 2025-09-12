@@ -109,7 +109,11 @@ export type FR04ReportType = {
   }[];
   form42: {
     life_cycle_phase: number;
-    process: ProcessType[];
+    life_cycle_phase_name: string;
+    process: {
+      process_name: string;
+      product: ItemProcessType[];
+    }[];
   }[];
   company: CompanyType;
   product: ProductType;
@@ -128,7 +132,7 @@ export type FR04ReportType = {
   report42Sum: ReportSum[];
 };
 export type FR04_reportType = {
-  form41: {
+  form41?: {
     life_cycle_phase: number;
     life_cycle_phase_name: string;
     process: {
@@ -160,7 +164,7 @@ export type FR04_reportType = {
       }[];
     }[];
   }[];
-  report41Sum: ReportSum[];
+  report41Sum?: ReportSum[];
 };
 export type FR04_1Type = {
   life_cycle_phase: number;

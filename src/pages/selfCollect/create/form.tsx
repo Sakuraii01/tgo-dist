@@ -16,16 +16,24 @@ import { ExpandCircleDownOutlined } from "@mui/icons-material";
 import { Edit } from "@mui/icons-material";
 
 import { Formik, Form } from "formik";
-import { Field, AutoCompleteField } from "../../../component/input/field";
+import {
+  Field,
+  AutoCompleteField,
+  CheckboxField,
+} from "../../../component/input/field";
+
 type selfCollectTopicType = {
   initialValue: {
     selfCollectName: string;
+    fu: string;
+    unit: number;
   };
   validation: any;
   self_collect_id: number;
   onSubmit: (values: any) => void;
 };
 export const SelfCollectTopic = (props: selfCollectTopicType) => {
+  const { unitsDropdown } = dropdown();
   const [isEdit, setIsEdit] = useState<boolean>(false);
   return (
     <>
@@ -35,23 +43,39 @@ export const SelfCollectTopic = (props: selfCollectTopicType) => {
             ชื่อหน่วยสนับสนุนการผลิตหรือชื่อระบบผลิตภัณฑ์ที่เกี่ยวข้อง
           </p>
           <div className="flex w-full gap-2 text-primary">
-            <p className="font-semibold text-3xl my-auto">
-              {props.initialValue.selfCollectName}
-            </p>
-            <button
-              className="px-6 py-2"
-              type="button"
-              onClick={() => setIsEdit(true)}
-            >
-              <Edit fontSize="small" />
-            </button>
+            <div>
+              <p className="font-semibold text-3xl my-auto">
+                {props.initialValue.selfCollectName}
+              </p>
+
+              <p className="font-semibold my-auto">
+                ค่าหน่วยการทำงาน {props.initialValue.fu}{" "}
+                {
+                  unitsDropdown.find(
+                    (data) => Number(data.values) === props.initialValue.unit
+                  )?.label
+                }
+              </p>
+            </div>
+            <div className="my-auto ml-10">
+              <button
+                className="px-2 pb-2 pt-1 bg-primary-2/5 rounded-full"
+                type="button"
+                onClick={() => setIsEdit(true)}
+              >
+                <Edit fontSize="small" />
+              </button>
+            </div>
           </div>
         </div>
       ) : (
         <Formik
           initialValues={{
             selfCollectName: props.initialValue.selfCollectName || "",
+            functionalValue: props.initialValue.fu || "",
+            functionalUnit: props.initialValue.unit || "",
           }}
+          enableReinitialize
           onSubmit={(values) => props.onSubmit(values)}
         >
           {({ handleSubmit }) => (
@@ -62,8 +86,29 @@ export const SelfCollectTopic = (props: selfCollectTopicType) => {
                     name="selfCollectName"
                     label="ชื่อหน่วยสนับสนุนการผลิตหรือชื่อระบบผลิตภัณฑ์ที่เกี่ยวข้อง"
                   />
+                  <div className="flex gap-2">
+                    <div className="w-1/3">
+                      <Field
+                        name="functionalValue"
+                        placeholder="ค่าหน่วยการทำงาน"
+                        label="ค่าหน่วยการทำงาน"
+                        require
+                        type="number"
+                      />
+                    </div>
+                    <div className="w-full">
+                      <AutoCompleteField
+                        name={`functionalUnit`}
+                        label="หน่วยการทำงาน"
+                        items={unitsDropdown.map((item) => ({
+                          label: item.label,
+                          value: Number(item.values),
+                        }))}
+                      />
+                    </div>
+                  </div>
                 </div>
-                <div className="my-auto mx-auto w-fit flex gap-3 h-fit">
+                <div className="mt-auto mx-auto w-fit flex gap-3 h-fit">
                   <button
                     className="secondary-button px-6 py-2"
                     type="button"
@@ -90,6 +135,8 @@ type processItemType = {
   };
   validation: any;
   self_collect_topic_id: number;
+  last_prod_value: number;
+  fu: number;
 
   item_id?: number;
   item_type: "input" | "output";
@@ -107,8 +154,9 @@ export const IOItem = (props: processItemType) => {
     unitsDropdown,
     selfCollectDropdown,
   } = dropdown();
+
   const selfCollectService = new SelfCollectService();
-  const [open, setOpen] = useState<boolean>(true);
+  const [open, setOpen] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(props.addItem);
   const [initialValues, setInitialValues] =
     useState<SelfCollectProcessItemType>({
@@ -147,6 +195,8 @@ export const IOItem = (props: processItemType) => {
       item_emission: "",
       transport_type: "",
       add_on_detail: "",
+      type2_FU: "",
+      finish_output: 0,
     });
   const fetchItemData = async () => {
     if (props.item_id) {
@@ -190,6 +240,8 @@ export const IOItem = (props: processItemType) => {
             item_emission: "",
             transport_type: "",
             add_on_detail: "",
+            type2_FU: data.type2_FU,
+            finish_output: data.finish_output,
           });
         })
         .catch((err) => console.log(err));
@@ -200,13 +252,13 @@ export const IOItem = (props: processItemType) => {
   };
   useEffect(() => {
     fetchItemData();
-  }, [open]);
+  }, [open, isEdit]);
   return (
     <div className="border border-gray-200/30 px-5 py-3 rounded mb-5">
       <Formik
         initialValues={initialValues}
         enableReinitialize
-        onSubmit={(values) => {
+        onSubmit={(values, { resetForm }) => {
           const ef =
             values.item_ef_source === "TGO EF"
               ? tgoEfDropdown?.find(
@@ -233,7 +285,9 @@ export const IOItem = (props: processItemType) => {
                 )?.ef
               : values.type2_return_ef;
 
-          const item_e = Number(values.item_fu_qty) * Number(ef);
+          const item_e =
+            ((Number(values.item_qty) * props.fu) / props.last_prod_value) *
+            Number(ef);
           const transport_e =
             Number(transport_outboune_ef) * Number(values.type2_outbound_load) +
             (Number(transport_return_ef) + Number(values.type2_return_load));
@@ -264,7 +318,7 @@ export const IOItem = (props: processItemType) => {
                 values.type2_ef_source === "TG_ef"
                   ? Math.round(
                       Number(values.type2_distance) *
-                        Number(values.item_fu_qty) *
+                        Number(values.type2_FU) *
                         1000
                     )
                   : values.type2_outbound_load,
@@ -281,15 +335,18 @@ export const IOItem = (props: processItemType) => {
                       const weight = extractWeightFromDetail(itemDetail) ?? 0;
                       const tkm = Math.round(
                         Number(values.type2_distance) *
-                          Number(values.item_fu_qty) *
+                          Number(values.type2_FU) *
                           1000
                       );
                       return weight !== null ? tkm / weight : "-";
                     })()
                   : values.type2_return_load,
+              finish_output: values.finish_output ? 1 : 0,
             },
             props.item_id
           );
+          resetForm();
+          setIsEdit(false);
         }}
       >
         {({ handleSubmit, values }) => {
@@ -338,6 +395,12 @@ export const IOItem = (props: processItemType) => {
                   ) : (
                     <div className="w-80">
                       <Field name="item_name" label="ชื่อรายการ" />
+                      {props.item_type === "output" && (
+                        <CheckboxField
+                          name="finish_output"
+                          label="เป็นผลิตภัณฑ์สุดท้ายหรือไม่"
+                        />
+                      )}
                     </div>
                   )}
 
@@ -378,18 +441,27 @@ export const IOItem = (props: processItemType) => {
                               />
                               <AutoCompleteField
                                 items={unitsDropdown.map((units) => ({
-                                  label: units,
-                                  value: units,
+                                  label: units.label,
+                                  value: units.values,
                                 }))}
                                 name={`item_unit`}
                                 placeholder={"หน่วย"}
                                 label={"หน่วย"}
                               />
-                              <Field
+                              <div className="w-full">
+                                <p className="text-sm text-gray-300">
+                                  ปริมาณ/FU
+                                </p>
+                                <p>
+                                  {(Number(values.item_qty) * props.fu) /
+                                    props.last_prod_value}
+                                </p>
+                              </div>
+                              {/* <Field
                                 name={`item_fu_qty`}
                                 placeholder={"ปริมาณ ton/FU"}
                                 label={"ปริมาณ ton/FU"}
-                              />
+                              /> */}
                               <Field
                                 name={`item_source`}
                                 placeholder={"แหล่งที่มาของ LCI"}
@@ -399,7 +471,7 @@ export const IOItem = (props: processItemType) => {
                           </div>
                           <div id="ef">
                             <p className="font-semibold mb-2 text-lg text-primary">
-                              EF
+                              EF (kgCO2e/หน่วย)
                             </p>
                             <div className="flex gap-4 mb-4">
                               <div className="w-40">
@@ -417,7 +489,12 @@ export const IOItem = (props: processItemType) => {
                                     label="แหล่งอ้างอิง EF"
                                     placeholder="แหล่งอ้างอิง EF"
                                     items={tgoEfDropdown.map((item) => ({
-                                      label: item.item_detail,
+                                      label:
+                                        item.item +
+                                        item.item_detail +
+                                        " (EF = " +
+                                        item.ef +
+                                        ")",
                                       value: item.ef_id,
                                     }))}
                                   />
@@ -449,7 +526,7 @@ export const IOItem = (props: processItemType) => {
                                 {values.item_ef_source === "TGO EF" ? (
                                   <div>
                                     <p className="text-sm text-gray-300">
-                                      ค่า EF (kgCO2e/Unit)
+                                      ค่า EF (kgCO2e/หน่วย)
                                     </p>
                                     <p>
                                       {tgoEfDropdown?.find(
@@ -462,7 +539,7 @@ export const IOItem = (props: processItemType) => {
                                 ) : values.item_ef_source === "Self collect" ? (
                                   <div>
                                     <p className="text-sm text-gray-300">
-                                      ค่า EF (kgCO2e/Unit)
+                                      ค่า EF (kgCO2e/หน่วย)
                                     </p>
                                     <p>
                                       {selfCollectDropdown?.find(
@@ -475,15 +552,15 @@ export const IOItem = (props: processItemType) => {
                                 ) : (
                                   <Field
                                     name="item_ef"
-                                    label="ค่า EF"
-                                    placeholder="ค่า EF"
+                                    label="ค่า EF (kgCO2e/หน่วย)"
+                                    placeholder="ค่า EF (kgCO2e/หน่วย)"
                                     type="number"
                                   />
                                 )}
                               </div>
                             </div>
                             <div className="p-4 rounded-xl shadow-lg">
-                              <p>การปล่อยก๊าซเรือนกระจกจากวัตถุดิบ(tCO2e)</p>
+                              <p>การปล่อยก๊าซเรือนกระจกจากวัตถุดิบ(kgCO2e)</p>
                               <p className="text-primary">
                                 {item_e.toFixed(4)}
                               </p>
@@ -507,6 +584,13 @@ export const IOItem = (props: processItemType) => {
                                   placeholder={"ระยะทาง (km)"}
                                   label={"ระยะทาง (km)"}
                                   type="number"
+                                />
+                              </div>
+                              <div className="w-52">
+                                <Field
+                                  name={`type2_FU`}
+                                  placeholder={"ปริมาณ ton/FU"}
+                                  label={"ปริมาณ ton/FU"}
                                 />
                               </div>
                             </div>
@@ -567,11 +651,11 @@ export const IOItem = (props: processItemType) => {
                             <div className="flex gap-3 w-2/3">
                               {values.type2_ef_source === "TG_ef" ? (
                                 <div>
-                                  <p>ภาระบรรทุกขาไป (tkm)</p>
+                                  <p>ภาระบรรทุกเที่ยวไป (tkm)</p>
                                   <p>
                                     {Math.round(
                                       Number(values.type2_distance) *
-                                        Number(values.item_fu_qty) *
+                                        Number(values.type2_FU) *
                                         1000
                                     ) / 1000}
                                   </p>
@@ -579,13 +663,13 @@ export const IOItem = (props: processItemType) => {
                               ) : (
                                 <Field
                                   name="type2_outbound_load"
-                                  label="ภาระบรรทุกขาไป (tkm)"
-                                  placeholder="ภาระบรรทุกขาไป (tkm)"
+                                  label="ภาระบรรทุกเที่ยวไป (tkm)"
+                                  placeholder="ภาระบรรทุกเที่ยวไป (tkm)"
                                 />
                               )}
                               {values.type2_ef_source === "TG_ef" ? (
                                 <div>
-                                  <p>ภาระบรรทุกขากลับ (km)</p>
+                                  <p>ภาระบรรทุกเที่ยวกลับ (km)</p>
                                   <p>
                                     {(() => {
                                       const itemDetail =
@@ -600,7 +684,7 @@ export const IOItem = (props: processItemType) => {
                                       const tkm =
                                         Math.round(
                                           Number(values.type2_distance) *
-                                            Number(values.item_fu_qty) *
+                                            Number(values.type2_FU) *
                                             1000
                                         ) / 1000;
                                       return weight !== null
@@ -612,8 +696,8 @@ export const IOItem = (props: processItemType) => {
                               ) : (
                                 <Field
                                   name="type2_return_load"
-                                  label="ภาระบรรทุกขากลับ (tkm)"
-                                  placeholder="ภาระบรรทุกขากลับ (tkm)"
+                                  label="ภาระบรรทุกเที่ยวกลับ (km)"
+                                  placeholder="ภาระบรรทุกเที่ยวกลับ (km)"
                                 />
                               )}
                             </div>
@@ -644,7 +728,7 @@ export const IOItem = (props: processItemType) => {
                                 {values.type2_ef_source === "TG_ef" ? (
                                   <div>
                                     <p className="text-sm text-gray-300">
-                                      ค่า EF เที่ยวไป (kgCO2e/Unit)
+                                      ค่า EF เที่ยวไป (kgCO2e/หน่วย)
                                     </p>
                                     <p>
                                       {tgoVehicles.find(
@@ -656,7 +740,7 @@ export const IOItem = (props: processItemType) => {
                                   </div>
                                 ) : (
                                   <Field
-                                    label="ค่า EF เที่ยวไป (kgCO2e/Unit)"
+                                    label="ค่า EF เที่ยวไป (kgCO2e/หน่วย)"
                                     placeholder="ค่า EF เที่ยวไป"
                                     name={`type2_outbound_ef`}
                                     type="number"
@@ -667,7 +751,7 @@ export const IOItem = (props: processItemType) => {
                                 {values.type2_ef_source === "TG_ef" ? (
                                   <div>
                                     <p className="text-sm text-gray-300">
-                                      ค่า EF เที่ยวกลับ (kgCO2e/Unit)
+                                      ค่า EF เที่ยวกลับ (kgCO2e/หน่วย)
                                     </p>
                                     <p>
                                       {tgoVehicles.find(
@@ -679,7 +763,7 @@ export const IOItem = (props: processItemType) => {
                                   </div>
                                 ) : (
                                   <Field
-                                    label="ค่า EF เที่ยวกลับ (kgCO2e/Unit)"
+                                    label="ค่า EF เที่ยวกลับ (kgCO2e/หน่วย)"
                                     placeholder="ค่า EF เที่ยวกลับ"
                                     name={`type2_return_ef`}
                                     type="number"
@@ -691,25 +775,24 @@ export const IOItem = (props: processItemType) => {
                               <div className="p-4 rounded-xl shadow-lg">
                                 <p className="text-sm">
                                   การปล่อยก๊าซเรือนกระจกจากการขนส่งเที่ยวไป
-                                  (tCO2e)
+                                  (kgCO2e)
                                 </p>
                                 <p className="text-primary">
                                   {(
-                                    ((Math.round(
+                                    (Math.round(
                                       Number(values.type2_distance) *
-                                        Number(values.item_fu_qty) *
+                                        Number(values.type2_FU) *
                                         1000
                                     ) /
                                       1000) *
-                                      Number(transport_outboune_ef)) /
-                                    1000
+                                    Number(transport_outboune_ef)
                                   ).toFixed(4)}
                                 </p>
                               </div>
                               <div className="p-4 rounded-xl shadow-lg">
                                 <p className="text-sm">
                                   การปล่อยก๊าซเรือนกระจกจากการขนส่งเที่ยวกลับ
-                                  (tCO2e)
+                                  (kgCO2e)
                                 </p>
                                 <p className="text-primary">
                                   {(() => {
@@ -724,8 +807,7 @@ export const IOItem = (props: processItemType) => {
                                       extractWeightFromDetail(itemDetail) ?? 0;
                                     const tkm = Math.round(
                                       Number(values.type2_distance) *
-                                        Number(values.item_fu_qty) *
-                                        1000
+                                        Number(values.type2_FU)
                                     );
 
                                     if (!weight) return "-";
@@ -781,12 +863,10 @@ export const IOItem = (props: processItemType) => {
                             <p>{initialValues.item_unit || "-"}</p>
                           </div>
                           <div>
-                            <p className="text-sm text-gray-300">
-                              ปริมาณ ton/FU
-                            </p>
+                            <p className="text-sm text-gray-300">ปริมาณ/FU</p>
                             <p>
-                              {Number(initialValues.item_fu_qty).toFixed(4) ||
-                                "-"}
+                              {(Number(initialValues.item_qty) * props.fu) /
+                                props.last_prod_value}
                             </p>
                           </div>
                           <div>
@@ -816,7 +896,9 @@ export const IOItem = (props: processItemType) => {
                             </p>
                           </div>
                           <div>
-                            <p className="text-sm text-gray-300">EF</p>
+                            <p className="text-sm text-gray-300">
+                              EF (kgCO2eq./หน่วย)
+                            </p>
                             <p>
                               {Number(initialValues.item_ef).toFixed(4) || "-"}
                             </p>
@@ -835,7 +917,11 @@ export const IOItem = (props: processItemType) => {
                             <p className="text-sm text-gray-300">
                               ระยะทาง (km)
                             </p>
-                            <p>{initialValues.type2_distance || "-"}</p>
+                            <p>
+                              {Number(initialValues.type2_distance).toFixed(
+                                4
+                              ) || "-"}
+                            </p>
                           </div>
                           <div>
                             <p className="text-sm text-gray-300">
@@ -878,41 +964,45 @@ export const IOItem = (props: processItemType) => {
                         <div className="flex gap-10 mt-5">
                           <div>
                             <p className="text-sm text-gray-300">
-                              ภาระบรรทุกขาไป (tkm)
+                              ภาระบรรทุกเที่ยวไป (tkm)
                             </p>
-                            <p>{initialValues.type2_outbound_load || "-"}</p>
+                            <p>
+                              {Number(
+                                initialValues.type2_outbound_load
+                              ).toFixed(2) || "-"}
+                            </p>
                           </div>
                           <div>
                             <p className="text-sm text-gray-300">
-                              ภาระบรรทุกขากลับ (km)
+                              ภาระบรรทุกเที่ยวกลับ (km)
                             </p>
-                            <p>{initialValues.type2_return_load || "-"}</p>
+                            <p>
+                              {Number(initialValues.type2_return_load).toFixed(
+                                2
+                              ) || "-"}
+                            </p>
                           </div>
-                          {/* <div>
-                          <p className="text-sm text-gray-300">% เที่ยวไป</p>
-                          <p>
-                            {initialValues.type2_outbound_load_percent || "-"}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-gray-300">% เที่ยวกลับ</p>
-                          <p>
-                            {initialValues.type2_return_load_percent || "-"}
-                          </p>
-                        </div> */}
                         </div>
                         <div className="flex gap-10 mt-5">
                           <div>
                             <p className="text-sm text-gray-300">
-                              ค่า EF เที่ยวไป
+                              ค่า EF เที่ยวไป (kgCO2eq./หน่วย)
                             </p>
-                            <p>{initialValues.type2_outbound_ef || "-"}</p>
+                            <p>
+                              {Number(initialValues.type2_outbound_ef).toFixed(
+                                4
+                              ) || "-"}
+                            </p>
                           </div>
                           <div>
                             <p className="text-sm text-gray-300">
-                              ค่า EF เที่ยวกลับ
+                              ค่า EF เที่ยวกลับ (kgCO2eq./หน่วย)
                             </p>
-                            <p>{initialValues.type2_return_ef || "-"}</p>
+                            <p>
+                              {Number(initialValues.type2_return_ef).toFixed(
+                                4
+                              ) || "-"}
+                            </p>
                           </div>
                           <div className="w-1/2">
                             <p className="text-sm text-gray-300 ">
@@ -938,7 +1028,6 @@ export const IOItem = (props: processItemType) => {
                               ? props.handleDelete(props.item_id)
                               : ""
                           }
-                          //   onClick={() => setIsEditProcess(false)}
                         >
                           ลบรายการ
                         </button>
@@ -965,7 +1054,9 @@ const dropdown = () => {
     TGOEFDropdownType[] | null
   >([]);
   const [tgoVehicles, setTgoVehicles] = useState<TGOVehiclesWithEFType[]>([]);
-  const [unitsDropdown, setUnitsDropdown] = useState<string[]>([]);
+  const [unitsDropdown, setUnitsDropdown] = useState<
+    { label: string; values: string }[]
+  >([]);
   const [vehiclesDropdown, setVehiclesDropdown] = useState<
     TGOVehiclesWithEFType[]
   >([]);
@@ -975,7 +1066,14 @@ const dropdown = () => {
 
   const fetchUnitsDropdown = async () => {
     const data = await unitsDropdownService.reqGetUnits();
-    setUnitsDropdown(data.map((unit) => unit.product_unit_abbr_eng));
+    setUnitsDropdown(
+      data.map((unit) => {
+        return {
+          label: unit.product_unit_name_th,
+          values: String(unit.product_unit_id),
+        };
+      })
+    );
   };
   const fetchVehiclesDropdown = async () => {
     const data = await vehiclesDropdownService.reqGetTGOVehiclesWithEF();

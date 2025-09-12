@@ -71,3 +71,13 @@ export type WasteCategoryDropdown = {
   waste_cat_id: 1;
   waste_cat_name: "ผลิตภัณฑ์ร่วม";
 };
+
+export type PDFExcelType = {
+  id: number;
+  company_id: number;
+  product_id: number;
+  path_excel: string;
+  created_at: string;
+  updated_at: string;
+  path_excel_fr03: string;
+};

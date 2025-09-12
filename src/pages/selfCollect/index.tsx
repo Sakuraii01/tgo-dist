@@ -6,12 +6,12 @@ import { PROTECTED_PATH } from "../../constants/path.route";
 import { useState } from "react";
 import { Popup } from "../../component/layout";
 import { Formik, Form } from "formik";
-import { Field } from "../../component/input/field";
+import { Field, AutoCompleteField } from "../../component/input/field";
 import { Backdrop, CircularProgress } from "@mui/material";
 
 const SelfCollect = () => {
   const navigate = useNavigate();
-  const { selfcollectList, loading } = useViewModel();
+  const { selfcollectList, loading, unitList } = useViewModel();
   return (
     <>
       {!loading ? (
@@ -20,17 +20,16 @@ const SelfCollect = () => {
           <BreadcrumbNav step={"Self Collect"} />
           <div className="max-w-5xl mx-auto">
             <div className="flex justify-between mt-20">
-              <h4 className="text-xl font-bold">
-                ข้อมูลค่า EF ที่กำหนดเอง{" "}
-                <span className="font-normal">(FR04.3)</span>
-              </h4>
+              <h4 className="text-xl font-bold">ข้อมูลค่า EF ที่กำหนดเอง</h4>
               <CreateSelfCollect />
             </div>
             <table className="w-full my-10 text-left rounded-3xl">
               <thead className="bg-primary text-white font-bold rounded-3xl">
                 <tr className="px-3 rounede-3xl">
                   <th className="ps-3 py-2">ขื่อกระบวนการ</th>
-                  <th>ค่า EF (tCO2 eq./หน่วย)</th>
+                  <th>ค่า FU</th>
+                  <th>ค่า EF (kgCO2 eq./หน่วย)</th>
+                  <th>ค่า EF (kgCO2 eq./หน่วย)</th>
                   <th></th>
                 </tr>
               </thead>
@@ -38,6 +37,12 @@ const SelfCollect = () => {
                 {selfcollectList.map((data) => (
                   <tr key={data.self_collect_id}>
                     <td className="ps-3 py-4">{data.self_collect_name}</td>
+                    <td>
+                      {data.FU_value}{" "}
+                      {unitList?.find(
+                        (unit) => unit.product_unit_id === Number(data.FU_en)
+                      )?.product_unit_abbr_th || ""}
+                    </td>
                     <td>{data.self_collect_ef}</td>
                     <td>
                       <div className="flex gap-3 justify-end mr-10">
@@ -72,7 +77,7 @@ export default SelfCollect;
 
 const CreateSelfCollect = () => {
   const [isAddSelfCollect, setIsAddSelfCollect] = useState<boolean>(false);
-  const { handleOnSubmitSelfCollectProcess } = useViewModel();
+  const { handleOnSubmitSelfCollectProcess, unitList } = useViewModel();
   return (
     <>
       <button
@@ -87,12 +92,19 @@ const CreateSelfCollect = () => {
             เพิ่มชื่อหน่วยสนับสนุนการผลิตหรือชื่อระบบผลิตภัณฑ์ที่เกี่ยวข้อง
           </h3>
           <Formik
-            initialValues={{ selfCollectName: "" }}
+            initialValues={{
+              selfCollectName: "",
+              functionalValue: "",
+              functionalUnit: "",
+            }}
             onSubmit={(values, actions) => {
               handleOnSubmitSelfCollectProcess({
                 company_id: 1005,
                 self_collect_name: values.selfCollectName,
                 self_collect_ef: "0",
+                FU_value: Number(values.functionalValue),
+                FU_th: values.functionalUnit,
+                FU_en: values.functionalUnit,
                 ratio: 1,
               });
               actions.resetForm();
@@ -106,6 +118,27 @@ const CreateSelfCollect = () => {
                     name="selfCollectName"
                     label="ชื่อหน่วยสนับสนุนการผลิตหรือชื่อระบบผลิตภัณฑ์ที่เกี่ยวข้อง"
                   />
+                </div>
+                <div className="flex gap-2">
+                  <div className="w-1/3">
+                    <Field
+                      name="functionalValue"
+                      placeholder="ค่าหน่วยการทำงาน"
+                      label="ค่าหน่วยการทำงาน"
+                      require
+                      type="number"
+                    />
+                  </div>
+                  <div className="w-full">
+                    <AutoCompleteField
+                      name={`functionalUnit`}
+                      label="หน่วยการทำงาน"
+                      items={unitList.map((item) => ({
+                        label: item.product_unit_name_en,
+                        value: Number(item.product_unit_id),
+                      }))}
+                    />
+                  </div>
                 </div>
                 <div className="my-3 mx-auto w-fit flex gap-3">
                   <button

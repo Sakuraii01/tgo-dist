@@ -54,6 +54,9 @@ export type SelfCollectListType = {
   self_collect_name: string;
   self_collect_ef: string;
   ratio: 1;
+  FU_value: number;
+  FU_th: string;
+  FU_en: string;
   created_date: string;
   updated_date: string;
 };
@@ -68,6 +71,9 @@ export type SelfCollectItemListType = {
 export type SelfCollectProcessEntityType = {
   company_id?: number;
   self_collect_name: string;
+  FU_value: number;
+  FU_th: string;
+  FU_en: string;
   self_collect_ef?: string;
   ratio?: number;
 };
@@ -115,4 +121,7 @@ export type SelfCollectProcessItemType = {
   add_on_detail: string;
   created_date?: string;
   updated_date?: string;
+
+  type2_FU: number | string;
+  finish_output: 0 | 1;
 };

@@ -5,7 +5,7 @@ import { Field } from "../../component/input/field";
 import useViewModel from "./viewModel";
 import LoginSchema from "./validation";
 const Login = () => {
-  const { handleOnSubmit } = useViewModel();
+  const { handleOnSubmit, passWrong } = useViewModel();
   const { LoginFormValidationSchema } = LoginSchema();
   const navigate = useNavigate();
   return (
@@ -16,7 +16,7 @@ const Login = () => {
           <h1 className="text-primary-linear text-linear text-center text-5xl font-medium">
             CBAM and CFP platform <br />
             <span className="text-2xl">
-              แพลตฟอร์มคำนวณค่าคาร์บอนแฝงและคาร์บอนฟุตพรินท์ของผลิตภัณฑ์
+              แพลตฟอร์มคำนวณค่าคาร์บอนแฝงและคาร์บอนฟุตพริ้นท์ของผลิตภัณฑ์
             </span>
           </h1>
         </div>
@@ -29,6 +29,7 @@ const Login = () => {
           <p className="text-primary-12 font-light">
             Sign in to access your account
           </p>
+
           <Formik
             initialValues={{ email: "", password: "" }}
             validationSchema={LoginFormValidationSchema}
@@ -57,6 +58,9 @@ const Login = () => {
                     <span className="cursor-pointer text-primary hover:text-primary-2">
                       Register Account
                     </span>
+                  </p>
+                  <p className="text-red-600 italic">
+                    {passWrong && "รหัสผ่าน หรือ email ไม่ถูกต้อง"}
                   </p>
                   <button
                     type="submit"

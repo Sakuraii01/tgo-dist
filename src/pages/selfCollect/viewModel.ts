@@ -4,12 +4,16 @@ import type {
   SelfCollectListType,
   SelfCollectProcessEntityType,
 } from "../../service/api/selfcollect/type";
+import { UnitsDropdownService } from "../../service/api/dropdown";
+import type { UnitsDrowpdownType } from "../../service/api/dropdown/type";
 const useViewModel = () => {
   const selfCollectService = new SelfCollectService();
+  const unitService = new UnitsDropdownService();
   const [selfcollectList, setSelfCollectList] = useState<SelfCollectListType[]>(
     []
   );
   const [loading, setLoading] = useState(false);
+  const [unitList, setUnitList] = useState<UnitsDrowpdownType[]>([]);
 
   const handleOnSubmitSelfCollectProcess = async (
     entity: SelfCollectProcessEntityType
@@ -41,12 +45,19 @@ const useViewModel = () => {
   };
   useEffect(() => {
     fetchSelfCollectListData();
+    unitService
+      .reqGetUnits()
+      .then((data) => {
+        setUnitList(data || []);
+      })
+      .catch((err) => console.error(err));
   }, []);
 
   return {
     selfcollectList,
     handleOnSubmitSelfCollectProcess,
     loading,
+    unitList,
   };
 };
 export default useViewModel;

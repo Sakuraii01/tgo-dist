@@ -6,12 +6,12 @@ export const PROTECTED_PATH = {
   SELECT_CBAM_CFP: "/select_cbam_cfp",
   CBAM: "/cbam",
   DASHBOARD: "/",
+  COMPANY_INFO: "/info",
 
-  VERIFIER:"/verifier",
-  PRODUCT_DETAIL_VERIFIER:"/product_vdetail",
+  VERIFIER: "/verifier",
+  PRODUCT_DETAIL_VERIFIER: "/product_vdetail",
   AUDITOR_COMMENT_HISTORY: "/vresponse",
   COMPANY_COMMENT_HISTORY: "/cresponse",
-
 
   PRODUCT_DETAIL_COMPANY: "/product_cdetail",
 
@@ -28,6 +28,4 @@ export const PROTECTED_PATH = {
   REGISTER_PRODUCT_FR05: "/register_product/fr05",
   REGISTER_PRODUCT_FR06_1: "/register_product/fr06_1",
   REGISTER_PRODUCT_FR06_2: "/register_product/fr06_2",
-
-  
 };

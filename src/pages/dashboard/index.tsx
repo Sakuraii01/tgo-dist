@@ -20,7 +20,7 @@ const Dashboard = () => {
               {auth?.user?.user?.name}
             </span>
           </h1>
-          <div className="flex justify-between">
+          <div className="flex gap-4">
             <div className="w-[400px] bg-gradient-to-b from-[#F4F8F3] to-[#F2F7F1] p-5 rounded-3xl text-center">
               <p className="text-[#193F4F]">ที่อยู่</p>
               <div className="text-secondary-500 font-semibold">
@@ -31,7 +31,6 @@ const Dashboard = () => {
                 <p>
                   {companyData?.province_name}, {companyData?.zipcode}
                 </p>
-                <p>เบอร์โทรศัพท์: {companyData?.contact_no}</p>
               </div>
             </div>
             <div className="w-[350px] bg-gradient-to-b from-[#F4F8F3] to-[#F2F7F1] p-5 rounded-3xl text-center">
@@ -43,7 +42,7 @@ const Dashboard = () => {
             </div>
             <div className="flex gap-5">
               <div className="bg-gradient-to-b from-[#F4F8F3] to-[#F2F7F1] rounded-3xl w-fit px-10 text-center py-5">
-                <p className="mb-3">ข้อมูลของสถานประกอบการ</p>
+                {/* <p className="mb-3">ข้อมูลของสถานประกอบการ</p> */}
                 <button
                   onClick={() => navigate(PROTECTED_PATH.SELF_COLLECT)}
                   className="text-white bg-gradient-to-r from-secondary-500/70 to-secondary-500 w-fit rounded-full py-2 px-8 shadow-md font-bold"
@@ -52,10 +51,10 @@ const Dashboard = () => {
                   <p>(Self collect)</p>
                 </button>
               </div>
-              <div className="px-10 bg-gradient-to-b from-[#F1FCFF] to-[#E2F7FB] rounded-3xl w-fit pt-10 text-center">
+              {/* <div className="px-10 bg-gradient-to-b from-[#F1FCFF] to-[#E2F7FB] rounded-3xl w-fit pt-10 text-center">
                 <p>รอบขึ้นทะเบียนปัจจุบัน</p>
                 <p className="font-bold text-primary text-3xl mt-2">1 / 2568</p>
-              </div>
+              </div> */}
             </div>
           </div>
         </section>
@@ -109,7 +108,7 @@ const Dashboard = () => {
                   tab === 1 ? "font-medium" : "font-normal"
                 }  text-lg`}
               >
-                รอการตรวจสอบ
+                รอการทวนสอบ
               </p>
               <p className="border rounded-full border-warn text-center px-3 text-warn text-xs h-fit py-1 my-auto">
                 {
