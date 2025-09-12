@@ -4,7 +4,6 @@ import {
   HomeRounded,
   LogoutRounded,
 } from "@mui/icons-material";
-import { useSearchParams } from "react-router-dom";
 import { Badge } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../../constants/path.route";
@@ -15,9 +14,12 @@ import axios from "axios";
 export const ANavbar = () => {
   const navigate = useNavigate();
   const userData = useToken();
-  const [searchParams] = useSearchParams();
-  const auditor_id = searchParams.get("user_id");
- const auditorId = Number(auditor_id);
+  const user_account_string = localStorage.getItem("user_account");
+  const user_account = user_account_string
+    ? JSON.parse(user_account_string)
+    : null;
+  const auditorId = user_account?.auditor?.auditor_id;
+
   const [count, setCount] = useState<number>(0);
   const [showNotifications, setShowNotifications] = useState<boolean>(false);
   const [notifications, setNotifications] = useState<any[]>([]);

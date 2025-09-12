@@ -10,8 +10,10 @@ const Response: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
-  const auditor_id = searchParams.get("user_id");
- const auditorId = Number(auditor_id);
+const user_account_string = localStorage.getItem("user_account");
+const user_account = user_account_string ? JSON.parse(user_account_string) : null;
+const auditorId = user_account?.auditor?.auditor_id;
+ 
 
   const [expandedComments, setExpandedComments] = useState<{
     [key: number]: boolean;
