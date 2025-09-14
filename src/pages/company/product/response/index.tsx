@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FileOpen, ExpandMore, ExpandLess } from "@mui/icons-material";
 import { BreadcrumbNav } from "../../../../component/layout";
 import { Navbar } from "../../../../component/layout";
-import useViewModel from "../../../auditor/product/viewModel";
+import useViewModel from "../../../company/product/viewModel";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
@@ -10,26 +10,19 @@ const Response: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
- const user_account_string = localStorage.getItem("user_account");
-const user_account = user_account_string ? JSON.parse(user_account_string) : null;
-const auditorId = user_account?.auditor?.auditor_id;
- 
 
   // สร้าง state สำหรับเก็บสถานะการเปิด/ปิด ของแต่ละความคิดเห็น
   const [expandedComments, setExpandedComments] = useState<{
     [key: number]: boolean;
   }>({ 0: true });
 
-  // Rename productData to individualProduct to avoid conflicts
-  const {
-    productData: individualProduct,
-    productDetail,
-    loading,
-    error,
-    excelList,
-    errorExcel,
-  } = useViewModel(auditorId, Number(id));
+  const { productData: individualProduct } = useViewModel(0, Number(id));
+  const auditorId = Number(individualProduct?.auditor_id);
+  console.log(id, auditorId);
+  const { productDetail, loading, error, excelList, errorExcel, commentData } =
+    useViewModel(auditorId, Number(id)); // ส่ง productId แค่ครั้งเดียว
 
+  console.log(excelList);
   // ฟังก์ชั่นสำหรับสลับการแสดง/ซ่อนความคิดเห็น
   const toggleComment = (index: number) => {
     setExpandedComments((prev) => ({
@@ -82,8 +75,8 @@ const auditorId = user_account?.auditor?.auditor_id;
 
   // Sort comments from newest to oldest if they exist
   const sortedComments =
-    productDetail.comments && productDetail.comments.length > 0
-      ? [...productDetail.comments].sort(
+    commentData.length > 0
+      ? [...commentData].sort(
           (a, b) =>
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         )
@@ -221,9 +214,9 @@ const auditorId = user_account?.auditor?.auditor_id;
                               วันที่บริษัทตอบกลับ
                             </h3>
                             <p>
-                              {new Date(
-                                comment.created_at_company
-                              ).toLocaleDateString("th-TH")}
+                              {new Date(comment.created_at).toLocaleDateString(
+                                "th-TH"
+                              )}
                             </p>
                           </div>
                           <div>
@@ -245,27 +238,39 @@ const auditorId = user_account?.auditor?.auditor_id;
                             )}
 
                             <div className="space-y-2">
-                              {index < excelList.length &&
-                              comment.old_excel_path != null ? (
-                                <button
-                                  onClick={() => {
-                                    console.log(index, comment);
-                                    window.open(
-                                      `http://178.128.123.212:5000${comment.old_excel_path}`,
-                                      "_blank"
+                              {comment.excel_old_id ? (
+                                (() => {
+                                  const oldFile = excelList.find(
+                                    (e) => e.id === comment.excel_old_id
+                                  );
+                                  if (!oldFile)
+                                    return (
+                                      <p className="text-gray-500 italic">
+                                        ไม่พบไฟล์
+                                      </p>
                                     );
-                                  }}
-                                  className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full text-left flex items-center"
-                                >
-                                  <FileOpen className="mr-2" />
-                                  {extractCleanFileName(
-                                    comment.old_excel_path
-                                  )}{" "}
-                                  -{" "}
-                                  {new Date(
-                                    comment.created_at
-                                  ).toLocaleDateString("th-TH")}
-                                </button>
+
+                                  return (
+                                    <button
+                                      onClick={() =>
+                                        window.open(
+                                          `http://178.128.123.212:5000${oldFile.path_excel}`,
+                                          "_blank"
+                                        )
+                                      }
+                                      className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full text-left flex items-center"
+                                    >
+                                      <FileOpen className="mr-2" />
+                                      {extractCleanFileName(
+                                        oldFile.path_excel
+                                      )}{" "}
+                                      -{" "}
+                                      {new Date(
+                                        comment.created_at
+                                      ).toLocaleDateString("th-TH")}
+                                    </button>
+                                  );
+                                })()
                               ) : (
                                 <p className="text-gray-500 italic">
                                   ไม่มีรายงานในระบบสำหรับความคิดเห็นนี้
@@ -284,26 +289,39 @@ const auditorId = user_account?.auditor?.auditor_id;
                             )}
 
                             <div className="space-y-2">
-                              {index < excelList.length &&
-                              comment.new_excel_path != null ? (
-                                <button
-                                  onClick={() =>
-                                    window.open(
-                                      `http://178.128.123.212:5000${comment.new_excel_path}`,
-                                      "_blank"
-                                    )
-                                  }
-                                  className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full text-left flex items-center"
-                                >
-                                  <FileOpen className="mr-2" />
-                                  {extractCleanFileName(
-                                    comment.new_excel_path
-                                  )}{" "}
-                                  -{" "}
-                                  {new Date(
-                                    comment.created_at
-                                  ).toLocaleDateString("th-TH")}
-                                </button>
+                              {comment.excel_new_id ? (
+                                (() => {
+                                  const newFile = excelList.find(
+                                    (e) => e.id === comment.excel_new_id
+                                  );
+                                  if (!newFile)
+                                    return (
+                                      <p className="text-gray-500 italic">
+                                        ไม่พบไฟล์
+                                      </p>
+                                    );
+
+                                  return (
+                                    <button
+                                      onClick={() =>
+                                        window.open(
+                                          `http://178.128.123.212:5000${newFile.path_excel}`,
+                                          "_blank"
+                                        )
+                                      }
+                                      className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full text-left flex items-center"
+                                    >
+                                      <FileOpen className="mr-2" />
+                                      {extractCleanFileName(
+                                        newFile.path_excel
+                                      )}{" "}
+                                      -{" "}
+                                      {new Date(
+                                        comment.created_at
+                                      ).toLocaleDateString("th-TH")}
+                                    </button>
+                                  );
+                                })()
                               ) : (
                                 <p className="text-gray-500 italic">
                                   ไม่มีรายงานในระบบสำหรับความคิดเห็นนี้

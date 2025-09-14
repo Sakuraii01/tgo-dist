@@ -42,6 +42,8 @@ const useViewModel = () => {
     }
   };
 
+  
+
   const fetchDistrict = async (province: string) => {
     await addressService.reqGetDistrict({ province: province }).then((data) => {
       setDistrict(data);

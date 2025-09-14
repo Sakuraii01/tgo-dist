@@ -1,14 +1,22 @@
 import { PROTECTED_PATH } from "../../../../constants/api.route";
 import { RemoteA } from "../../../remote";
-import type {
-  ProductType,
-  ProductDetailType,
-} from "../type";
+import type { ProductType, ProductDetailType } from "../type";
 import type { AddCommentRequest, CommentResponseType } from "./type";
 
 export class ProductService extends RemoteA {
 
   reqGetProductDetail = async (
+    productId: number
+  ): Promise<ProductDetailType> => {
+    const response = await this.getAxiosInstance().get(
+      `${PROTECTED_PATH.PRODUCT}/${productId}`
+    );
+    console.log("Response from reqGetProductDetail:", response);
+
+    return response.data;
+  };
+
+  reqGetAProductDetail = async (
     auditorId: number,
     productId: number
   ): Promise<ProductDetailType> => {
@@ -16,17 +24,17 @@ export class ProductService extends RemoteA {
       `${PROTECTED_PATH.AUDITOR_PRODUCT}/${auditorId}/${productId}`
     );
     console.log("Response from reqGetProductDetail:", response);
-    
+
     return response.data;
   };
 
   reqGetProduct = async (productId: number): Promise<ProductType> => {
-      const response = await this.getAxiosInstance().get(
-       `${PROTECTED_PATH.PRODUCT}/${productId}`
-      );
-      const { data } = response;
-      return data;
-    };
+    const response = await this.getAxiosInstance().get(
+      `${PROTECTED_PATH.PRODUCT}/${productId}`
+    );
+    const { data } = response;
+    return data;
+  };
 
   reqAddComment = async (
     commentData: AddCommentRequest
