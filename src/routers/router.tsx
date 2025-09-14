@@ -33,6 +33,7 @@ import { useAuth } from "../auth/useAuth";
 
 import { useLocation } from "react-router-dom";
 
+
 const Router = () => {
   return (
     <BrowserRouter basename="/cfp">
@@ -157,6 +158,9 @@ function UnRequireAuth() {
         replace
       />
     );
+  } else if (auth?.user?.role?.role_id === 1) {
+    window.location.replace("http://178.128.123.212:8080/admin/");
+    return null; 
   }
 
   return (

@@ -13,6 +13,8 @@ export const PROTECTED_PATH = {
   AUDITOR_COMMENT_HISTORY: "/vresponse",
   COMPANY_COMMENT_HISTORY: "/cresponse",
 
+  ADMIN: "/admin/",
+
   PRODUCT_DETAIL_COMPANY: "/product_cdetail",
 
   PRODUCT_DETAIL: "/product_detail",

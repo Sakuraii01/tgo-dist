@@ -6,18 +6,18 @@ import { useAuth } from "../../auth/useAuth";
 import { useToken } from "../../utils/localStorage";
 
 const Auditor = () => {
-  const {
-    tab,
-    error,
-    loading,
-    auditorData,
-    productList,
-    handleTabChange,
-  } = useViewModel();
-  
+  const { tab, error, loading, auditorData, productList, handleTabChange } =
+    useViewModel();
+
   const navigate = useNavigate();
   const auth = useAuth();
   const userData = useToken();
+  const user_account_string = localStorage.getItem("user_account");
+
+  // แปลง string เป็น JavaScript object
+  const useraccount = user_account_string
+    ? JSON.parse(user_account_string)
+    : null;
 
   if (loading) {
     return (
@@ -53,7 +53,7 @@ const Auditor = () => {
           <h1 className="text-4xl font-medium mb-5 mt-10">
             ยินดีต้อนรับ{" "}
             <span className="font-bold text-linear text-primary-linear">
-              {userData?.user?.name || auditorData?.name || auth?.user?.user?.name}
+              {useraccount?.auditor?.prefix_name + useraccount?.auditor?.name}
             </span>
           </h1>
         </section>

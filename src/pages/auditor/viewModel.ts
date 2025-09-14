@@ -6,13 +6,11 @@ import type {
 import { AuditorService } from "../../service/api/auditor";
 import type { AuditorType } from "../../service/api/auditor/type";
 import type { CompanyType } from "../../service/api/company/type";
-import { useSearchParams } from "react-router-dom";
 
 const useViewModel = () => {
   const [tab, setTab] = useState(0);
   const [loading, setLoading] = useState(true);
   const auditorService = new AuditorService();
-  const [searchParams] = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [auditorData, setAuditorData] = useState<AuditorType>();
   const [companyData] = useState<CompanyType>();
@@ -20,8 +18,11 @@ const useViewModel = () => {
   const [auditorReportData, setAuditorReportData] =
     useState<AuditorReportType>();
 
-  const auditor_id = searchParams.get("user_id");
-  const auditorId = Number(auditor_id);
+const user_account_string = localStorage.getItem("user_account");
+const user_account = user_account_string ? JSON.parse(user_account_string) : null;
+const auditorId = user_account?.auditor?.auditor_id;
+
+
 
   const handleTabChange = (newValue: number) => {
     setTab(newValue);
