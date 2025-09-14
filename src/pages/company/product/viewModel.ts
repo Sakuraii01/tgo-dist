@@ -24,7 +24,7 @@ const useViewModel = (auditorId: number, productId: number) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const productService = new ProductService();
-  const [productList, setProductList] = useState<ProductType[]>([]);
+  const [productList] = useState<ProductType[]>([]);
   const [excelLink, setExcelLink] = useState<string | null>(null);
     const [excelList, setExcelList] = useState<ListExcelType[]>([]);
   
