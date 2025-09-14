@@ -448,7 +448,7 @@ const CProduct: React.FC = () => {
           </div>
         )}
 
-        { !showCommentBox && (
+        { (productDetail?.comments?.length > 0 && !showCommentBox )&& (
           <div className="mt-8">
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200 px-6 py-5 rounded-t-xl flex justify-between items-center"></div>
