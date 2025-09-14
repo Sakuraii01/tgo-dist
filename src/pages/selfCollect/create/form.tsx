@@ -471,7 +471,7 @@ export const IOItem = (props: processItemType) => {
                           </div>
                           <div id="ef">
                             <p className="font-semibold mb-2 text-lg text-primary">
-                              EF (kgCO2e/หน่วย)
+                              EF (kgCO2eq./หน่วย)
                             </p>
                             <div className="flex gap-4 mb-4">
                               <div className="w-40">
@@ -526,7 +526,7 @@ export const IOItem = (props: processItemType) => {
                                 {values.item_ef_source === "TGO EF" ? (
                                   <div>
                                     <p className="text-sm text-gray-300">
-                                      ค่า EF (kgCO2e/หน่วย)
+                                      ค่า EF (kgCO2eq./หน่วย)
                                     </p>
                                     <p>
                                       {tgoEfDropdown?.find(
@@ -539,7 +539,7 @@ export const IOItem = (props: processItemType) => {
                                 ) : values.item_ef_source === "Self collect" ? (
                                   <div>
                                     <p className="text-sm text-gray-300">
-                                      ค่า EF (kgCO2e/หน่วย)
+                                      ค่า EF (kgCO2eq./หน่วย)
                                     </p>
                                     <p>
                                       {selfCollectDropdown?.find(
@@ -552,8 +552,8 @@ export const IOItem = (props: processItemType) => {
                                 ) : (
                                   <Field
                                     name="item_ef"
-                                    label="ค่า EF (kgCO2e/หน่วย)"
-                                    placeholder="ค่า EF (kgCO2e/หน่วย)"
+                                    label="ค่า EF (kgCO2eq./หน่วย)"
+                                    placeholder="ค่า EF (kgCO2eq./หน่วย)"
                                     type="number"
                                   />
                                 )}
@@ -580,17 +580,17 @@ export const IOItem = (props: processItemType) => {
                             <div className="flex gap-3">
                               <div className="w-52">
                                 <Field
-                                  name={`type2_distance`}
-                                  placeholder={"ระยะทาง (km)"}
-                                  label={"ระยะทาง (km)"}
-                                  type="number"
+                                  name={`type2_FU`}
+                                  placeholder={"ปริมาณ ton/FU"}
+                                  label={"ปริมาณ ton/FU"}
                                 />
                               </div>
                               <div className="w-52">
                                 <Field
-                                  name={`type2_FU`}
-                                  placeholder={"ปริมาณ ton/FU"}
-                                  label={"ปริมาณ ton/FU"}
+                                  name={`type2_distance`}
+                                  placeholder={"ระยะทาง (km)"}
+                                  label={"ระยะทาง (km)"}
+                                  type="number"
                                 />
                               </div>
                             </div>
@@ -728,7 +728,7 @@ export const IOItem = (props: processItemType) => {
                                 {values.type2_ef_source === "TG_ef" ? (
                                   <div>
                                     <p className="text-sm text-gray-300">
-                                      ค่า EF เที่ยวไป (kgCO2e/หน่วย)
+                                      ค่า EF เที่ยวไป (kgCO2eq./หน่วย)
                                     </p>
                                     <p>
                                       {tgoVehicles.find(
@@ -740,7 +740,7 @@ export const IOItem = (props: processItemType) => {
                                   </div>
                                 ) : (
                                   <Field
-                                    label="ค่า EF เที่ยวไป (kgCO2e/หน่วย)"
+                                    label="ค่า EF เที่ยวไป (kgCO2eq./หน่วย)"
                                     placeholder="ค่า EF เที่ยวไป"
                                     name={`type2_outbound_ef`}
                                     type="number"
@@ -751,7 +751,7 @@ export const IOItem = (props: processItemType) => {
                                 {values.type2_ef_source === "TG_ef" ? (
                                   <div>
                                     <p className="text-sm text-gray-300">
-                                      ค่า EF เที่ยวกลับ (kgCO2e/หน่วย)
+                                      ค่า EF เที่ยวกลับ (kgCO2eq./หน่วย)
                                     </p>
                                     <p>
                                       {tgoVehicles.find(
@@ -763,7 +763,7 @@ export const IOItem = (props: processItemType) => {
                                   </div>
                                 ) : (
                                   <Field
-                                    label="ค่า EF เที่ยวกลับ (kgCO2e/หน่วย)"
+                                    label="ค่า EF เที่ยวกลับ (kgCO2eq./หน่วย)"
                                     placeholder="ค่า EF เที่ยวกลับ"
                                     name={`type2_return_ef`}
                                     type="number"
@@ -1069,7 +1069,7 @@ const dropdown = () => {
     setUnitsDropdown(
       data.map((unit) => {
         return {
-          label: unit.product_unit_name_th,
+          label: unit.product_unit_name_en,
           values: String(unit.product_unit_id),
         };
       })
