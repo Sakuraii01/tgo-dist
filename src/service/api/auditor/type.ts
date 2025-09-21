@@ -84,7 +84,7 @@ export interface ProductType {
   collect_data_end: string;
   product_photo: string | null;
   auditor_id: number;
-  verify_status: "Pending" | "Under" | "Approved" | "Rejected";
+  verify_status: "Draft"|"Pending" | "Under" | "Approved" | "Rejected";
   submitted_round: string | null;
   submitted_date: string;
   created_date: string | null;

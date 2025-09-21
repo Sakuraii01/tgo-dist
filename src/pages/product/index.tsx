@@ -87,7 +87,7 @@ const Product = () => {
                       });
                     } else {
                       window.open(
-                        import.meta.env.VITE_APP_API_V1 + "/" + data || "",
+                        import.meta.env.VITE_APP_API_V1 + data || "",
                         "_blank"
                       );
                     }
@@ -121,7 +121,7 @@ const Product = () => {
             let photoSrc: string = "/";
             if (typeof productData?.product_photo === "string") {
               photoSrc =
-                import.meta.env.VITE_APP_API_V1 + "/" + productData.photo_path;
+                import.meta.env.VITE_APP_API_V1 + productData.photo_path;
             }
             return <img src={photoSrc} className="w-80" />;
           })()}

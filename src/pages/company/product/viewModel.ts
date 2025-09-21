@@ -5,6 +5,8 @@ import type {
   ProductDetailType,
   ProductType,
 } from "../../../service/api/auditor/type";
+import type { CompanyCommentType,ListExcelType} from "../../../service/api/company/type";
+
 
 const useViewModel = (auditorId: number, productId: number) => {
   const [productDetail, setProductDetail] = useState<
@@ -14,13 +16,18 @@ const useViewModel = (auditorId: number, productId: number) => {
   const [productData, setProductData] = useState<ProductType | undefined>(
     undefined
   );
+
+  const [commentData, setCommentData] = useState<CompanyCommentType[]>([]);
   // const token = JSON.parse(localStorage.getItem("token") || "{}");
   const companyService = new CompanyService();
 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const productService = new ProductService();
+  const [productList] = useState<ProductType[]>([]);
   const [excelLink, setExcelLink] = useState<string | null>(null);
+    const [excelList, setExcelList] = useState<ListExcelType[]>([]);
+  
 
   const fetchProductDetail = async () => {
     if (!productId) {
@@ -33,11 +40,11 @@ const useViewModel = (auditorId: number, productId: number) => {
 
     try {
       const data = await productService.reqGetProductDetail(
-        auditorId,
         productId
       );
       setProductDetail(data);
     } catch (error) {
+      
       console.error("Error fetching product detail:", error);
       setError("Failed to fetch product detail");
       setProductDetail(undefined);
@@ -45,6 +52,11 @@ const useViewModel = (auditorId: number, productId: number) => {
       setLoading(false);
     }
   };
+
+  // const fetchProductList = async () => {
+  //   const data = await companyService.reqGetAllProducts();
+  //   setProductList(data);
+  // };
 
   const fetchProductData = async () => {
     if (!productId) return;
@@ -57,6 +69,39 @@ const useViewModel = (auditorId: number, productId: number) => {
       // We don't set an error state here to not override more critical errors
     }
   };
+
+  const fetchComment = async () => {
+    if (!auditorId && !productId) return;
+
+    try {
+      const data = await companyService.reqGetComment(auditorId,productId);
+      setCommentData(data);
+    } catch (error) {
+      console.error("Error fetching product data:", error);
+      // We don't set an error state here to not override more critical errors
+    }
+  };
+
+  const fetchListExcel = async () => {
+  setLoading(true);
+  setError(null);
+
+  try {
+    const list: ListExcelType[] = await companyService.reqGetListExcel(
+      auditorId,
+      productId
+    );
+    console.log("auditorId:", auditorId, "prId:", productId, list);
+    setExcelList(list); // เก็บผลลัพธ์ลง state
+    return list; // ถ้าต้องการ return list ด้วย
+  } catch (error) {
+    console.error("Error fetching Excel list:", error);
+    setError("Failed to fetch Excel file list");
+    return []; // ถ้าเกิด error คืน array ว่าง
+  } finally {
+    setLoading(false);
+  }
+};
 
   const fetchExcel = async () => {
     if (!productId) {
@@ -117,21 +162,32 @@ const useViewModel = (auditorId: number, productId: number) => {
     }
   };
 
+  
+
   useEffect(() => {
     fetchProductDetail();
     fetchProductData();
-  }, [productId]);
+     fetchComment();
+     fetchListExcel();
+     
+  }, [auditorId, productId]);
+
 
   return {
+    commentData,
     productData,
+    productList,
     productDetail,
     loading,
     error,
+    fetchComment,
     fetchExcel,
     fetchLatestExcel,
     fetchGenExcel,
     fetchUploadExcel,
+    fetchProductData,
     excelLink,
+    excelList,
     loadingExcel: loading,
     errorExcel: error,
     refetch: fetchProductDetail,

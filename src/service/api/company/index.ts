@@ -7,6 +7,7 @@ import {
   type NotificationType,
   type LatestExcelType,
   type ListExcelType,
+  type CompanyCommentType,
 } from "./type";
 
 import { useToken } from "../../../utils/localStorage";
@@ -23,6 +24,16 @@ export class CompanyService extends RemoteA {
     const { data } = response;
     return data;
   };
+
+  reqGetComment = async (
+  auditorId: number,
+  productId: number
+): Promise<CompanyCommentType[]> => {
+  const response = await this.getAxiosInstance().get(
+    PROTECTED_PATH.COMPANT_COMMENT + `/${auditorId}/${this.company_id}/${productId}`
+  );
+  return response.data; // <-- array
+};
 
   reqGetExcel = async (product_id: number): Promise<ExcelType> => {
     const response = await this.getAxiosInstance().get(

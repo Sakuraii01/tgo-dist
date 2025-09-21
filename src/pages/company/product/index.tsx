@@ -12,21 +12,27 @@ const CProduct: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
- const user_account_string = localStorage.getItem("user_account");
-const user_account = user_account_string ? JSON.parse(user_account_string) : null;
-const auditorId = user_account?.auditor?.auditor_id;
- 
+
+  const { productData: individualProduct, productDetail} = useViewModel(
+    0,
+    Number(id)
+  );
+
+  const auditorId = Number(individualProduct?.auditor_id);
+
+  console.log(individualProduct);
 
   const {
-    productData: individualProduct,
     fetchGenExcel,
     fetchUploadExcel,
+    commentData,
     excelLink,
-    productDetail,
     loading,
     error,
     refetch,
   } = useViewModel(auditorId, Number(id));
+
+  console.log("comment: ", commentData[0]);
 
   const productId = productDetail?.product?.[0]?.product_id;
   const [comment, setComment] = useState("");
@@ -64,7 +70,7 @@ const auditorId = user_account?.auditor?.auditor_id;
       setSubmitting(true);
 
       await companyService.reqUpdateCommentCompany(
-        productDetail?.comments[0]?.comments_id || 0,
+        commentData[0]?.comments_id || 0,
         comment.trim()
       );
 
@@ -83,18 +89,18 @@ const auditorId = user_account?.auditor?.auditor_id;
 
   const getStatusDisplay = () => {
     // Check the status object first for detailed status
-    if (productDetail?.status?.status === 4) {
+    if (individualProduct?.verify_status === "Rejected") {
       return { text: "ปฏิเสธ", class: "bg-red-100 text-red-800" };
-    } else if (productDetail?.status?.status === 3) {
+    } else if (individualProduct?.verify_status ===  "Approved") {
       return { text: "อนุมัติ", class: "bg-green-100 text-green-800" };
-    } else if (productDetail?.status?.status === 2) {
+    } else if (individualProduct?.verify_status ===  "Under") {
       return {
         text: "อยู่ระหว่างการพิจารณา",
         class: "bg-yellow-100 text-yellow-800",
       };
     } else if (
-      productDetail?.status?.status === 0 ||
-      productDetail?.status?.status === 1
+      individualProduct?.verify_status ===  "Draft" ||
+      individualProduct?.verify_status ===  "Pending"
     ) {
       return { text: "รอการพิจารณา", class: "bg-gray-100 text-gray-800" };
     }
@@ -306,7 +312,7 @@ const auditorId = user_account?.auditor?.auditor_id;
             </div>
           </div>
         </section>
-        {productDetail?.comments?.length > 0 && (
+        {commentData.length > 0 && (
           <div>
             <div className="mt-8">
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
@@ -330,9 +336,10 @@ const auditorId = user_account?.auditor?.auditor_id;
                       ความคิดเห็นล่าสุด
                     </h3>
                     <span className="text-xs text-gray-500 mt-1 ml-7">
-                      {new Date(
-                        productDetail.comments[0].created_at
-                      ).toLocaleDateString("th-TH")}
+                      {commentData[0]?.created_at &&
+                        new Date(commentData[0]?.created_at).toLocaleDateString(
+                          "th-TH"
+                        )}
                     </span>
                   </div>
                   <div className="ml-auto mr-4">
@@ -366,14 +373,14 @@ const auditorId = user_account?.auditor?.auditor_id;
                   <div className="flex items-center gap-4">
                     <span className="text-gray-700">
                       <div className="overflow-y-auto whitespace-pre-wrap break-words">
-                        {productDetail.comments[0].comment}
+                        {commentData[0]?.comment}
                       </div>
                     </span>
                   </div>
                   <div className="flex gap-3 mt-4 flex-wrap justify-end">
-                    {(productDetail?.status?.status === 0 ||
-                      productDetail?.status?.status === 1 ||
-                      productDetail?.status?.status === 2) && (
+                    {(individualProduct?.verify_status ===  "Draft" ||
+                      individualProduct?.verify_status ===  "Pending" ||
+                      individualProduct?.verify_status ===  "Under") && (
                       <>
                         {!showCommentBox && (
                           <>
@@ -421,15 +428,15 @@ const auditorId = user_account?.auditor?.auditor_id;
                     )}
 
                     {/* แสดงข้อความเมื่อไม่สามารถแก้ไขได้ */}
-                    {(productDetail?.status?.status === 3 ||
-                      productDetail?.status?.status === 4) && (
+                    {(individualProduct?.verify_status ===  "Approved" ||
+                      individualProduct?.verify_status ===  "Rejected") && (
                       <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-2 w-full">
                         <p className="text-blue-800 text-sm">
                           <span className="font-semibold">หมายเหตุ:</span>{" "}
                           ผลิตภัณฑ์นี้อยู่ในสถานะ "{statusInfo.text}"
-                          {productDetail?.status?.status === 3 &&
+                          {individualProduct?.verify_status ===  "Approved" &&
                             " - การพิจารณาเสร็จสิ้นแล้ว"}
-                          {productDetail?.status?.status === 4 &&
+                          {individualProduct?.verify_status ===  "Rejected" &&
                             " - การพิจารณาเสร็จสิ้นแล้ว"}
                         </p>
                       </div>
@@ -441,7 +448,7 @@ const auditorId = user_account?.auditor?.auditor_id;
           </div>
         )}
 
-        {!productDetail?.comments?.length && !showCommentBox && (
+        { (productDetail?.comments?.length > 0 && !showCommentBox )&& (
           <div className="mt-8">
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200 px-6 py-5 rounded-t-xl flex justify-between items-center"></div>
@@ -449,9 +456,9 @@ const auditorId = user_account?.auditor?.auditor_id;
               <div className="p-5">
                 <div className="flex justify-end gap-3">
                   {/* ปุ่มดำเนินการเมื่อไม่มีความคิดเห็น แสดงเฉพาะเมื่อ status = 0,1,2 */}
-                  {(productDetail?.status?.status === 0 ||
-                    productDetail?.status?.status === 1 ||
-                    productDetail?.status?.status === 2) &&
+                  {(individualProduct?.verify_status ===  "Draft" ||
+                    individualProduct?.verify_status ===  "Pending" ||
+                    individualProduct?.verify_status ===  "Under") &&
                     productDetail?.comments?.length > 0 && (
                       <>
                         <button
@@ -479,15 +486,15 @@ const auditorId = user_account?.auditor?.auditor_id;
                       </>
                     )}
                   {/* แสดงข้อความเมื่อไม่สามารถแก้ไขได้ */}
-                  {(productDetail?.status?.status === 3 ||
-                    productDetail?.status?.status === 4) && (
+                  {(individualProduct?.verify_status ===  "Approved" ||
+                    individualProduct?.verify_status ===  "Rejected") && (
                     <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-2 w-full">
                       <p className="text-blue-800 text-sm">
                         <span className="font-semibold">หมายเหตุ:</span>{" "}
                         ผลิตภัณฑ์นี้อยู่ในสถานะ "{statusInfo.text}"
-                        {productDetail?.status?.status === 3 &&
+                        {individualProduct?.verify_status ===  "Approved" &&
                           " - การพิจารณาเสร็จสิ้นแล้ว"}
-                        {productDetail?.status?.status === 4 &&
+                        {individualProduct?.verify_status ===  "Rejected" &&
                           " - การพิจารณาเสร็จสิ้นแล้ว"}
                       </p>
                     </div>
@@ -500,15 +507,17 @@ const auditorId = user_account?.auditor?.auditor_id;
 
         {/* New Comment Box Section - แสดงเฉพาะเมื่อ status = 0,1,2 และกดปุ่มเพิ่มความคิดเห็น */}
         {showCommentBox &&
-          (productDetail?.status?.status === 0 ||
-            productDetail?.status?.status === 1 ||
-            productDetail?.status?.status === 2) && (
+          (individualProduct?.verify_status ===  "Draft" ||
+            individualProduct?.verify_status ===  "Pending" ||
+            individualProduct?.verify_status ===  "Under") && (
             <div className="mt-8 animate-fade-in">
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
                 {/* Header */}
                 <div className="bg-gradient-to-r text-black px-6 py-4 rounded-t-xl">
                   <div className="flex justify-between items-center">
-                    <h3 className="text-lg font-semibold">ตอบกลับความคิดเห็น</h3>
+                    <h3 className="text-lg font-semibold">
+                      ตอบกลับความคิดเห็น
+                    </h3>
                     <div className="space-y-2">
                       {/* checkbox สำหรับยืนยันแบบฟอร์ม CFP */}
                       <div className="space-y-2">
@@ -563,7 +572,7 @@ const auditorId = user_account?.auditor?.auditor_id;
                   />
 
                   {/* Action Buttons */}
-                    <div className="flex justify-end gap-3 mt-4">
+                  <div className="flex justify-end gap-3 mt-4">
                     <button
                       type="button"
                       onClick={() => setComment("")}
@@ -583,9 +592,9 @@ const auditorId = user_account?.auditor?.auditor_id;
                       {submitting ? "กำลังบันทึก..." : "บันทึกและอัปโหลด"}
                     </button>
                   </div>
-                  </div>
                 </div>
               </div>
+            </div>
           )}
         {/* Back to List Button */}
         <button

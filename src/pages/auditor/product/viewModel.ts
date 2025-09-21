@@ -33,7 +33,7 @@ const useViewModel = (auditorId: number, productId: number) => {
     setError(null);
 
     try {
-      const data = await productService.reqGetProductDetail(
+      const data = await productService.reqGetAProductDetail(
         auditorId,
         productId
       );
