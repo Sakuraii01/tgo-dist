@@ -14,7 +14,8 @@ const useViewModel = (id: number) => {
     setLoading(true);
     const data = await selfCollectService.reqGetSelfCollectProcessItem(id);
     setSelfCollectProcessItemList(data);
-    await fetchFindLastProd(data);
+    setLastProdvalues(data.self_collect.output_qut);
+    // await fetchFindLastProd(data);
     new Promise((resolve) => setTimeout(resolve, 1000));
 
     setLoading(false);
@@ -141,20 +142,6 @@ const useViewModel = (id: number) => {
     await fetchSelfCollect();
     setLoading(false);
     // window.location.reload();
-  };
-  const fetchFindLastProd = async (entity: SelfCollectItemListType) => {
-    entity?.items.map(
-      async (data) =>
-        await selfCollectService
-          .reqGetSelfCollectProcessPerItem(data.cfp_report43_selfcollect_efs_id)
-          .then((res) => {
-            console.log({ res: res.finish_output });
-            res.finish_output === 1
-              ? setLastProdvalues(res.finish_output)
-              : setLastProdvalues(0);
-          })
-          .catch((err) => console.error(err))
-    );
   };
 
   useEffect(() => {

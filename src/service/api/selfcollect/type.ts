@@ -57,6 +57,9 @@ export type SelfCollectListType = {
   FU_value: number;
   FU_th: string;
   FU_en: string;
+  finish_output: string;
+  output_qut: number;
+  output_unit: string;
   created_date: string;
   updated_date: string;
 };
@@ -74,6 +77,9 @@ export type SelfCollectProcessEntityType = {
   FU_value: number;
   FU_th: string;
   FU_en: string;
+  finish_output: string;
+  output_qut: number;
+  output_unit: string;
   self_collect_ef?: string;
   ratio?: number;
 };

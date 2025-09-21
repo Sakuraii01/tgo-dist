@@ -96,6 +96,9 @@ const CreateSelfCollect = () => {
               selfCollectName: "",
               functionalValue: "",
               functionalUnit: "",
+              finish_output: "",
+              output_qut: "",
+              output_unit: "",
             }}
             onSubmit={(values, actions) => {
               handleOnSubmitSelfCollectProcess({
@@ -105,6 +108,9 @@ const CreateSelfCollect = () => {
                 FU_value: Number(values.functionalValue),
                 FU_th: values.functionalUnit,
                 FU_en: values.functionalUnit,
+                finish_output: values.finish_output,
+                output_qut: Number(values.output_qut),
+                output_unit: values.output_unit,
                 ratio: 1,
               });
               actions.resetForm();
@@ -133,6 +139,30 @@ const CreateSelfCollect = () => {
                     <AutoCompleteField
                       name={`functionalUnit`}
                       label="หน่วยการทำงาน"
+                      items={unitList.map((item) => ({
+                        label: item.product_unit_name_en,
+                        value: Number(item.product_unit_id),
+                      }))}
+                    />
+                  </div>
+                </div>
+                <div className="mt-5">
+                  <p>ข้อมูลผลิตภัณฑ์สุดท้าย</p>
+                  <div className="flex gap-2">
+                    <Field
+                      name={`finish_output`}
+                      label={`ชื่อผลิตภัณฑ์สุดท้าย`}
+                      placeholder={`ชื่อผลิตภัณฑ์สุดท้าย`}
+                    />
+                    <Field
+                      name={`output_qut`}
+                      label="ปริมาณ"
+                      placeholder="ปริมาณ"
+                      type="number"
+                    />
+                    <AutoCompleteField
+                      name={`output_unit`}
+                      label="หน่วย"
                       items={unitList.map((item) => ({
                         label: item.product_unit_name_en,
                         value: Number(item.product_unit_id),

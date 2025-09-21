@@ -41,10 +41,33 @@ export const FR03Form = (props: FR03FormType) => {
       {props.showForm && (
         <Popup>
           <Formik
-            initialValues={props.initialValues || initialValues}
+            initialValues={{
+              ...(props?.initialValues || initialValues),
+              two_ef: false,
+              unit_2_ef: "",
+              amount_2_ef: "",
+            }}
             enableReinitialize
             validationSchema={FR03FomrValidationSchema}
-            onSubmit={(data) => props.handleOnSubmit(data, data.type)}
+            onSubmit={(data) => {
+              if (data.two_ef) {
+                props.handleOnSubmit(
+                  { ...data, itemName: data.itemName + " - การได้มา" },
+                  data.type
+                );
+                props.handleOnSubmit(
+                  {
+                    ...data,
+                    itemName: data.itemName + " - การเผาไหม้",
+                    unit: data.unit_2_ef,
+                    amount: data.amount_2_ef,
+                  },
+                  data.type
+                );
+              } else {
+                props.handleOnSubmit(data, data.type);
+              }
+            }}
           >
             {({ handleSubmit, values }) => (
               <Form onSubmit={handleSubmit}>
@@ -79,8 +102,12 @@ export const FR03Form = (props: FR03FormType) => {
                       <div className="shrink-0">
                         <Field
                           name={`itemName`}
-                          label="ชื่อรายการ"
-                          placeholder="ชื่อรายการ"
+                          label={`ชื่อรายการ ${
+                            values.two_ef ? "- การได้มา" : ""
+                          }`}
+                          placeholder={`ชื่อรายการ ${
+                            values.two_ef ? "- การได้มา" : ""
+                          }`}
                         />
                       </div>
                       {values.type !== "intermediate" && (
@@ -114,7 +141,69 @@ export const FR03Form = (props: FR03FormType) => {
                           type="number"
                         />
                       </div>
+                      {values.materialType === 9 ? (
+                        <div>
+                          <div className="mt-3">
+                            <CheckboxField
+                              name="two_ef"
+                              label="มีปฏิกิริยาเคมี / การเผาไหม้"
+                            />
+                          </div>
+                        </div>
+                      ) : (
+                        ""
+                      )}
                     </div>
+                    {values.two_ef ? (
+                      <div className="flex gap-3">
+                        <div className="shrink-0">
+                          <Field
+                            name={`itemName`}
+                            label={`ชื่อรายการ ${
+                              values.two_ef ? "- การเผาไหม้" : ""
+                            }`}
+                            placeholder={`ชื่อรายการ ${
+                              values.two_ef ? "- การเผาไหม้" : ""
+                            }`}
+                            disable
+                          />
+                        </div>
+                        {values.type !== "intermediate" && (
+                          <div className="w-48">
+                            <AutoCompleteField
+                              name={`materialType`}
+                              label="ประเภท"
+                              items={
+                                values.type === "input"
+                                  ? inputCategoryDropdown
+                                  : wasteCategoryDropdown
+                              }
+                              disable
+                            />
+                          </div>
+                        )}
+                        <div className="w-40">
+                          <AutoCompleteField
+                            name={`unit_2_ef`}
+                            label="หน่วย"
+                            items={unitList.map((item) => ({
+                              label: item.label,
+                              value: item.value,
+                            }))}
+                          />
+                        </div>
+                        <div className="w-40">
+                          <Field
+                            name={`amount_2_ef`}
+                            label="ปริมาณ"
+                            placeholder="ปริมาณ"
+                            type="number"
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      ""
+                    )}
                     {values.type === "intermediate" && (
                       <div>
                         <div className="mt-3">
@@ -153,59 +242,59 @@ export const FR03Form = (props: FR03FormType) => {
   );
 };
 
-export const InputFr03 = ({
-  type,
-}: {
-  type: "input" | "output" | "intermediate";
-}) => {
-  const { inputCategoryDropdown, wasteCategoryDropdown, unitList } =
-    FR03Function();
-  return (
-    <div className="flex gap-3">
-      <div className="shrink-0">
-        <Field name={`itemName`} label="ชื่อรายการ" placeholder="ชื่อรายการ" />
-      </div>
-      {type !== "intermediate" && (
-        <div className="w-48">
-          <AutoCompleteField
-            name={`materialType`}
-            label="ประเภท"
-            items={
-              type === "input" ? inputCategoryDropdown : wasteCategoryDropdown
-            }
-          />
-        </div>
-      )}
-      <div className="w-40">
-        <AutoCompleteField
-          name={`unit`}
-          label="หน่วย"
-          items={unitList.map((item) => ({
-            label: item.label,
-            value: item.value,
-          }))}
-        />
-      </div>
-      <div className="w-40">
-        <Field
-          name={`amount`}
-          label="ปริมาณ"
-          placeholder="ปริมาณ"
-          type="number"
-        />
-      </div>
-      {type === "intermediate" && (
-        <div>
-          <CheckboxField
-            name="isLastProduct"
-            label="เป็นผลิตภัณฑ์สุดท้ายหรือไม่"
-          />
-          {/* {values. <CheckboxField name="isLastProduct" label="ผลิตภภัณฑ์สุดท้ายรวมบรรจุภัณฑ์หรือไม่"/>} */}
-        </div>
-      )}
-    </div>
-  );
-};
+// export const InputFr03 = ({
+//   type,
+// }: {
+//   type: "input" | "output" | "intermediate";
+// }) => {
+//   const { inputCategoryDropdown, wasteCategoryDropdown, unitList } =
+//     FR03Function();
+//   return (
+//     <div className="flex gap-3">
+//       <div className="shrink-0">
+//         <Field name={`itemName`} label="ชื่อรายการ" placeholder="ชื่อรายการ" />
+//       </div>
+//       {type !== "intermediate" && (
+//         <div className="w-48">
+//           <AutoCompleteField
+//             name={`materialType`}
+//             label="ประเภท"
+//             items={
+//               type === "input" ? inputCategoryDropdown : wasteCategoryDropdown
+//             }
+//           />
+//         </div>
+//       )}
+//       <div className="w-40">
+//         <AutoCompleteField
+//           name={`unit`}
+//           label="หน่วย"
+//           items={unitList.map((item) => ({
+//             label: item.label,
+//             value: item.value,
+//           }))}
+//         />
+//       </div>
+//       <div className="w-40">
+//         <Field
+//           name={`amount`}
+//           label="ปริมาณ"
+//           placeholder="ปริมาณ"
+//           type="number"
+//         />
+//       </div>
+//       {type === "intermediate" && (
+//         <div>
+//           <CheckboxField
+//             name="isLastProduct"
+//             label="เป็นผลิตภัณฑ์สุดท้ายหรือไม่"
+//           />
+//         </div>
+//       )}
+//       {}
+//     </div>
+//   );
+// };
 const FR03Function = () => {
   const unitService = new UnitsDropdownService();
   const inputProcessService = new InputProcessService();

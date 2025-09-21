@@ -137,6 +137,7 @@ type AutoCompleteProps = {
   placeholder?: string;
   type?: "primary" | "secondary";
   disable?: boolean;
+  require?: boolean;
 };
 
 const AutoCompleteField = ({
@@ -145,11 +146,12 @@ const AutoCompleteField = ({
   name,
   placeholder,
   disable = false,
+  require = false,
 }: AutoCompleteProps) => {
   const [field, meta, helpers] = useField(name);
   const { setValue, setTouched } = helpers;
   const selectedOption =
-    items.find((item) => item.value === field.value) || null;
+    items.find((item) => String(item.value) === String(field.value)) || null;
   return (
     <Autocomplete
       fullWidth
@@ -179,6 +181,7 @@ const AutoCompleteField = ({
           label={label}
           placeholder={placeholder}
           disabled={disable}
+          required={require}
           error={meta.touched && Boolean(meta.error)}
           helperText={meta.touched && meta.error}
           variant="outlined"

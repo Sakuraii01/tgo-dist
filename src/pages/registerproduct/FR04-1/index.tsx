@@ -11,12 +11,15 @@ import useViewModel from "./viewModel";
 import type {
   ProcessItemType,
   ItemProcessType,
+  FR04_1ItemType,
 } from "../../../service/api/fr04/type";
 
 import { Formik, Form } from "formik";
 import { Field, AutoCompleteField } from "../../../component/input/field";
 import { Fr04Service } from "../../../service/api/fr04";
 import { Popup } from "../../../component/layout";
+import type { TGOEFDropdownType } from "../../../service/api/dropdown/type";
+import type { SelfCollectListType } from "../../../service/api/selfcollect/type";
 const FR04_1 = () => {
   const [searchParams] = useSearchParams();
   const id = Number(searchParams.get("id"));
@@ -31,6 +34,12 @@ const FR04_1 = () => {
     handleNavigateto04_2,
     handleNavigateto03,
     handleAddItemB2C,
+    unitList,
+    tgoEfDropdown,
+    selfCollectDropdown,
+    fetchTGOEFDropdown,
+    handleSubmit,
+    handleDeleteItem,
   } = useViewModel(id);
 
   return (
@@ -79,6 +88,12 @@ const FR04_1 = () => {
                         processId={data.process_id}
                         lifePhase={tab}
                         fu={fr04Data[tab - 1].FU || 0}
+                        unitList={unitList}
+                        tgoEfDropdown={tgoEfDropdown}
+                        selfCollectDropdown={selfCollectDropdown}
+                        fetchTGOEFDropdown={fetchTGOEFDropdown}
+                        handleSubmit={handleSubmit}
+                        handleDeleteItem={handleDeleteItem}
                       />
                     </Accordion>
                   </div>
@@ -113,6 +128,12 @@ const FR04_1 = () => {
                       isB2C={true}
                       report_id={data.report_41_id}
                       B2CData={data}
+                      unitList={unitList}
+                      tgoEfDropdown={tgoEfDropdown}
+                      selfCollectDropdown={selfCollectDropdown}
+                      fetchTGOEFDropdown={fetchTGOEFDropdown}
+                      handleSubmit={handleSubmit}
+                      handleDeleteItem={handleDeleteItem}
                     />
                   </Accordion>
                 </div>
@@ -150,15 +171,20 @@ const FR04_1Form = (props: {
   isB2C?: boolean;
   report_id?: number;
   B2CData?: ItemProcessType;
+  unitList: {
+    value: string;
+    label: string;
+  }[];
+  tgoEfDropdown: TGOEFDropdownType[] | null;
+  selfCollectDropdown: SelfCollectListType[];
+  fetchTGOEFDropdown: () => void;
+  handleSubmit: (
+    method: "PUT" | "POST",
+    data: FR04_1ItemType,
+    item_id?: number
+  ) => Promise<void>;
+  handleDeleteItem: (item_id: number) => Promise<void>;
 }) => {
-  const {
-    unitList,
-    tgoEfDropdown,
-    selfCollectDropdown,
-    fetchTGOEFDropdown,
-    handleSubmit,
-    handleDeleteItem,
-  } = useViewModel(props.id);
   const fr04Service = new Fr04Service();
   const [isEdit, setIsEdit] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -173,7 +199,6 @@ const FR04_1Form = (props: {
     description: "",
   });
   const [fr4_1ReportId, setFr4_1ReportId] = useState<number>(0);
-  console.log(initialValues);
 
   // const [fr04Item, setFr04Item] = useState<FR04_1ItemInfoType | null>(null);
   const handleSetInitialValues = async (
@@ -241,8 +266,8 @@ const FR04_1Form = (props: {
           initialValues={initialValues}
           enableReinitialize
           // validationSchema={validationSchema}
-          onSubmit={(values) => {
-            handleSubmit(
+          onSubmit={async (values) => {
+            await props.handleSubmit(
               fr4_1ReportId === 0 ||
                 fr4_1ReportId === undefined ||
                 fr4_1ReportId === null
@@ -266,13 +291,13 @@ const FR04_1Form = (props: {
                 ef:
                   values.ef_source === "TGO EF"
                     ? Number(
-                        tgoEfDropdown?.find(
+                        props.tgoEfDropdown?.find(
                           (data) => data.ef_id === Number(values.ef_source_ref)
                         )?.ef
                       )
                     : values.ef_source === "Self collect"
                     ? Number(
-                        selfCollectDropdown?.find(
+                        props.selfCollectDropdown?.find(
                           (data) =>
                             data.self_collect_id ===
                             Number(values.ef_source_ref)
@@ -296,7 +321,7 @@ const FR04_1Form = (props: {
           {({ handleSubmit, values }) => {
             useEffect(() => {
               if (values.ef_source === "TGO EF") {
-                fetchTGOEFDropdown();
+                props.fetchTGOEFDropdown();
               }
             }, [values.ef_source]);
             return (
@@ -311,7 +336,7 @@ const FR04_1Form = (props: {
                             <AutoCompleteField
                               name={`item_unit`}
                               label="หน่วย"
-                              items={unitList.map((item) => ({
+                              items={props.unitList.map((item) => ({
                                 label: item.label,
                                 value: item.value,
                               }))}
@@ -387,12 +412,13 @@ const FR04_1Form = (props: {
                           </div>
 
                           <div className="w-full">
-                            {tgoEfDropdown && values.ef_source === "TGO EF" ? (
+                            {props.tgoEfDropdown &&
+                            values.ef_source === "TGO EF" ? (
                               <AutoCompleteField
                                 name="ef_source_ref"
                                 label="แหล่งอ้างอิง EF"
                                 placeholder="แหล่งอ้างอิง EF"
-                                items={tgoEfDropdown.map((item) => ({
+                                items={props.tgoEfDropdown.map((item) => ({
                                   label:
                                     item.item +
                                     item.item_detail +
@@ -402,20 +428,22 @@ const FR04_1Form = (props: {
                                   value: item.ef_id,
                                 }))}
                               />
-                            ) : selfCollectDropdown &&
+                            ) : props.selfCollectDropdown &&
                               values.ef_source === "Self collect" ? (
                               <AutoCompleteField
                                 name="ef_source_ref"
                                 label="แหล่งอ้างอิง EF"
                                 placeholder="แหล่งอ้างอิง EF"
-                                items={selfCollectDropdown.map((item) => ({
-                                  label:
-                                    item.self_collect_name +
-                                    " (EF = " +
-                                    item.self_collect_ef +
-                                    ")",
-                                  value: item.self_collect_id,
-                                }))}
+                                items={props.selfCollectDropdown.map(
+                                  (item) => ({
+                                    label:
+                                      item.self_collect_name +
+                                      " (EF = " +
+                                      item.self_collect_ef +
+                                      ")",
+                                    value: item.self_collect_id,
+                                  })
+                                )}
                               />
                             ) : (
                               <Field
@@ -434,7 +462,7 @@ const FR04_1Form = (props: {
                                   ค่า EF (kgCO2eq./หน่วย)
                                 </p>
                                 <p>
-                                  {tgoEfDropdown?.find(
+                                  {props.tgoEfDropdown?.find(
                                     (data) =>
                                       data.ef_id ===
                                       Number(values.ef_source_ref)
@@ -447,7 +475,7 @@ const FR04_1Form = (props: {
                                   ค่า EF (kgCO2eq./หน่วย)
                                 </p>
                                 <p>
-                                  {selfCollectDropdown?.find(
+                                  {props.selfCollectDropdown?.find(
                                     (data) =>
                                       data.self_collect_id ===
                                       Number(values.ef_source_ref)
@@ -472,7 +500,7 @@ const FR04_1Form = (props: {
                                 ? values.ef_source === "TGO EF"
                                   ? (
                                       Number(
-                                        tgoEfDropdown?.find(
+                                        props.tgoEfDropdown?.find(
                                           (data) =>
                                             data.ef_id ===
                                             Number(values.ef_source_ref)
@@ -483,7 +511,7 @@ const FR04_1Form = (props: {
                                   : values.ef_source === "Self collect"
                                   ? (
                                       Number(
-                                        selfCollectDropdown?.find(
+                                        props.selfCollectDropdown?.find(
                                           (data) =>
                                             data.self_collect_id ===
                                             Number(values.ef_source_ref)
@@ -517,13 +545,13 @@ const FR04_1Form = (props: {
                           </label>
                           <p className="w-fit">
                             {(initialValues.ef_source === "TGO EF"
-                              ? tgoEfDropdown?.find(
+                              ? props.tgoEfDropdown?.find(
                                   (data) =>
                                     data.ef_id ===
                                     Number(initialValues.ef_source_ref)
                                 )?.item
                               : initialValues.ef_source === "Self collect"
-                              ? selfCollectDropdown.find(
+                              ? props.selfCollectDropdown.find(
                                   (data) =>
                                     data.self_collect_id ===
                                     Number(initialValues.ef_source_ref)
@@ -626,7 +654,7 @@ const FR04_1Form = (props: {
           {props.isB2C && (
             <button
               type="button"
-              onClick={() => handleDeleteItem(props.data.item_id)}
+              onClick={() => props.handleDeleteItem(props.data.item_id)}
               className="border border-error rounded-full text-error text-sm flex items-center gap-2 h-fit mt-4.5 px-4 py-1 ml-4"
             >
               <Delete />

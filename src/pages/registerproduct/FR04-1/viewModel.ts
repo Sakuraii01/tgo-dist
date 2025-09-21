@@ -185,7 +185,15 @@ const useViewModel = (id: number) => {
     };
 
     await fr04Service.reqPostFr04_1(data);
-    window.location.reload();
+    await fr04Service.reqPostFr04_2({
+      product_id: data.product_id,
+      process_id: data.process_id,
+      item_process_id: data.item_process_id,
+      life_cycle_phase: data.life_cycle_phase,
+      production_class: "input",
+      item_name: data.item_name,
+    } as any);
+    // window.location.reload();
   };
 
   useEffect(() => {

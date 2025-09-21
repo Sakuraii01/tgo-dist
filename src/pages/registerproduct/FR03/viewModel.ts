@@ -66,7 +66,7 @@ const useViewModel = (id: number) => {
               console.log(error);
             })
             .finally(() => {
-              window.location.reload();
+              fetchProcess();
             });
         } else if (type === "intermediate") {
           await outputProcessService
@@ -86,7 +86,7 @@ const useViewModel = (id: number) => {
               console.log(error);
             })
             .finally(() => {
-              window.location.reload();
+              fetchProcess();
             });
         } else if (type === "waste") {
           await wasteProcessService
@@ -98,7 +98,7 @@ const useViewModel = (id: number) => {
               console.log(error);
             })
             .finally(() => {
-              window.location.reload();
+              fetchProcess();
             });
         } else {
           console.error("Invalid type");
@@ -129,7 +129,7 @@ const useViewModel = (id: number) => {
           console.log("New input process added:", response);
         })
         .finally(() => {
-          window.location.reload();
+          fetchProcess();
         });
     } else if (type === "intermediate") {
       await outputProcessService
@@ -149,7 +149,7 @@ const useViewModel = (id: number) => {
           console.error("Error adding output process:", error);
         })
         .finally(() => {
-          window.location.reload();
+          fetchProcess();
         });
     } else if (type === "waste") {
       console.log(entity);
@@ -170,7 +170,7 @@ const useViewModel = (id: number) => {
           console.error("Error adding waste process:", error);
         })
         .finally(() => {
-          window.location.reload();
+          fetchProcess();
         });
     } else {
       console.error("Invalid type");
@@ -186,7 +186,7 @@ const useViewModel = (id: number) => {
         console.error("Error deleting item:", error);
       })
       .finally(() => {
-        window.location.reload();
+        fetchProcess();
       });
   };
   const toggleExpanded = (id: string) => {
@@ -233,7 +233,7 @@ const useViewModel = (id: number) => {
         console.error("Error adding process:", error);
       })
       .finally(() => {
-        window.location.reload();
+        fetchProcess();
       });
   };
   const handleUpdateProcess = async (
@@ -252,7 +252,7 @@ const useViewModel = (id: number) => {
         console.error("Error updating process:", error);
       })
       .finally(() => {
-        window.location.reload();
+        fetchProcess();
       });
   };
   const handleDeleteProcess = async (processId: number) => {
@@ -266,7 +266,7 @@ const useViewModel = (id: number) => {
         console.error("Error deleting process:", error);
       })
       .finally(() => {
-        window.location.reload();
+        fetchProcess();
       });
   };
   const fetchPDFExcel = async () => {
@@ -304,7 +304,6 @@ const useViewModel = (id: number) => {
     fetchProcess();
     fetchPDFExcel();
   }, []);
-  // useEffect(() => {}, [processId]);
 
   return {
     processData,

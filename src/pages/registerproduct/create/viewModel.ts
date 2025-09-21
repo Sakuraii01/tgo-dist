@@ -89,7 +89,7 @@ const useViewModel = (id?: number) => {
       PU_th: Number(data.functionalProduct),
       PU_en: Number(data.functionalProduct),
       sale_ratio: Number(data.sale_ratio),
-      pcr_reference: data.pcrReference,
+      pcr_reference: Number(data.pcrReference),
       product_photo: "",
       auditor_id: Number(data.auditor_id),
       product_techinfo: Array.isArray(data.technicalInfo)
@@ -178,7 +178,7 @@ const useViewModel = (id?: number) => {
                   : data.product_techinfo
                 : [""],
               sale_ratio: String(data.sale_ratio),
-              pcrReference: data.pcr_reference,
+              pcrReference: String(data.pcr_reference),
               product_image: data.product_photo
                 ? "http://178.128.123.212:5000" + data.photo_path
                 : null,

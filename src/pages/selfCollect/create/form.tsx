@@ -295,6 +295,7 @@ export const IOItem = (props: processItemType) => {
           props.handleSubmit(
             {
               ...values,
+              type2_FU: Number(values.type2_FU) || null,
               transport_emission: transport_e,
               item_emission: item_e,
               total_emission: transport_e + item_e,
@@ -345,6 +346,7 @@ export const IOItem = (props: processItemType) => {
             },
             props.item_id
           );
+          props.handleCancleAdd?.(props.item_type);
           resetForm();
           setIsEdit(false);
         }}
@@ -526,7 +528,7 @@ export const IOItem = (props: processItemType) => {
                                 {values.item_ef_source === "TGO EF" ? (
                                   <div>
                                     <p className="text-sm text-gray-300">
-                                      ค่า EF (kgCO2eq./หน่วย)
+                                      ค่า EF <br /> (kgCO2eq./หน่วย)
                                     </p>
                                     <p>
                                       {tgoEfDropdown?.find(
@@ -539,7 +541,7 @@ export const IOItem = (props: processItemType) => {
                                 ) : values.item_ef_source === "Self collect" ? (
                                   <div>
                                     <p className="text-sm text-gray-300">
-                                      ค่า EF (kgCO2eq./หน่วย)
+                                      ค่า EF <br /> (kgCO2eq./หน่วย)
                                     </p>
                                     <p>
                                       {selfCollectDropdown?.find(
@@ -560,7 +562,7 @@ export const IOItem = (props: processItemType) => {
                               </div>
                             </div>
                             <div className="p-4 rounded-xl shadow-lg">
-                              <p>การปล่อยก๊าซเรือนกระจกจากวัตถุดิบ(kgCO2e)</p>
+                              <p>การปล่อยก๊าซเรือนกระจกจากวัตถุดิบ(kgCO2eq.)</p>
                               <p className="text-primary">
                                 {item_e.toFixed(4)}
                               </p>
@@ -728,7 +730,8 @@ export const IOItem = (props: processItemType) => {
                                 {values.type2_ef_source === "TG_ef" ? (
                                   <div>
                                     <p className="text-sm text-gray-300">
-                                      ค่า EF เที่ยวไป (kgCO2eq./หน่วย)
+                                      ค่า EF เที่ยวไป <br />
+                                      (kgCO2eq./หน่วย)
                                     </p>
                                     <p>
                                       {tgoVehicles.find(
@@ -751,7 +754,7 @@ export const IOItem = (props: processItemType) => {
                                 {values.type2_ef_source === "TG_ef" ? (
                                   <div>
                                     <p className="text-sm text-gray-300">
-                                      ค่า EF เที่ยวกลับ (kgCO2eq./หน่วย)
+                                      ค่า EF เที่ยวกลับ <br /> (kgCO2eq./หน่วย)
                                     </p>
                                     <p>
                                       {tgoVehicles.find(
@@ -774,8 +777,9 @@ export const IOItem = (props: processItemType) => {
                             <div className="flex gap-10 mt-5">
                               <div className="p-4 rounded-xl shadow-lg">
                                 <p className="text-sm">
-                                  การปล่อยก๊าซเรือนกระจกจากการขนส่งเที่ยวไป
-                                  (kgCO2e)
+                                  การปล่อยก๊าซเรือนกระจกจากการขนส่งเที่ยวไป{" "}
+                                  <br />
+                                  (kgCO2eq.)
                                 </p>
                                 <p className="text-primary">
                                   {(
@@ -791,8 +795,9 @@ export const IOItem = (props: processItemType) => {
                               </div>
                               <div className="p-4 rounded-xl shadow-lg">
                                 <p className="text-sm">
-                                  การปล่อยก๊าซเรือนกระจกจากการขนส่งเที่ยวกลับ
-                                  (kgCO2e)
+                                  การปล่อยก๊าซเรือนกระจกจากการขนส่งเที่ยวกลับ{" "}
+                                  <br />
+                                  (kgCO2eq.)
                                 </p>
                                 <p className="text-primary">
                                   {(() => {
@@ -986,7 +991,8 @@ export const IOItem = (props: processItemType) => {
                         <div className="flex gap-10 mt-5">
                           <div>
                             <p className="text-sm text-gray-300">
-                              ค่า EF เที่ยวไป (kgCO2eq./หน่วย)
+                              ค่า EF เที่ยวไป <br />
+                              (kgCO2eq./หน่วย)
                             </p>
                             <p>
                               {Number(initialValues.type2_outbound_ef).toFixed(
@@ -996,7 +1002,10 @@ export const IOItem = (props: processItemType) => {
                           </div>
                           <div>
                             <p className="text-sm text-gray-300">
-                              ค่า EF เที่ยวกลับ (kgCO2eq./หน่วย)
+                              ค่า EF เที่ยวกลับ
+                            </p>
+                            <p className="text-sm text-gray-300">
+                              (kgCO2eq./หน่วย)
                             </p>
                             <p>
                               {Number(initialValues.type2_return_ef).toFixed(

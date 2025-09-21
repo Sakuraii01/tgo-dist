@@ -17,7 +17,7 @@ const FR06_2 = () => {
       <div className="w-fit mx-auto">
         <Formik
           initialValues={{
-            std_emission: fr06Data?.std_emission || 0,
+            std_emission: fr06Data?.std_emission || "",
             source: fr06Data?.std_emission_source || "",
           }}
           enableReinitialize

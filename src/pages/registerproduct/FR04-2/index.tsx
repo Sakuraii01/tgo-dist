@@ -21,6 +21,7 @@ import type { TGOVehiclesWithEFType } from "../../../service/api/dropdown/type";
 import { Fr04Service } from "../../../service/api/fr04";
 import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../../constants/path.route";
+import type { FR04_2ItemItemInfo } from "../../../service/api/fr04/type";
 const FR04_2 = () => {
   const [searchParams] = useSearchParams();
   const id = Number(searchParams.get("id"));
@@ -32,9 +33,9 @@ const FR04_2 = () => {
     handleNavigateto06_1,
     handleSetAddItem,
     fr04LifeCycleData,
+    handleSubmit,
   } = useViewModel(id);
   const navigate = useNavigate();
-  console.log(fr04LifeCycleData);
 
   return (
     <div>
@@ -67,6 +68,7 @@ const FR04_2 = () => {
                         // processName={data.process_name}
                         processId={data.process_id}
                         lifePhase={tab}
+                        handleSubmit={handleSubmit}
                         // fu={fr04Data[tab - 1].FU || 0}
                       />
                     </Accordion>
@@ -81,31 +83,33 @@ const FR04_2 = () => {
                   process.process_name ===
                   fr04LifeCycleData.form42?.[tab - 1].life_cycle_phase_name
               )
-              ?.product.map((data, index) => (
-                <div className="my-5" key={`${index}`}>
-                  <Accordion title={data.item_name}>
-                    <FR04_2Form
-                      data={{
-                        item_id: data.item_id,
-                        item_name: data.item_name,
-                        item_unit: data.item_unit,
-                        item_quantity: data.item_quantity,
-                        chemical_reaction: 0,
-                        input_title: "",
-                        item_class: null,
-                      }}
-                      id={id}
-                      // processName={data.process_name}
-                      processId={data.process_id}
-                      lifePhase={tab}
-                      // fu={fr04Data[0].FU || 0}
-                      isB2C={true}
-                      // report_id={data.report_42_id}
-                      // B2CData={data}
-                    />
-                  </Accordion>
-                </div>
-              ))}
+              ?.product.map((cycledata, index) => {
+                return (
+                  <div className="my-5" key={`${index}`}>
+                    <Accordion title={cycledata.item_name}>
+                      <FR04_2Form
+                        data={{
+                          item_id: cycledata.item_id,
+                          item_name: cycledata.item_name,
+                          item_unit: cycledata.item_unit,
+                          item_quantity: cycledata.item_quantity,
+                          chemical_reaction: 0,
+                          input_title: "",
+                          item_class: null,
+                        }}
+                        id={id}
+                        // processName={data.process_name}
+                        processId={cycledata.process_id}
+                        lifePhase={tab}
+                        // fu={fr04Data[0].FU || 0}
+                        isB2C={true}
+                        handleSubmit={handleSubmit}
+                        B2CData={cycledata}
+                      />
+                    </Accordion>
+                  </div>
+                );
+              })}
         </div>
       </FR04Layout>
       <div className="w-1/3 mx-auto flex gap-4">
@@ -139,6 +143,11 @@ const FR04_2Form = (props: {
   isB2C?: boolean;
   report_id?: number;
   B2CData?: ItemProcessType;
+  handleSubmit: (
+    method: "PUT" | "POST",
+    entity: FR04_2ItemItemInfo,
+    item_id?: number
+  ) => Promise<void>;
 }) => {
   const [isEdit, setIsEdit] = useState(false);
   const [trafficType, setTrafficType] = useState("b");
@@ -189,6 +198,7 @@ const FR04_2Form = (props: {
             handleIsEdit={(value) => handleSetEdit(value)}
             lifePhase={props.lifePhase}
             process_id={props.processId}
+            handleSubmit={props.handleSubmit}
           />
         </div>
       ) : (
@@ -366,8 +376,9 @@ const FormTypeB = ({
   tgoVehicles,
   id,
   handleIsEdit,
-  // B2CData,
+  B2CData,
   isB2C,
+  handleSubmit,
 }: // report_id,
 {
   lifePhase: number;
@@ -379,10 +390,16 @@ const FormTypeB = ({
   handleIsEdit: (value: boolean) => void;
   isB2C?: boolean;
   report_id?: number;
-  B2CData?: ItemProcessType;
+  B2CData?: any;
+  handleSubmit: (
+    method: "PUT" | "POST",
+    entity: FR04_2ItemItemInfo,
+    item_id?: number
+  ) => Promise<void>;
 }) => {
   const fr04Service = new Fr04Service();
-  const { handleSubmit } = useViewModel(id);
+  console.log("cycle", B2CData);
+
   const [loading, setLoading] = useState(false);
   const [initialValues, setInitialValues] = useState({
     item_name: "",
@@ -408,40 +425,35 @@ const FormTypeB = ({
     type2_ef_source: "",
   });
   const [fr4_2ReportId, setFr4_2ReportId] = useState<number>(0);
-  const handleSetInitialValue = async (
-    life_cycle_phase: number,
-    product_id: number,
-    class_type: string,
-    item_id: number
-  ) => {
+  const handleSetInitialValue = async () => {
     setLoading(true);
     if (isB2C) {
-      // setInitialValues({
-      //   item_name: B2CData?.item_name || "",
-      //   item_unit: B2CData?.item_unit || "",
-      //   item_fu_qty: B2CData?.item_fu_qty || "",
-      //   distance: B2CData?.distance || "",
-      //   distance_source: B2CData?.distance_source || "",
-      //   calculate_type: B2CData?.calculate_type || "",
-      //   type1_gas: B2CData?.type1_gas || 0,
-      //   type1_gas_unit: B2CData?.type1_gas_unit || "",
-      //   type1_gas_qty: B2CData?.type1_gas_qty || 0,
-      //   type1_ef: B2CData?.type1_ef || 0,
-      //   type1_ef_source: B2CData?.type1_ef_source || "",
-      //   type2_outbound_load: B2CData?.type2_outbound_load || 0,
-      //   type2_return_load: B2CData?.type2_return_load || 0,
-      //   type2_vehicle_outbound: B2CData?.type2_vehicle_outbound || "",
-      //   type2_vehicle_return: B2CData?.type2_vehicle_return || "",
-      //   type2_ef_source_ref: B2CData?.type2_ef_source_ref || "",
-      //   type2_outbound_load_percent: B2CData?.type2_outbound_load_percent || 0,
-      //   type2_return_load_percent: B2CData?.type2_return_load_percent || 0,
-      //   type2_outbound_ef: B2CData?.type2_outbound_ef || 0,
-      //   type2_return_ef: B2CData?.type2_return_ef || 0,
-      //   type2_ef_source: B2CData?.type2_ef_source || "",
-      // });
+      setInitialValues({
+        item_name: B2CData?.item_name || "",
+        item_unit: B2CData?.item_unit || "",
+        item_fu_qty: B2CData?.item_fu_qty || "",
+        distance: B2CData?.distance || "",
+        distance_source: B2CData?.distance_source || "",
+        calculate_type: B2CData?.calculate_type || "",
+        type1_gas: B2CData?.type1_gas || 0,
+        type1_gas_unit: B2CData?.type1_gas_unit || "",
+        type1_gas_qty: B2CData?.type1_gas_qty || 0,
+        type1_ef: B2CData?.type1_ef || 0,
+        type1_ef_source: B2CData?.type1_ef_source || "",
+        type2_outbound_load: B2CData?.type2_outbound_load || 0,
+        type2_return_load: B2CData?.type2_return_load || 0,
+        type2_vehicle_outbound: B2CData?.type2_vehicle_outbound || "",
+        type2_vehicle_return: B2CData?.type2_vehicle_return || "",
+        type2_ef_source_ref: B2CData?.type2_ef_source_ref || "",
+        type2_outbound_load_percent: B2CData?.type2_outbound_load_percent || 0,
+        type2_return_load_percent: B2CData?.type2_return_load_percent || 0,
+        type2_outbound_ef: B2CData?.type2_outbound_ef || 0,
+        type2_return_ef: B2CData?.type2_return_ef || 0,
+        type2_ef_source: B2CData?.type2_ef_source || "",
+      });
     } else {
       await fr04Service
-        .reqGetFr04_2Item(life_cycle_phase, product_id, class_type, item_id)
+        .reqGetFr04_2Item(lifePhase, id, data.item_class || "", data.item_id)
         .then((data) => {
           const itemInfo = data.itemInfo;
           setInitialValues({
@@ -478,14 +490,7 @@ const FormTypeB = ({
     }
   };
   useEffect(() => {
-    (async () => {
-      await handleSetInitialValue(
-        lifePhase,
-        id,
-        data.item_class || "",
-        data.item_id
-      );
-    })();
+    handleSetInitialValue();
   }, []);
 
   return (
@@ -501,7 +506,7 @@ const FormTypeB = ({
                 ? "POST"
                 : "PUT",
               {
-                company_id: 1005,
+                company_id: 0,
                 product_id: id,
                 process_id: process_id,
                 life_cycle_phase: lifePhase,

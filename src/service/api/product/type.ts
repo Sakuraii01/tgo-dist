@@ -12,7 +12,7 @@ export type ProductType = {
   PU_en: number;
   sale_ratio: number;
   product_techinfo: string[] | string | null;
-  pcr_reference: string;
+  pcr_reference: string | number;
   collect_data_start: Date | string | null;
   collect_data_end: Date | string | null;
   product_photo: File | FormData | Blob | string;

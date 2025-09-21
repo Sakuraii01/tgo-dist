@@ -38,58 +38,83 @@ import { ExcelViewer } from "./excelView";
 const FR03 = () => {
   const [searchParams] = useSearchParams();
   const id = Number(searchParams.get("id"));
-  const { tab, handleTabChange, handelAddProcess, pdflink, loading } =
-    useViewModel(id);
-  const { processData } = useViewModel(id);
+
+  const {
+    processData,
+    tab,
+    handleTabChange,
+    handelAddProcess,
+    pdflink,
+    loading,
+    processId,
+    expandedItems,
+    toggleExpanded,
+    handleChangeOrder,
+    handleDeleteProcess,
+    handleUpdateProcess,
+    handleOnSubmitFR03Item,
+    handleDeleteFR03Item,
+  } = useViewModel(id);
   const navigate = useNavigate();
   return (
     <div>
       <ProcessStepper isActive={1} id={id} />
       {!loading ? (
-        <div>
-          <div className="flex w-fit mx-auto text-xl font-medium text-gray-300">
-            <p
-              onClick={() => handleTabChange(1)}
-              className={`${
-                tab === 1
-                  ? "font-bold text-primary border-b-2 border-primary"
-                  : "border-b border-gray-300"
-              } px-6 py-2`}
-            >
-              กรอกข้อมูล
-            </p>
-            <p
-              onClick={() => handleTabChange(0)}
-              className={`${
-                tab === 0
-                  ? "font-bold text-primary border-b-2 border-primary"
-                  : "border-b border-gray-300"
-              } px-6 py-2`}
-            >
-              สรุปผล
-            </p>
-          </div>
-          {tab === 0 ? (
-            <div className="mx-10 mt-10" style={{ height: "750px" }}>
-              {pdflink && (
-                <ExcelViewer url={import.meta.env.VITE_APP_API_V1 + pdflink} />
-              )}
-            </div>
-          ) : (
-            <div>
-              <DraggableList />
-              <AddProcess
-                processId={processData?.length ?? 0}
-                handleAddProcess={handelAddProcess}
-              />
-            </div>
-          )}
-        </div>
+        ""
       ) : (
         <Backdrop open>
           <CircularProgress color="inherit" />
         </Backdrop>
       )}
+      <div>
+        <div className="flex w-fit mx-auto text-xl font-medium text-gray-300">
+          <p
+            onClick={() => handleTabChange(1)}
+            className={`${
+              tab === 1
+                ? "font-bold text-primary border-b-2 border-primary"
+                : "border-b border-gray-300"
+            } px-6 py-2`}
+          >
+            กรอกข้อมูล
+          </p>
+          <p
+            onClick={() => handleTabChange(0)}
+            className={`${
+              tab === 0
+                ? "font-bold text-primary border-b-2 border-primary"
+                : "border-b border-gray-300"
+            } px-6 py-2`}
+          >
+            สรุปผล
+          </p>
+        </div>
+        {tab === 0 ? (
+          <div className="mx-10 mt-10" style={{ height: "750px" }}>
+            {pdflink && (
+              <ExcelViewer url={import.meta.env.VITE_APP_API_V1 + pdflink} />
+            )}
+          </div>
+        ) : (
+          <div>
+            <DraggableList
+              processData={processData}
+              processId={processId}
+              handleChangeOrder={handleChangeOrder}
+              expandedItems={expandedItems}
+              toggleExpanded={toggleExpanded}
+              handleDeleteProcess={handleDeleteProcess}
+              handleUpdateProcess={handleUpdateProcess}
+              handleOnSubmitFR03Item={handleOnSubmitFR03Item}
+              handleDeleteFR03Item={handleDeleteFR03Item}
+            />
+            <AddProcess
+              processId={processData?.length ?? 0}
+              handleAddProcess={handelAddProcess}
+            />
+          </div>
+        )}
+      </div>
 
       <div className="w-1/3 mx-auto flex gap-4">
         <button
@@ -190,15 +215,20 @@ type FR03ItemProps = {
   order: number;
   isOpen: boolean;
   onToggle: () => void;
+  handleDeleteProcess: (id: number) => void;
+  handleUpdateProcess: (data: any, process_name: string) => void;
+  handleOnSubmitFR03Item: (
+    data: any,
+    type: "input" | "intermediate" | "waste",
+    id: number,
+    input_id?: number,
+    isUpdate?: boolean,
+    istype?: boolean
+  ) => void;
+  handleDeleteFR03Item: (type: string, id: number) => void;
   dragHandleProps?: React.HTMLAttributes<any>;
 };
 const FR03Item = (props: FR03ItemProps) => {
-  const {
-    handleDeleteProcess,
-    handleUpdateProcess,
-    handleOnSubmitFR03Item,
-    handleDeleteFR03Item,
-  } = useViewModel(props.data.product_id);
   const { AddProcessValidationSchema } = FR03FormSchema();
   const { isOpen, onToggle } = props;
   const [isEdit, setIsEdit] = useState(false);
@@ -218,7 +248,7 @@ const FR03Item = (props: FR03ItemProps) => {
         >
           <CreateRounded sx={{ fontSize: "16px" }} className="text-primary" />
         </button>
-        <button onClick={() => handleDeleteFR03Item(type, item_id)}>
+        <button onClick={() => props.handleDeleteFR03Item(type, item_id)}>
           <DeleteRounded sx={{ fontSize: "16px" }} className="text-error" />
         </button>
       </div>
@@ -244,7 +274,10 @@ const FR03Item = (props: FR03ItemProps) => {
           enableReinitialize
           validationSchema={AddProcessValidationSchema}
           onSubmit={async (values) => {
-            handleUpdateProcess(props.data.process_id, values.process_name);
+            props.handleUpdateProcess(
+              props.data.process_id,
+              values.process_name
+            );
           }}
         >
           {({ handleSubmit }) => (
@@ -301,7 +334,7 @@ const FR03Item = (props: FR03ItemProps) => {
                 <div className="flex ml-auto gap-2 my-auto">
                   <button
                     onClick={() => {
-                      handleDeleteProcess(props.data.process_id);
+                      props.handleDeleteProcess(props.data.process_id);
                     }}
                     type="button"
                     className="border border-red-700 rounded-full text-red-700 hover:bg-red-50 transition font-semibold text-sm flex px-3 py-1 transform"
@@ -350,7 +383,11 @@ const FR03Item = (props: FR03ItemProps) => {
                 }}
                 handleOnClose={() => setShowform(false)}
                 handleOnSubmit={(data, type) => {
-                  handleOnSubmitFR03Item(data, type, props.data.process_id);
+                  props.handleOnSubmitFR03Item(
+                    data,
+                    type,
+                    props.data.process_id
+                  );
                   setShowform(false);
                 }}
               />
@@ -374,7 +411,7 @@ const FR03Item = (props: FR03ItemProps) => {
                         ?.filter((data) => data.input_cat_id === 7)
                         ?.map((data, index) => {
                           return (
-                            <>
+                            <div key={index}>
                               <FR03Form
                                 initialValues={{
                                   type: "input",
@@ -385,7 +422,7 @@ const FR03Item = (props: FR03ItemProps) => {
                                 }}
                                 handleOnClose={() => setEditIsOpen("close")}
                                 handleOnSubmit={(formData, type) => {
-                                  handleOnSubmitFR03Item(
+                                  props.handleOnSubmitFR03Item(
                                     formData,
                                     type,
                                     props.data.process_id,
@@ -417,7 +454,7 @@ const FR03Item = (props: FR03ItemProps) => {
                                   "input"
                                 )}
                               />
-                            </>
+                            </div>
                           );
                         })
                     ) : (
@@ -447,7 +484,7 @@ const FR03Item = (props: FR03ItemProps) => {
                               }}
                               handleOnClose={() => setEditIsOpen("close")}
                               handleOnSubmit={(formData, type) => {
-                                handleOnSubmitFR03Item(
+                                props.handleOnSubmitFR03Item(
                                   formData,
                                   type,
                                   props.data.process_id,
@@ -507,7 +544,7 @@ const FR03Item = (props: FR03ItemProps) => {
                               }}
                               handleOnClose={() => setEditIsOpen("close")}
                               handleOnSubmit={(formData, type) => {
-                                handleOnSubmitFR03Item(
+                                props.handleOnSubmitFR03Item(
                                   formData,
                                   type,
                                   props.data.process_id,
@@ -570,7 +607,7 @@ const FR03Item = (props: FR03ItemProps) => {
                           }}
                           handleOnClose={() => setEditIsOpen("close")}
                           handleOnSubmit={(formData, type) => {
-                            handleOnSubmitFR03Item(
+                            props.handleOnSubmitFR03Item(
                               formData,
                               type,
                               props.data.process_id,
@@ -635,7 +672,7 @@ const FR03Item = (props: FR03ItemProps) => {
                               }}
                               handleOnClose={() => setEditIsOpen("close")}
                               handleOnSubmit={(formData, type) => {
-                                handleOnSubmitFR03Item(
+                                props.handleOnSubmitFR03Item(
                                   formData,
                                   type,
                                   props.data.process_id,
@@ -690,7 +727,7 @@ const FR03Item = (props: FR03ItemProps) => {
                               }}
                               handleOnClose={() => setEditIsOpen("close")}
                               handleOnSubmit={(formData, type) => {
-                                handleOnSubmitFR03Item(
+                                props.handleOnSubmitFR03Item(
                                   formData,
                                   type,
                                   props.data.process_id,
@@ -742,12 +779,27 @@ const SortableItem = ({
   index,
   isOpen,
   onToggle,
+  handleDeleteProcess,
+  handleUpdateProcess,
+  handleOnSubmitFR03Item,
+  handleDeleteFR03Item,
 }: {
   id: string;
   data: ProcessType;
   index: number;
   isOpen: boolean;
   onToggle: () => void;
+  handleDeleteProcess: (id: number) => void;
+  handleUpdateProcess: (data: any, process_name: string) => void;
+  handleOnSubmitFR03Item: (
+    data: any,
+    type: "input" | "intermediate" | "waste",
+    id: number,
+    input_id?: number,
+    isUpdate?: boolean,
+    istype?: boolean
+  ) => void;
+  handleDeleteFR03Item: (type: string, id: number) => void;
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
@@ -765,48 +817,65 @@ const SortableItem = ({
         isOpen={isOpen}
         onToggle={onToggle}
         dragHandleProps={listeners}
+        handleDeleteProcess={handleDeleteProcess}
+        handleUpdateProcess={handleUpdateProcess}
+        handleOnSubmitFR03Item={handleOnSubmitFR03Item}
+        handleDeleteFR03Item={handleDeleteFR03Item}
       />
     </div>
   );
 };
 
-export function DraggableList() {
-  const [searchParams] = useSearchParams();
-  const id = Number(searchParams.get("id"));
-  const {
-    processData,
-    processId,
-    expandedItems,
-    toggleExpanded,
-    handleChangeOrder,
-  } = useViewModel(id);
-
+export function DraggableList(props: {
+  processData: any;
+  processId: any;
+  handleChangeOrder: (data: any) => void;
+  expandedItems: any;
+  toggleExpanded: (data: any) => void;
+  handleDeleteProcess: (id: number) => void;
+  handleUpdateProcess: (data: any, process_name: string) => void;
+  handleOnSubmitFR03Item: (
+    data: any,
+    type: "input" | "intermediate" | "waste",
+    id: number,
+    input_id?: number,
+    isUpdate?: boolean,
+    istype?: boolean
+  ) => void;
+  handleDeleteFR03Item: (type: string, id: number) => void;
+}) {
   return (
     <div>
-      {processData && (
+      {props.processData && (
         <DndContext
           collisionDetection={closestCenter}
           modifiers={[restrictToVerticalAxis]}
           onDragEnd={({ active, over }) => {
             if (over && active.id !== over.id) {
-              const oldIndex = processId.indexOf(String(active.id));
-              const newIndex = processId.indexOf(String(over.id));
-              handleChangeOrder(arrayMove(processId, oldIndex, newIndex));
+              const oldIndex = props.processId.indexOf(String(active.id));
+              const newIndex = props.processId.indexOf(String(over.id));
+              props.handleChangeOrder(
+                arrayMove(props.processId, oldIndex, newIndex)
+              );
             }
           }}
         >
           <SortableContext
-            items={processId.map((item) => item)}
+            items={props.processId.map((item: any) => item)}
             strategy={verticalListSortingStrategy}
           >
-            {processId?.map((item, index) => (
+            {props.processId?.map((item: any, index: number) => (
               <div key={item}>
                 <SortableItem
                   id={item}
-                  data={processData[index]}
+                  data={props.processData[index]}
                   index={index}
-                  isOpen={expandedItems.includes(item)}
-                  onToggle={() => toggleExpanded(item)}
+                  isOpen={props.expandedItems.includes(item)}
+                  onToggle={() => props.toggleExpanded(item)}
+                  handleDeleteProcess={props.handleDeleteProcess}
+                  handleUpdateProcess={props.handleUpdateProcess}
+                  handleOnSubmitFR03Item={props.handleOnSubmitFR03Item}
+                  handleDeleteFR03Item={props.handleDeleteFR03Item}
                 />
               </div>
             ))}

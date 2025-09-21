@@ -2,16 +2,15 @@ import { ANavbar } from "./layout";
 import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../constants/path.route";
 import useViewModel from "./viewModel";
-import { useAuth } from "../../auth/useAuth";
-import { useToken } from "../../utils/localStorage";
+// import { useAuth } from "../../auth/useAuth";
+// import { useToken } from "../../utils/localStorage";
 
 const Auditor = () => {
-  const { tab, error, loading, auditorData, productList, handleTabChange } =
-    useViewModel();
+  const { tab, error, loading, productList, handleTabChange } = useViewModel();
 
   const navigate = useNavigate();
-  const auth = useAuth();
-  const userData = useToken();
+  // const auth = useAuth();
+  // const userData = useToken();
   const user_account_string = localStorage.getItem("user_account");
 
   // แปลง string เป็น JavaScript object

@@ -4,9 +4,15 @@ import { type ProductType } from "../../service/api/product/type";
 import { CompanyService } from "../../service/api/company";
 import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../constants/path.route";
+
+import { Fr06Service } from "../../service/api/fr06";
+import type { FR06_1Sum4142 } from "../../service/api/fr06/type";
+
 const useViewModel = (product_id: number) => {
   const navigate = useNavigate();
   const [productData, setProductData] = useState<ProductType>();
+  const [fr06Sum4142, setFr06Sum4142] = useState<FR06_1Sum4142>();
+  const fr06Service = new Fr06Service();
   const productService = new ProductService();
   const companyService = new CompanyService();
 
@@ -29,6 +35,16 @@ const useViewModel = (product_id: number) => {
       return null;
     }
   };
+  const fetchFr06Service = async () => {
+    await fr06Service
+      .reqGetFr06_1Sum4142(product_id)
+      .then((res) => {
+        setFr06Sum4142(res);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   const sendExcelToAuditor = async () => {
     if (!product_id) return;
@@ -48,7 +64,8 @@ const useViewModel = (product_id: number) => {
 
   useEffect(() => {
     fetchProductData();
+    fetchFr06Service();
   }, []);
-  return { productData, fetchGenExcel, sendExcelToAuditor };
+  return { fr06Sum4142, productData, fetchGenExcel, sendExcelToAuditor };
 };
 export default useViewModel;

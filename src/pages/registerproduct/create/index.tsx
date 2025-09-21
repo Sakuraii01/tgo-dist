@@ -207,6 +207,7 @@ const CreateProduct = () => {
                     label: item.pcr_name,
                     value: item.id,
                   }))}
+                  require
                 />
               </div>
               <Dropzone

@@ -10,9 +10,8 @@ const Product = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
-  const { productData, fetchGenExcel, sendExcelToAuditor } = useViewModel(
-    Number(id)
-  );
+  const { fr06Sum4142, productData, fetchGenExcel, sendExcelToAuditor } =
+    useViewModel(Number(id));
   const data = {
     labels: [
       "การได้มาของวัตถุดิบ",
@@ -24,7 +23,13 @@ const Product = () => {
     datasets: [
       {
         label: "Min",
-        data: [0.78],
+        data: [
+          fr06Sum4142?.sum_lc1_emission || 0,
+          fr06Sum4142?.sum_lc2_emission || 0,
+          fr06Sum4142?.sum_lc3_emission || 0,
+          fr06Sum4142?.sum_lc4_emission || 0,
+          fr06Sum4142?.sum_lc5_emission || 0,
+        ],
         backgroundColor: "#5B4C97",
         borderRadius: 5,
       },
@@ -206,7 +211,24 @@ const Product = () => {
           </div>
         </section>
         <section>
-          <BarChart data={data} />
+          <div className="flex gap-10">
+            <div className="my-auto">
+              <img src="./co2.png" className="h-38" />
+              <div className="text-center my-5 text-primary font-semibold text-lg">
+                <p className="text-xl">
+                  {(
+                    (Number(fr06Sum4142?.sum_lc1_emission) || 0) +
+                    (Number(fr06Sum4142?.sum_lc2_emission) || 0) +
+                    (Number(fr06Sum4142?.sum_lc3_emission) || 0) +
+                    (Number(fr06Sum4142?.sum_lc4_emission) || 0) +
+                    (Number(fr06Sum4142?.sum_lc5_emission) || 0)
+                  ).toFixed(4)}{" "}
+                </p>
+                <p>kgCO2 eq.</p>
+              </div>
+            </div>
+            <BarChart data={data} />
+          </div>
         </section>
       </div>
     </div>

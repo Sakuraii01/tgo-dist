@@ -2,11 +2,14 @@ import { Navbar, BreadcrumbNav } from "../../../component/layout";
 import useViewModel from "./viewModel";
 import { useSearchParams } from "react-router-dom";
 
-import { IOItem, SelfCollectTopic } from "./form";
+// import { IOItem, SelfCollectTopic } from "./form";
 import { useCallback, useState } from "react";
 import { Backdrop, CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { PROTECTED_PATH } from "../../../constants/path.route";
+
+import { IOItem } from "./components/IOItem";
+import { SelfCollectTopic } from "./components/SelfCollectTopic";
 // import * as Yup from "yup";
 
 const CreateSelfCollect = () => {
